@@ -15,8 +15,93 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Kronos Engine.cpp">
+    <ClCompile Include="Source\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\KronosEngine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Vertex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Header\Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Primitives.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Renderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Standard.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Vertex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="KronosEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resource\Shader\Light.fs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\Shader\Light.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\Shader\LightColorCube.fs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\Shader\LightColorCube.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\Shader\Shader.fs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\Shader\Shader.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\Shader\Solid.fs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\Shader\Solid.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\Shader\Stencil.fs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resource\Shader\Stencil.vs">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
