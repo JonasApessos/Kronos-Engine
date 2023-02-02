@@ -68,7 +68,7 @@
     <ClInclude Include="Header\Vertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="KronosEngine.h">
+    <ClInclude Include="Header\KronosEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -108,6 +108,8 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -152,6 +154,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\Camera.h" />
+    <ClInclude Include="Header\KronosEngine.h" />
     <ClInclude Include="Header\Mesh.h" />
     <ClInclude Include="Header\Model.h" />
     <ClInclude Include="Header\Primitives.h" />
@@ -160,7 +163,6 @@
     <ClInclude Include="Header\Standard.h" />
     <ClInclude Include="Header\Texture.h" />
     <ClInclude Include="Header\Vertex.h" />
-    <ClInclude Include="KronosEngine.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shader\Light.fs" />
