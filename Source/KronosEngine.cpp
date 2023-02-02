@@ -223,10 +223,6 @@ int main()
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-
-
-
-
 		Shader rShaderLight("Resource/Shader/Light.vs", "Resource/Shader/Light.fs");
 		Shader rShaderCubeLight("Resource/Shader/LightColorCube.vs", "Resource/Shader/LightColorCube.fs");
 		Shader rShaderStencil("Resource/Shader/Stencil.vs", "Resource/Shader/Stencil.fs");
