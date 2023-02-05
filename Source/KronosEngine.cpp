@@ -11,7 +11,11 @@
 
 using namespace glm;
 
+using glm::vec3;
+
 using namespace std;
+
+using std::cout;
 
 
 int WindowWidth = 1024;
@@ -60,9 +64,9 @@ int GLEWInit()
 	return true;
 }
 
-void OnWindowResize(GLFWwindow* InrWindow, int IniWindowWidth, int IniWidthHeight) noexcept
+void OnWindowResize(GLFWwindow* InrWindow, int32 IniWindowWidth, int32 IniWidthHeight) noexcept
 {
-	glViewport(0, 0, IniWindowWidth, IniWidthHeight);
+	glViewport(0, 0, static_cast<GLsizei>(IniWindowWidth), static_cast<GLsizei>(IniWidthHeight));
 }
 
 void ProcessInput(GLFWwindow* InrWindow)
@@ -159,7 +163,7 @@ GLvoid MaterialView() noexcept
 
 GLvoid WindowRenderLoop()
 {
-	const float CurrentFrame = glfwGetTime();
+	const float CurrentFrame = static_cast<float>(glfwGetTime());
 
 	DeltaTime = CurrentFrame - LastFrame;
 	LastFrame = CurrentFrame;
@@ -173,8 +177,7 @@ int main()
 	{
 
 		// Open a window and create its OpenGL context
-		GLFWwindow* Window; // (In the accompanying source code, this variable is global for simplicity)
-		Window = glfwCreateWindow(WindowWidth, WindowHeight, "Tutorial 01", NULL, NULL);
+		GLFWwindow* Window = glfwCreateWindow(WindowWidth, WindowHeight, "Tutorial 01", NULL, NULL); // (In the accompanying source code, this variable is global for simplicity)
 
 		if (Window == NULL)
 		{
@@ -201,25 +204,28 @@ int main()
 		GLint nrAttributes;
 		glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
 
-		cout << "Maximum nr if vertex attributes supported: " << nrAttributes << endl;
+		cout << "Maximum nr if vertex attributes supported: " << nrAttributes << "\n";
 
-		Texture FrameBufferTexture(WindowWidth, WindowHeight, ETextureType::ETT_Albedo, ETextureDataType::ETDT_Texture2D, ETextureSlot::ETS_Slot0, ETextureFormat::ETF_RGBA);
-
-		unsigned int BufferID = 0;
+		
+		GLuint TextureID = 0;
+		GLuint BufferID = 0;
 
 		glGenFramebuffers(1, &BufferID);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, BufferID);
 
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, FrameBufferTexture.GetId(), 0);
-
-		int CodeCheck = glCheckNamedFramebufferStatus(BufferID, GL_FRAMEBUFFER);
+		GLenum CodeCheck = glCheckNamedFramebufferStatus(BufferID, GL_FRAMEBUFFER);
 
 		if (CodeCheck == GL_FRAMEBUFFER_COMPLETE)
 			cout << "Frame Buffer Created" << endl;
 		else
 			cout << "Failed to init frame buffer with code: " << CodeCheck << endl;
 
+		Texture FrameBufferTexture(WindowWidth, WindowHeight, ETextureType::ETT_Albedo, ETextureDataType::ETDT_Texture2D, ETextureSlot::ETS_Slot0, ETextureFormat::ETF_RGB);
+
+		TextureID = static_cast<GLuint>(FrameBufferTexture.GetId());
+
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, TextureID, 0);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 

@@ -19,7 +19,8 @@ Texture::Texture(
     switch (eTextureDataType)
     {
         case ETextureDataType::ETDT_Texture1D:
-            glTexImage1D(static_cast<GLenum>(eTextureDataType),
+            glTexImage1D(
+                static_cast<GLenum>(eTextureDataType),
                 0,
                 static_cast<GLint>(IneTextureFormat),
                 static_cast<GLint>(iWidth),
@@ -31,27 +32,29 @@ Texture::Texture(
             break;
 
         case ETextureDataType::ETDT_Texture2D:
-            glTexImage2D((GLenum)eTextureDataType,
+            glTexImage2D(
+                static_cast<GLenum>(eTextureDataType),
                 0,
-                (GLint)IneTextureFormat,
-                (GLint)iWidth,
-                (GLint)iHeight,
+                static_cast<GLint>(IneTextureFormat),
+                static_cast<GLint>(iWidth),
+                static_cast<GLint>(iHeight),
                 0,
-                (GLint)IneTextureFormat,
+                static_cast<GLint>(IneTextureFormat),
                 GL_UNSIGNED_BYTE,
                 NULL);
 
             break;
 
         case ETextureDataType::ETDT_Texture3D:
-            glTexImage3D((GLenum)eTextureDataType,
+            glTexImage3D(
+                static_cast<GLenum>(eTextureDataType),
                 0,
-                (GLint)IneTextureFormat,
-                (GLint)iWidth,
-                (GLint)iHeight,
+                static_cast<GLint>(IneTextureFormat),
+                static_cast<GLint>(iWidth),
+                static_cast<GLint>(iHeight),
                 0,
                 0,
-                (GLint)IneTextureFormat,
+                static_cast<GLint>(IneTextureFormat),
                 GL_UNSIGNED_BYTE,
                 NULL);
 
@@ -65,7 +68,15 @@ Texture::Texture(
     Active();
 }
 
-Texture::Texture(const char* IncImagePath, ETextureType IneTextureType, ETextureDataType IneTextureDataType, ETextureSlot IneTextureSlot, ETextureFormat IneTextureFormat, ETextureFormat IneInternalFormat) : eTextureDataType(IneTextureDataType), eTextureSlot(IneTextureSlot)
+Texture::Texture(
+    const char* IncImagePath,
+    ETextureType IneTextureType,
+    ETextureDataType IneTextureDataType,
+    ETextureSlot IneTextureSlot,
+    ETextureFormat IneTextureFormat,
+    ETextureFormat IneInternalFormat) : 
+    eTextureDataType(IneTextureDataType),
+    eTextureSlot(IneTextureSlot)
 {
     stbi_set_flip_vertically_on_load(bInvertYOnLoad);
 
@@ -111,7 +122,13 @@ Texture::Texture(const char* IncImagePath, ETextureType IneTextureType, ETexture
     stbi_image_free(PixelData);
 }
 
-Texture::Texture(const char* IncImagePath, ETextureType IneTextureType, ETextureDataType IneTextureDataType, ETextureSlot IneTextureSlot) : eTextureDataType(IneTextureDataType), eTextureSlot(IneTextureSlot)
+Texture::Texture(
+    const char* IncImagePath,
+    ETextureType IneTextureType,
+    ETextureDataType IneTextureDataType,
+    ETextureSlot IneTextureSlot) : 
+    eTextureDataType(IneTextureDataType),
+    eTextureSlot(IneTextureSlot)
 {
     stbi_set_flip_vertically_on_load(bInvertYOnLoad);
 
@@ -151,15 +168,42 @@ Texture::Texture(const char* IncImagePath, ETextureType IneTextureType, ETexture
         switch (eTextureDataType)
         {
         case ETextureDataType::ETDT_Texture1D:
-            glTexImage1D((GLenum)eTextureDataType, 0, (GLint)eFormat, iWidth, 0, (GLint)eFormat, GL_UNSIGNED_BYTE, PixelData);
+            glTexImage1D(
+                (GLenum)eTextureDataType,
+                0,
+                (GLint)eFormat,
+                iWidth,
+                0,
+                (GLint)eFormat,
+                GL_UNSIGNED_BYTE,
+                PixelData);
             break;
 
         case ETextureDataType::ETDT_Texture2D:
-            glTexImage2D((GLenum)eTextureDataType, 0, (GLint)eFormat, iWidth, iHeight, 0, (GLint)eFormat, GL_UNSIGNED_BYTE, PixelData);
+            glTexImage2D(
+                (GLenum)eTextureDataType,
+                0,
+                (GLint)eFormat,
+                iWidth,
+                iHeight,
+                0,
+                (GLint)eFormat,
+                GL_UNSIGNED_BYTE,
+                PixelData);
             break;
 
         case ETextureDataType::ETDT_Texture3D:
-            glTexImage3D((GLenum)eTextureDataType, 0, (GLint)eFormat, iWidth, iHeight, 0, 0, (GLint)eFormat, GL_UNSIGNED_BYTE, PixelData);
+            glTexImage3D(
+                (GLenum)eTextureDataType,
+                0,
+                (GLint)eFormat,
+                iWidth,
+                iHeight,
+                0,
+                0,
+                (GLint)eFormat,
+                GL_UNSIGNED_BYTE,
+                PixelData);
             break;
         }
 
@@ -177,7 +221,13 @@ Texture::Texture(const char* IncImagePath, ETextureType IneTextureType, ETexture
     stbi_image_free(PixelData);
 }
 
-Texture::Texture(const char* IncImagePath, aiTextureType IneTextureType, ETextureDataType IneTextureDataType, ETextureSlot IneTextureSlot) : eTextureDataType(IneTextureDataType), eTextureSlot(IneTextureSlot)
+Texture::Texture(
+    const char* IncImagePath,
+    aiTextureType IneTextureType,
+    ETextureDataType IneTextureDataType,
+    ETextureSlot IneTextureSlot) :
+    eTextureDataType(IneTextureDataType),
+    eTextureSlot(IneTextureSlot)
 {
     stbi_set_flip_vertically_on_load(bInvertYOnLoad);
 
@@ -217,15 +267,42 @@ Texture::Texture(const char* IncImagePath, aiTextureType IneTextureType, ETextur
         switch (eTextureDataType)
         {
         case ETextureDataType::ETDT_Texture1D:
-            glTexImage1D((GLenum)eTextureDataType, 0, (GLint)eFormat, iWidth, 0, (GLint)eFormat, GL_UNSIGNED_BYTE, PixelData);
+            glTexImage1D(
+                (GLenum)eTextureDataType,
+                0,
+                (GLint)eFormat,
+                iWidth,
+                0,
+                (GLint)eFormat,
+                GL_UNSIGNED_BYTE,
+                PixelData);
             break;
 
         case ETextureDataType::ETDT_Texture2D:
-            glTexImage2D((GLenum)eTextureDataType, 0, (GLint)eFormat, iWidth, iHeight, 0, (GLint)eFormat, GL_UNSIGNED_BYTE, PixelData);
+            glTexImage2D(
+                (GLenum)eTextureDataType,
+                0,
+                (GLint)eFormat,
+                iWidth,
+                iHeight,
+                0,
+                (GLint)eFormat,
+                GL_UNSIGNED_BYTE,
+                PixelData);
             break;
 
         case ETextureDataType::ETDT_Texture3D:
-            glTexImage3D((GLenum)eTextureDataType, 0, (GLint)eFormat, iWidth, iHeight, 0, 0, (GLint)eFormat, GL_UNSIGNED_BYTE, PixelData);
+            glTexImage3D(
+                (GLenum)eTextureDataType,
+                0,
+                (GLint)eFormat,
+                iWidth,
+                iHeight,
+                0,
+                0,
+                (GLint)eFormat,
+                GL_UNSIGNED_BYTE,
+                PixelData);
             break;
         }
 

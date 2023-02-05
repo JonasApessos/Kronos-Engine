@@ -28,7 +28,7 @@ Shader::Shader(const GLchar* IncVertPath, const GLchar* IncFragPath)
     }
     catch (ifstream::failure e)
     {
-        cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << endl;
+        cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ - " << e.what() << "\n";
     }
 
     const GLchar* cVertShaderCode = sVertCode.c_str();
