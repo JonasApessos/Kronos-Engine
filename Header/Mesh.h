@@ -8,14 +8,14 @@
 
 class Vertex;
 
-using std::string;
-using std::vector;
+using KronosPrim::uint32;
+using std::string, std::vector;
 
 class MeshBase
 {
 public:
 	vector<Vertex> rVertices;
-	vector<unsigned int> rIndices;
+	vector<uint32> rIndices;
 	vector<Texture> rTextures;
 
 	MeshBase();
@@ -28,8 +28,8 @@ protected:
 	virtual void SetupMesh() = 0;
 
 private:
-	unsigned int MeshID;
-	unsigned int VAO, VBO, EBO;
+	uint32 MeshID;
+	uint32 VAO, VBO, EBO;
 
 	
 };
@@ -38,14 +38,14 @@ class Mesh
 {
 public:
 	vector<Vertex> rVertices;
-	vector<unsigned int> rIndices;
+	vector<uint32> rIndices;
 	vector<Texture> rTextures;
 
-	Mesh(vector<Vertex> InrVertices, vector<unsigned int> InrIndices, vector<Texture> InrTextures);
+	Mesh(vector<Vertex> InrVertices, vector<uint32> InrIndices, vector<Texture> InrTextures);
 	void Draw(Shader& InrShader);
 
 private:
-	unsigned int VAO, VBO, EBO;
+	uint32 VAO, VBO, EBO;
 
 	void SetupMesh();
 };

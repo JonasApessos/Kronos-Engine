@@ -1,6 +1,6 @@
 #include "Shader.h"
 
-Shader::Shader(const GLchar* IncVertPath, const GLchar* IncFragPath)
+Shader::Shader(const char* IncVertPath, const char* IncFragPath)
 {
     sShaderFile = IncVertPath;
     string sVertCode, sFragCode;
@@ -31,38 +31,38 @@ Shader::Shader(const GLchar* IncVertPath, const GLchar* IncFragPath)
         cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ - " << e.what() << "\n";
     }
 
-    const GLchar* cVertShaderCode = sVertCode.c_str();
-    const GLchar* cFragShaderCode = sFragCode.c_str();
+    const char* cVertShaderCode = sVertCode.c_str();
+    const char* cFragShaderCode = sFragCode.c_str();
 
-    GLuint iVertShaderRef, iFragShaderRef;
+    uint32 iVertShaderRef, iFragShaderRef;
     
     
-    CompileShader(iVertShaderRef, cVertShaderCode, ShaderCompilationType::VertexShader);
-    CompileShader(iFragShaderRef, cFragShaderCode, ShaderCompilationType::FragmentShader);
+    CompileShader(iVertShaderRef, cVertShaderCode, EShaderCompilationType::ESCT_Vertex);
+    CompileShader(iFragShaderRef, cFragShaderCode, EShaderCompilationType::ESCT_Fragment);
 
     CreateShaderProg(iVertShaderRef, iFragShaderRef);
 }
 
 Shader::~Shader()
 {
-    if (glIsShader(ShaderProgID))
+    if (glIsShader(iShaderProgID))
     {
 
     }
 }
 
-void Shader::CompileShader(GLuint& IniShaderID, const GLchar* IncShaderCode, ShaderCompilationType InFShaderType)
+void Shader::CompileShader(uint32& IniShaderID, const char* IncShaderCode, EShaderCompilationType IneShaderType)
 {
-    GLint iSuccess;
-    GLchar cInfoLog[512];
+    int32 iSuccess;
+    char cInfoLog[512];
 
-    switch (InFShaderType)
+    switch (IneShaderType)
     {
-        case ShaderCompilationType::VertexShader:
+        case EShaderCompilationType::ESCT_Vertex:
             IniShaderID = glCreateShader(GL_VERTEX_SHADER);
             break;
 
-        case ShaderCompilationType::FragmentShader:
+        case EShaderCompilationType::ESCT_Fragment:
             IniShaderID = glCreateShader(GL_FRAGMENT_SHADER);
             break;
     }
@@ -75,27 +75,27 @@ void Shader::CompileShader(GLuint& IniShaderID, const GLchar* IncShaderCode, Sha
     if (!iSuccess)
     {
         glGetShaderInfoLog(IniShaderID, 512, NULL, cInfoLog);
-        cout << "FILE::" << sShaderFile << endl;
-        cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << cInfoLog << endl;
+        cout << "FILE::" << sShaderFile << "\n";
+        cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << cInfoLog << "\n";
     }
 }
 
-void Shader::CreateShaderProg(GLuint& IniVertShaderID, GLuint& IniFragShaderID)
+void Shader::CreateShaderProg(uint32& IniVertShaderID, uint32& IniFragShaderID)
 {
     GLint iSuccess;
-    GLchar cInfoLog[512];
+    char cInfoLog[512];
 
-    ShaderProgID = glCreateProgram();
-    glAttachShader(ShaderProgID, IniVertShaderID);
-    glAttachShader(ShaderProgID, IniFragShaderID);
-    glLinkProgram(ShaderProgID);
+    iShaderProgID = glCreateProgram();
+    glAttachShader(iShaderProgID, IniVertShaderID);
+    glAttachShader(iShaderProgID, IniFragShaderID);
+    glLinkProgram(iShaderProgID);
 
-    glGetProgramiv(ShaderProgID, GL_LINK_STATUS, &iSuccess);
+    glGetProgramiv(iShaderProgID, GL_LINK_STATUS, &iSuccess);
 
     if (!iSuccess)
     {
-        glGetProgramInfoLog(ShaderProgID, 512, NULL, cInfoLog);
-        cout << "ERROR:SHADER::PROGRAM::LINKING_FAILED\n" << cInfoLog << endl;
+        glGetProgramInfoLog(iShaderProgID, 512, NULL, cInfoLog);
+        cout << "ERROR:SHADER::PROGRAM::LINKING_FAILED\n" << cInfoLog << "\n";
     }
 
     glDeleteShader(IniVertShaderID);

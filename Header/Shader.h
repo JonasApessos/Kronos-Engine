@@ -12,30 +12,38 @@
 
 #include <glm/glm.hpp>
 
-using namespace std;
-using namespace glm;
+#include "Primitives.h"
 
-enum class ShaderCompilationType : GLuint
+using KronosPrim::int32, KronosPrim::uint32, KronosPrim::uint8;
+using glm::vec3, glm::mat2, glm::mat3, glm::mat4;
+using std::cout, std::string, std::ifstream, std::stringstream;
+
+enum EShaderCompilationType : uint8
 {
-    VertexShader = 0,
-    FragmentShader = 1
+    ESCT_Vertex = 0,
+    ESCT_Fragment = 1,
+    ESCT_Geometry = 2,
+    ESCT_Tessellation = 3,
+    ESCT_Mesh = 4,
+    ESCT_Raytracing = 5,
+    ESCT_Compute = 6
 };
 
 class Shader
 {
 
 public:
-    GLuint ShaderProgID = 0;
+    uint32 iShaderProgID = 0;
 
     string sShaderFile;
 
-    Shader(const GLchar* IncVertPath, const GLchar* IncFragPath);
+    Shader(const char* IncVertPath, const char* IncFragPath);
     
     ~Shader();
 
     inline void Use();
-    void CompileShader(GLuint& ShaderID, const GLchar* IncShaderCode, ShaderCompilationType InFShaderType);
-    void CreateShaderProg(GLuint& IniVertShaderID, GLuint& IniFragShaderID);
+    void CompileShader(uint32& IniShaderID, const char* IncShaderCode, EShaderCompilationType IneShaderType);
+    void CreateShaderProg(uint32& IniVertShaderID, uint32& IniFragShaderID);
 
     inline void SetBool(const string& InsName, bool InbValue) const;
     inline void SetInt(const string& InsName, int32 IniValue) const;
@@ -57,62 +65,59 @@ private:
 
 inline void Shader::SetBool(const string& InsName, bool InbValue) const
 {
-    glUniform1i(glGetUniformLocation(ShaderProgID, InsName.c_str()), (GLboolean)InbValue);
+    glUniform1i(glGetUniformLocation(iShaderProgID, InsName.c_str()), InbValue);
 }
 
 inline void Shader::SetInt(const string& InsName, int32 IniValue) const
 {
-    glUniform1i(glGetUniformLocation(ShaderProgID, InsName.c_str()), (GLint)IniValue);
+    glUniform1i(glGetUniformLocation(iShaderProgID, InsName.c_str()), IniValue);
 }
 
 inline void Shader::SetFloat(const string& InsName, float InfValue) const
 {
-    glUniform1f(glGetUniformLocation(ShaderProgID, InsName.c_str()), (GLfloat)InfValue);
+    glUniform1f(glGetUniformLocation(iShaderProgID, InsName.c_str()), InfValue);
 }
 
 inline void Shader::SetVec2(const string& InsName, float InfUniform) const
 {
-    glUniform2f(glGetUniformLocation(ShaderProgID, InsName.c_str()), (GLfloat)InfUniform, (GLfloat)InfUniform);
+    glUniform2f(glGetUniformLocation(iShaderProgID, InsName.c_str()), InfUniform, InfUniform);
 }
 
 inline void Shader::SetVec2(const string& InsName, float InfX, float InfY) const
 {
-    glUniform2f(glGetUniformLocation(ShaderProgID, InsName.c_str()), (GLfloat)InfX, (GLfloat)InfY);
+    glUniform2f(glGetUniformLocation(iShaderProgID, InsName.c_str()), InfX, InfY);
 }
 
 inline void Shader::SetVec3(const string& InsName, vec3& InfValue) const
 {
-    glUniform3fv(glGetUniformLocation(ShaderProgID, InsName.c_str()), 1, &InfValue[0]);
+    glUniform3fv(glGetUniformLocation(iShaderProgID, InsName.c_str()), 1, &InfValue[0]);
 }
 
 inline void Shader::SetVec3(const string& InsName, float InfUniform) const
 {
-    glUniform3f(glGetUniformLocation(ShaderProgID, InsName.c_str()), (GLfloat)InfUniform, (GLfloat)InfUniform, (GLfloat)InfUniform);
+    glUniform3f(glGetUniformLocation(iShaderProgID, InsName.c_str()), InfUniform, InfUniform, InfUniform);
 }
 
 inline void Shader::SetVec3(const string& InsName, float InfX, float InfY, float InfZ) const
 {
-    glUniform3f(glGetUniformLocation(ShaderProgID, InsName.c_str()), (GLfloat)InfX, (GLfloat)InfY, (GLfloat)InfZ);
+    glUniform3f(glGetUniformLocation(iShaderProgID, InsName.c_str()), InfX, InfY, InfZ);
 }
 
 inline void Shader::SetMat2(const string& InsName, mat2& InrValue) const
 {
-    glUniformMatrix2fv(glGetUniformLocation(ShaderProgID, InsName.c_str()), 1, GL_FALSE, &InrValue[0][0]);
+    glUniformMatrix2fv(glGetUniformLocation(iShaderProgID, InsName.c_str()), 1, GL_FALSE, &InrValue[0][0]);
 }
 
 inline void Shader::SetMat3(const string& InsName, mat3& InrValue) const
 {
-    glUniformMatrix3fv(glGetUniformLocation(ShaderProgID, InsName.c_str()), 1, GL_FALSE, &InrValue[0][0]);
+    glUniformMatrix3fv(glGetUniformLocation(iShaderProgID, InsName.c_str()), 1, GL_FALSE, &InrValue[0][0]);
 }
 
 inline void Shader::SetMat4(const string& InsName, mat4& InrValue) const
 {
-    glUniformMatrix4fv(glGetUniformLocation(ShaderProgID, InsName.c_str()), 1, GL_FALSE, &InrValue[0][0]);
+    glUniformMatrix4fv(glGetUniformLocation(iShaderProgID, InsName.c_str()), 1, GL_FALSE, &InrValue[0][0]);
 }
 
-inline void Shader::Use()
-{
-    glUseProgram(ShaderProgID);
-}
+inline void Shader::Use() { glUseProgram(iShaderProgID); }
 
 #endif

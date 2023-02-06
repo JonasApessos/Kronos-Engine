@@ -4,14 +4,22 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-using namespace std;
-using namespace glm;
+using glm::vec3, glm::mat4;
+using glm::perspective, glm::normalize, glm::radians, glm::lookAt;
 
 class Camera
 {
 public:
 
-	Camera(vec3 InrCameraLoc, vec3 InrCameraFront, vec3 InrCameraUp, float InfFOV, float InfAspectRatio, float InfTravelSpeed, float InfNearClip, float InfFarClip);
+	Camera(
+		vec3 InrCameraLoc,
+		vec3 InrCameraFront,
+		vec3 InrCameraUp,
+		float InfFOV,
+		float InfAspectRatio,
+		float InfTravelSpeed,
+		float InfNearClip,
+		float InfFarClip);
 
 	inline void TravelForwards(float InfTravelSpeed);
 	inline void TravelSideways(float InfTravelSpeed);

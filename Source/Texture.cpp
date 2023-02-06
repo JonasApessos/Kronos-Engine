@@ -23,7 +23,7 @@ Texture::Texture(
                 static_cast<GLenum>(eTextureDataType),
                 0,
                 static_cast<GLint>(IneTextureFormat),
-                static_cast<GLint>(iWidth),
+                iWidth,
                 0,
                 static_cast<GLint>(IneTextureFormat),
                 GL_UNSIGNED_BYTE,
@@ -36,8 +36,8 @@ Texture::Texture(
                 static_cast<GLenum>(eTextureDataType),
                 0,
                 static_cast<GLint>(IneTextureFormat),
-                static_cast<GLint>(iWidth),
-                static_cast<GLint>(iHeight),
+                iWidth,
+                iHeight,
                 0,
                 static_cast<GLint>(IneTextureFormat),
                 GL_UNSIGNED_BYTE,
@@ -50,8 +50,8 @@ Texture::Texture(
                 static_cast<GLenum>(eTextureDataType),
                 0,
                 static_cast<GLint>(IneTextureFormat),
-                static_cast<GLint>(iWidth),
-                static_cast<GLint>(iHeight),
+                iWidth,
+                iHeight,
                 0,
                 0,
                 static_cast<GLint>(IneTextureFormat),
@@ -96,15 +96,42 @@ Texture::Texture(
         switch (eTextureDataType)
         {
             case ETextureDataType::ETDT_Texture1D:
-                glTexImage1D((GLenum)eTextureDataType, 0, (GLint)IneInternalFormat, iWidth, 0, (GLint)IneTextureFormat, GL_UNSIGNED_BYTE, PixelData);
+                glTexImage1D(
+                    static_cast<GLenum>(eTextureDataType),
+                    0,
+                    static_cast<GLint>(IneInternalFormat),
+                    iWidth,
+                    0,
+                    static_cast<GLint>(IneTextureFormat),
+                    GL_UNSIGNED_BYTE,
+                    PixelData);
                 break;
 
             case ETextureDataType::ETDT_Texture2D:
-                glTexImage2D((GLenum)eTextureDataType, 0, (GLint)IneInternalFormat, iWidth, iHeight, 0, (GLint)IneTextureFormat, GL_UNSIGNED_BYTE, PixelData);
+                glTexImage2D(
+                    static_cast<GLenum>(eTextureDataType),
+                    0,
+                    static_cast<GLint>(IneInternalFormat),
+                    iWidth,
+                    iHeight,
+                    0,
+                    static_cast<GLint>(IneTextureFormat),
+                    GL_UNSIGNED_BYTE,
+                    PixelData);
                 break;
 
             case ETextureDataType::ETDT_Texture3D:
-                glTexImage3D((GLenum)eTextureDataType, 0, (GLint)IneInternalFormat, iWidth, iHeight, 0, 0, (GLint)IneTextureFormat, GL_UNSIGNED_BYTE, PixelData);
+                glTexImage3D(
+                    static_cast<GLenum>(eTextureDataType),
+                    0,
+                    static_cast<GLint>(IneInternalFormat),
+                    iWidth,
+                    iHeight,
+                    0,
+                    0,
+                    static_cast<GLint>(IneTextureFormat),
+                    GL_UNSIGNED_BYTE,
+                    PixelData);
                 break;
         }
 
@@ -140,7 +167,6 @@ Texture::Texture(
 
         eTextureDataType = IneTextureDataType;
         eTextureSlot = IneTextureSlot;
-
         SetTextureType(IneTextureType);
 
         switch (iChannels)
@@ -161,7 +187,7 @@ Texture::Texture(
         Active();
 
         glGenTextures(1, &iTextureId);
-        glBindTexture((GLenum)eTextureDataType, iTextureId);
+        glBindTexture(static_cast<GLenum>(eTextureDataType), iTextureId);
 
 
 
@@ -169,39 +195,39 @@ Texture::Texture(
         {
         case ETextureDataType::ETDT_Texture1D:
             glTexImage1D(
-                (GLenum)eTextureDataType,
+                static_cast<GLenum>(eTextureDataType),
                 0,
-                (GLint)eFormat,
+                static_cast<GLint>(eFormat),
                 iWidth,
                 0,
-                (GLint)eFormat,
+                static_cast<GLint>(eFormat),
                 GL_UNSIGNED_BYTE,
                 PixelData);
             break;
 
         case ETextureDataType::ETDT_Texture2D:
             glTexImage2D(
-                (GLenum)eTextureDataType,
+                static_cast<GLenum>(eTextureDataType),
                 0,
-                (GLint)eFormat,
+                static_cast<GLint>(eFormat),
                 iWidth,
                 iHeight,
                 0,
-                (GLint)eFormat,
+                static_cast<GLint>(eFormat),
                 GL_UNSIGNED_BYTE,
                 PixelData);
             break;
 
         case ETextureDataType::ETDT_Texture3D:
             glTexImage3D(
-                (GLenum)eTextureDataType,
+                static_cast<GLenum>(eTextureDataType),
                 0,
-                (GLint)eFormat,
+                static_cast<GLint>(eFormat),
                 iWidth,
                 iHeight,
                 0,
                 0,
-                (GLint)eFormat,
+                static_cast<GLint>(eFormat),
                 GL_UNSIGNED_BYTE,
                 PixelData);
             break;
@@ -209,7 +235,7 @@ Texture::Texture(
 
         if (bGenerateMipMap)
         {
-            glGenerateMipmap((GLenum)eTextureDataType);
+            glGenerateMipmap(static_cast<GLenum>(eTextureDataType));
 
             SetTextureWrap(ETextureWrap::ETW_Repeat);
             SetTextureMinMagFilter(ETextureMinFilter::ETMF_Linear, ETextureMagFilter::ETMF_Linear);
@@ -260,7 +286,7 @@ Texture::Texture(
         Active();
 
         glGenTextures(1, &iTextureId);
-        glBindTexture((GLenum)eTextureDataType, iTextureId);
+        glBindTexture(static_cast<GLenum>(eTextureDataType), iTextureId);
 
 
 
@@ -268,39 +294,39 @@ Texture::Texture(
         {
         case ETextureDataType::ETDT_Texture1D:
             glTexImage1D(
-                (GLenum)eTextureDataType,
+                static_cast<GLenum>(eTextureDataType),
                 0,
-                (GLint)eFormat,
+                static_cast<GLint>(eFormat),
                 iWidth,
                 0,
-                (GLint)eFormat,
+                static_cast<GLint>(eFormat),
                 GL_UNSIGNED_BYTE,
                 PixelData);
             break;
 
         case ETextureDataType::ETDT_Texture2D:
             glTexImage2D(
-                (GLenum)eTextureDataType,
+                static_cast<GLenum>(eTextureDataType),
                 0,
-                (GLint)eFormat,
+                static_cast<GLint>(eFormat),
                 iWidth,
                 iHeight,
                 0,
-                (GLint)eFormat,
+                static_cast<GLint>(eFormat),
                 GL_UNSIGNED_BYTE,
                 PixelData);
             break;
 
         case ETextureDataType::ETDT_Texture3D:
             glTexImage3D(
-                (GLenum)eTextureDataType,
+                static_cast<GLenum>(eTextureDataType),
                 0,
-                (GLint)eFormat,
+                static_cast<GLint>(eFormat),
                 iWidth,
                 iHeight,
                 0,
                 0,
-                (GLint)eFormat,
+                static_cast<GLint>(eFormat),
                 GL_UNSIGNED_BYTE,
                 PixelData);
             break;
@@ -308,7 +334,7 @@ Texture::Texture(
 
         if (bGenerateMipMap)
         {
-            glGenerateMipmap((GLenum)eTextureDataType);
+            glGenerateMipmap(static_cast<GLenum>(eTextureDataType));
 
             SetTextureWrap(ETextureWrap::ETW_Repeat);
             SetTextureMinMagFilter(ETextureMinFilter::ETMF_Linear, ETextureMagFilter::ETMF_Linear);

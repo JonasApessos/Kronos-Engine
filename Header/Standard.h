@@ -1,5 +1,7 @@
 #pragma once
 
+using KronosPrim::uint16;
+
 enum EGLError : uint16
 {
 	EGLE_NoError = GL_NO_ERROR,

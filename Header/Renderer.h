@@ -2,6 +2,8 @@
 #include <GL/glew.h>
 #include "Primitives.h"
 
+using KronosPrim::uint16;
+
 enum EGLEnable : uint16
 {
 	EGLE_Blend = GL_BLEND,
@@ -97,9 +99,9 @@ private:
 
 inline void Renderer::SetViewMode() { }
 
-inline void Renderer::Enable(const EGLEnable InrFlag) { glEnable(static_cast<GLint>(InrFlag)); }
+inline void Renderer::Enable(const EGLEnable InrFlag) { glEnable(InrFlag); }
 
-inline void Renderer::SetDepthFunc(const EGLDepthFunc InrFlag) { glDepthFunc(static_cast<GLint>(InrFlag)); }
+inline void Renderer::SetDepthFunc(const EGLDepthFunc InrFlag) { glDepthFunc(InrFlag); }
 
 
 

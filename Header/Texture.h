@@ -9,9 +9,11 @@
 
 #include "Primitives.h"
 
+using KronosPrim::uint16, KronosPrim::int32, KronosPrim::uint32;
+
 using namespace std;
 
-enum class ETextureParameter:GLenum
+enum class ETextureParameter:uint16
 {
     ETP_DepthStencilTextureMode = GL_DEPTH_STENCIL_TEXTURE_MODE,
     ETP_BaseLevel = GL_TEXTURE_BASE_LEVEL,
@@ -34,7 +36,7 @@ enum class ETextureParameter:GLenum
     ETP_SwizzleRGBA = GL_TEXTURE_SWIZZLE_RGBA
 };
 
-enum class ETextureWrap:GLenum
+enum class ETextureWrap:uint16
 {
     ETW_Repeat = GL_REPEAT,
     ETW_Mirror = GL_MIRRORED_REPEAT,
@@ -42,13 +44,13 @@ enum class ETextureWrap:GLenum
     ETW_Border = GL_CLAMP_TO_BORDER
 };
 
-enum class ETextureMagFilter:GLenum
+enum class ETextureMagFilter:uint16
 {
     ETMF_Linear = GL_LINEAR,
     ETMF_Nearest = GL_NEAREST
 };
 
-enum class ETextureMinFilter:GLenum
+enum class ETextureMinFilter:uint16
 {
     ETMF_Linear = GL_LINEAR,
     ETMF_Nearest = GL_NEAREST,
@@ -58,7 +60,7 @@ enum class ETextureMinFilter:GLenum
     ETMF_LinearMipMapLinear = GL_LINEAR_MIPMAP_LINEAR
 };
 
-enum class ETextureSlot:GLenum
+enum class ETextureSlot:uint16
 {
     ETS_Slot0 = GL_TEXTURE0,
     ETS_Slot1 = GL_TEXTURE1,
@@ -78,7 +80,7 @@ enum class ETextureSlot:GLenum
     ETS_Slot15 = GL_TEXTURE15
 };
 
-enum class ETextureDataType:GLenum
+enum class ETextureDataType:uint16
 {
     ETDT_Texture1D = GL_TEXTURE_1D,
     ETDT_Texture1DArray = GL_TEXTURE_1D_ARRAY,
@@ -91,7 +93,7 @@ enum class ETextureDataType:GLenum
     ETDT_TextureCubeMapArray = GL_TEXTURE_CUBE_MAP_ARRAY,
 };
 
-enum class ETextureType:GLenum
+enum class ETextureType:uint16
 {
     ETT_Diffuse = aiTextureType::aiTextureType_DIFFUSE,
     ETT_Albedo = aiTextureType::aiTextureType_BASE_COLOR,
@@ -119,7 +121,7 @@ enum class ETextureType:GLenum
     ETT_RGBA_Mask = 23
 };
 
-enum class ETextureFormat:GLenum
+enum class ETextureFormat:uint16
 {
     ETF_RED = GL_RED,
     ETF_GREEN = GL_GREEN,

@@ -9,11 +9,7 @@
 
 #include "KronosEngine.h"
 
-using namespace glm;
-
-using glm::vec3;
-
-using namespace std;
+using glm::vec3, glm::vec2 , glm::mat4;
 
 using std::cout;
 
@@ -205,7 +201,6 @@ int main()
 		glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
 
 		cout << "Maximum nr if vertex attributes supported: " << nrAttributes << "\n";
-
 		
 		GLuint TextureID = 0;
 		GLuint BufferID = 0;
@@ -219,7 +214,7 @@ int main()
 		if (CodeCheck == GL_FRAMEBUFFER_COMPLETE)
 			cout << "Frame Buffer Created" << endl;
 		else
-			cout << "Failed to init frame buffer with code: " << CodeCheck << endl;
+			cout << "Failed to init frame buffer with code: " << CodeCheck << "\n";
 
 		Texture FrameBufferTexture(WindowWidth, WindowHeight, ETextureType::ETT_Albedo, ETextureDataType::ETDT_Texture2D, ETextureSlot::ETS_Slot0, ETextureFormat::ETF_RGB);
 
@@ -278,8 +273,6 @@ int main()
 		Vertices.at(3).VertexData.Position = Pos4.VertexData.Position + 1.f;
 
 		Mesh PlanarGrass2 = Mesh(Vertices, Indices, Textures);
-
-		cout << sizeof(GLenum) << endl;
 
 
 		glEnable(GL_DEPTH_TEST);
