@@ -10,8 +10,7 @@
 #include "Primitives.h"
 
 using KronosPrim::uint16, KronosPrim::int32, KronosPrim::uint32;
-
-using namespace std;
+using std::cout, std::string, std::cerr;
 
 enum class ETextureParameter:uint16
 {
@@ -137,6 +136,8 @@ public:
     bool bGenerateMipMap = true;
     static bool bInvertYOnLoad;
 
+    uint32 iTextureId = 0;
+
     int32 iWidth = 0, iHeight = 0, iChannels = 0;
 
     string sPath;
@@ -186,8 +187,6 @@ protected:
     ETextureMagFilter eTextureMagFilter = ETextureMagFilter::ETMF_Nearest;
 
 private:
-    uint32 iTextureId = 0;
-
     unsigned char* PixelData = NULL;
 };
 

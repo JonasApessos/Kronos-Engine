@@ -9,7 +9,7 @@
 class Vertex;
 
 using KronosPrim::uint32;
-using std::string, std::vector;
+using std::string, std::vector, std::to_string;
 
 class MeshBase
 {

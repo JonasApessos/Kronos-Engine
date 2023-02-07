@@ -16,6 +16,8 @@
 
 #include "Texture.h"
 
+#include "Framebuffer.h"
+
 #include "Shader.h"
 
 #include "Camera.h"

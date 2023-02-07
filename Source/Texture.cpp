@@ -144,7 +144,7 @@ Texture::Texture(
         }
     }
     else
-        cerr << "Failed to load image" << endl;
+        cerr << "Failed to load image" << "\n";
 
     stbi_image_free(PixelData);
 }
@@ -242,7 +242,7 @@ Texture::Texture(
         }
     }
     else
-        cerr << "Failed to load image" << endl;
+        cerr << "Failed to load image" << "\n";
 
     stbi_image_free(PixelData);
 }
@@ -341,7 +341,7 @@ Texture::Texture(
         }
     }
     else
-        cerr << "Failed to load image" << endl;
+        cerr << "Failed to load image" << "\n";
 
     stbi_image_free(PixelData);
 }
@@ -392,7 +392,7 @@ void Texture::SetTextureType(aiTextureType IneTextureType)
         
     default:
         eTextureType = ETextureType::ETT_Unknown;
-        cout << "Unknown Texture " << IneTextureType << endl;
+        cout << "Unknown Texture type" << IneTextureType << "\n";
         break;
     }
 }

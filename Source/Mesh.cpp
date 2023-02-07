@@ -1,7 +1,7 @@
 #include "Mesh.h"
 
 
-Mesh::Mesh(vector<Vertex> InrVertices, vector<unsigned int> InrIndices, vector<Texture> InrTextures)
+Mesh::Mesh(vector<Vertex> InrVertices, vector<uint32> InrIndices, vector<Texture> InrTextures)
 {
 	rVertices = InrVertices;
 	rIndices = InrIndices;
@@ -12,11 +12,6 @@ Mesh::Mesh(vector<Vertex> InrVertices, vector<unsigned int> InrIndices, vector<T
 
 void Mesh::SetupMesh()
 {
-	cout << sizeof(Vertex) << "\n Pos Size: " << sizeof(Vertex::VertexData.Position) << "\n Norm Size: " << sizeof(Vertex::VertexData.Normal) << "\n Tex Size: " << sizeof(Vertex::VertexData.TexCoords) << "\n";
-	cout << offsetof(Vertex, Vertex::VertexData.Position) << "\n";
-	cout << offsetof(Vertex, Vertex::VertexData.Normal) << "\n";
-	cout << offsetof(Vertex, Vertex::VertexData.TexCoords) << "\n";
-
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 	glGenBuffers(1, &EBO);
@@ -46,10 +41,10 @@ void Mesh::SetupMesh()
 
 void Mesh::Draw(Shader& InrShader)
 {
-	unsigned int DiffuseNr = 1;
-	unsigned int SpecularNr = 1;
+	uint32 DiffuseNr = 1;
+	uint32 SpecularNr = 1;
 
-	for (unsigned int i = 0; i < rTextures.size(); i++)
+	for (uint32 i = 0; i < rTextures.size(); i++)
 	{
 		glActiveTexture(GL_TEXTURE0 + i);
 
@@ -60,8 +55,8 @@ void Mesh::Draw(Shader& InrShader)
 		else if (rTextures[i].GetTextureType() == ETextureType::ETT_Specular)
 			Number = to_string(SpecularNr++);
 
-		InrShader.SetInt(("Material." + to_string((GLint)rTextures[i].GetTextureType()) + "." + Number).c_str(), i);
-		glBindTexture((GLenum)rTextures[i].GetTextureDataType(), rTextures[i].GetId());
+		InrShader.SetInt(("Material." + to_string((int32)rTextures[i].GetTextureType()) + "." + Number).c_str(), i);
+		glBindTexture(static_cast<GLenum>(rTextures[i].GetTextureDataType()), rTextures[i].GetId());
 	}
 
 	glActiveTexture(GL_TEXTURE0);

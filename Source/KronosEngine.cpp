@@ -201,28 +201,21 @@ int main()
 		glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
 
 		cout << "Maximum nr if vertex attributes supported: " << nrAttributes << "\n";
-		
-		GLuint TextureID = 0;
-		GLuint BufferID = 0;
 
-		glGenFramebuffers(1, &BufferID);
+		Texture FrameBufferTexture(
+			WindowWidth,
+			WindowHeight,
+			ETextureType::ETT_Albedo,
+			ETextureDataType::ETDT_Texture2D,
+			ETextureSlot::ETS_Slot0,
+			ETextureFormat::ETF_RGB);
 
-		glBindFramebuffer(GL_FRAMEBUFFER, BufferID);
-
-		GLenum CodeCheck = glCheckNamedFramebufferStatus(BufferID, GL_FRAMEBUFFER);
-
-		if (CodeCheck == GL_FRAMEBUFFER_COMPLETE)
-			cout << "Frame Buffer Created" << endl;
-		else
-			cout << "Failed to init frame buffer with code: " << CodeCheck << "\n";
-
-		Texture FrameBufferTexture(WindowWidth, WindowHeight, ETextureType::ETT_Albedo, ETextureDataType::ETDT_Texture2D, ETextureSlot::ETS_Slot0, ETextureFormat::ETF_RGB);
-
-		TextureID = static_cast<GLuint>(FrameBufferTexture.GetId());
-
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, TextureID, 0);
-
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		Framebuffer rFramebuffer(
+			EFramebufferOp::EFO_FrameBuffer,
+			EFramebufferAttach::EFA_Color,
+			EFramebufferTex::EFT_Texture2D,
+			&FrameBufferTexture,
+			0);
 
 		Shader rShaderLight("Resource/Shader/Light.vs", "Resource/Shader/Light.fs");
 		Shader rShaderCubeLight("Resource/Shader/LightColorCube.vs", "Resource/Shader/LightColorCube.fs");
@@ -342,7 +335,7 @@ int main()
 			glfwPollEvents();
 		}
 
-		glDeleteFramebuffers(1, &BufferID);
+		//glDeleteFramebuffers(1, &BufferID);
 
 		glfwTerminate();
 	}
