@@ -14,6 +14,8 @@
 
 #include "Standard.h"
 
+#include "Log.h"
+
 #include "Texture.h"
 
 #include "Framebuffer.h"

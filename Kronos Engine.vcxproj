@@ -146,6 +146,7 @@
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\Framebuffer.cpp" />
     <ClCompile Include="Source\KronosEngine.cpp" />
+    <ClCompile Include="Source\Log.cpp" />
     <ClCompile Include="Source\Mesh.cpp" />
     <ClCompile Include="Source\Model.cpp" />
     <ClCompile Include="Source\Renderer.cpp" />
@@ -157,6 +158,7 @@
     <ClInclude Include="Header\Camera.h" />
     <ClInclude Include="Header\Framebuffer.h" />
     <ClInclude Include="Header\KronosEngine.h" />
+    <ClInclude Include="Header\Log.h" />
     <ClInclude Include="Header\Mesh.h" />
     <ClInclude Include="Header\Model.h" />
     <ClInclude Include="Header\Primitives.h" />

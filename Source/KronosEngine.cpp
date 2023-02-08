@@ -169,6 +169,12 @@ GLvoid WindowRenderLoop()
 
 int main()
 {
+	Log TestLog("text.txt");
+
+	TestLog.Write("testtest");
+
+	cout << TestLog.Read() << std::endl;
+
 	if (GLFWInit())
 	{
 

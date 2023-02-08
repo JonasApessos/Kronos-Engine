@@ -27,11 +27,7 @@ Framebuffer::Framebuffer(
 		if (CodeCheck == EFramebufferStatus::EFS_Complete)
 			cout << "Frame buffer created" << "\n";
 		else
-		{
 			cerr << "Failed to init frame buffer with code: " << CodeCheck << "\n";
-
-			cerr << glGetError() << "\n";
-		}
 	}
 	else
 		cerr << "Texture object returned null\n";
