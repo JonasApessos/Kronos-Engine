@@ -2,17 +2,33 @@
 
 #include "Log.h"
 
-Log::Log(string InsFilePath) : sFilePath(InsFilePath), LogFile(sFilePath, ios_base::in | ios_base::out | ios_base::app)
+Log::Log(string InsFilePath, int32 IniBitFlagMode) : sFilePath(InsFilePath), iBitFlagMode(IniBitFlagMode)
 {
 	if (!LogFile)
 		cerr << "Failed to open log file streams \n";
+
+	rTime = time(0);
+}
+
+Log::~Log()
+{
+	if (LogFile.is_open())
+		LogFile.close();
+
+	LogFile.clear();
 }
 
 bool Log::Write(string InsData)
 {
-	if (CheckFile())
+	if (CheckFile() && !InsData.empty())
 	{
-		LogFile << InsData;
+		tm rTimeStruct;
+		LogFile.open(sFilePath, iBitFlagMode);
+
+		localtime_s(&rTimeStruct, &rTime);
+		strftime(cTimeBuffer, sizeof(cTimeBuffer), "%d/%m/%y - %T", &rTimeStruct);
+
+		LogFile << "[" << cTimeBuffer << "]: " << InsData << "\n\r";
 
 		LogFile.close();
 
@@ -26,14 +42,14 @@ bool Log::Write(string InsData)
 string Log::Read()
 {
 	string sReadData;
+	string Line;
 
 	if (CheckFile())
 	{
+		LogFile.open(sFilePath, iBitFlagMode);
 
-		while (!LogFile.eof())
-		{
-			LogFile >> sReadData;
-		}
+		while (getline(LogFile, Line))
+			sReadData.append("\n"+Line);
 
 		LogFile.close();
 	}
@@ -45,19 +61,9 @@ bool Log::CheckFile()
 {
 	if (!LogFile)
 	{
-		cerr << "File object handler failed to init \n";
+		cerr << "File object handler failed to init " << LogFile.rdstate() << "\n";
 
 		return false;
-	}
-	else
-	{
-		LogFile.open(sFilePath, ios_base::in | ios_base::out | ios_base::app);
-
-		if (!LogFile.is_open())
-		{
-			cerr << "File failed to open, File - " << sFilePath << "\n";
-			return false;
-		}
 	}
 
 	return true;

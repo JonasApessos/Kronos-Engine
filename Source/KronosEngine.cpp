@@ -169,7 +169,7 @@ GLvoid WindowRenderLoop()
 
 int main()
 {
-	Log TestLog("text.txt");
+	Log TestLog("text.txt", ios_base::in | ios_base::out | ios_base::app);
 
 	TestLog.Write("testtest");
 
