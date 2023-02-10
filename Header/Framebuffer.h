@@ -1,6 +1,7 @@
 #pragma once
 #include <GL/glew.h>
 #include <iostream>
+#include "Log.h"
 
 #include "Primitives.h"
 #include "Texture.h"

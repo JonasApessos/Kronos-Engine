@@ -27,6 +27,8 @@ Texture* Test;
 
 int GLFWInit()
 {
+	Log GLFWLog("GLFWLog", "Log/", "Log.txt", ios_base::in | ios_base::out | ios_base::app);
+
 	MainCamera.SetMinRotation(vec3(-360.0f, -89.0f, -360.0f));
 	MainCamera.SetMaxRotation(vec3(360.0f, 89.0f, 360.0f));
 	// Initialise GLFW
@@ -34,7 +36,7 @@ int GLFWInit()
 
 	if (!glfwInit())
 	{
-		fprintf(stderr, "Failed to initialize GLFW\n");
+		GLFWLog.WriteAndDisplay("Failed to initialize GLFW", ELogSeverity::ELS_Critical);
 
 		return -1;
 	}
@@ -50,10 +52,14 @@ int GLFWInit()
 
 int GLEWInit()
 {
+	Log GLEWLog("GLEWLog", "Log/", "Log.txt", ios_base::in | ios_base::out | ios_base::app);
+
 	if (glewInit() != GLEW_OK)
 	{
-		fprintf(stderr, "Glew context failed to load\n");
+		GLEWLog.WriteAndDisplay("Glew context failed to load", ELogSeverity::ELS_Critical);
+
 		glfwTerminate();
+
 		return -2;
 	}
 
@@ -168,13 +174,7 @@ GLvoid WindowRenderLoop()
 }
 
 int main()
-{
-	Log TestLog("text.txt", ios_base::in | ios_base::out | ios_base::app);
-
-	TestLog.Write("testtest");
-
-	cout << TestLog.Read() << std::endl;
-
+{	
 	if (GLFWInit())
 	{
 
