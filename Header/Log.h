@@ -25,11 +25,14 @@ public:
 	string sLogName = "";
 
 	Log();
+	Log(const string& InsLogName, const string& InsFilePath, const string& InsFileName);
 	Log(const string& InsLogName, const string& InsFilePath, const string& InsFileName, int32 IniBitFlagMode);
-	Log(Log&& InrLog);
+	Log(Log&& InrLog) noexcept;
 	Log(const Log& InrLog);
 
 	~Log();
+
+	Log& operator=(Log&& InrLog) noexcept;
 
 	//Write to log file at specified file in construction
 	//by default INFO seveoity level is used
@@ -57,7 +60,7 @@ protected:
 	char cTimeBuffer[32] = "";
 	char cErrorMsg[256] = "";
 
-	int32 iBitFlagMode = 0;
+	int32 iBitFlagMode = ios_base::in | ios_base::out | ios_base::app;
 
 	uint32 iMinFileSizeBytes = 4194304;
 
@@ -69,8 +72,10 @@ protected:
 	void ShowErrorCode(const string& InsCustomErrorMessage);
 
 private:
-	fstream LogFile;
+	fstream* rLogFile;
 	string sFileName;
 	string sFilePath;
 	error_code rErrorCode;
+
+	void Initialization();
 };

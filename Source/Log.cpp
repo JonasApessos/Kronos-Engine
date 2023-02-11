@@ -2,10 +2,22 @@
 
 #include "Log.h"
 
-Log::Log()
+Log::Log() 
 {
-	//cTimeBuffer = "";
-	//cErrorMsg = "";
+	rLogFile = new fstream(sFilePath + sFileName, iBitFlagMode);
+}
+
+Log::Log(
+	const string& InsLogName,
+	const string& InsFilePath,
+	const string& InsFileName) :
+	sLogName(InsLogName),
+	sFilePath(InsFilePath),
+	sFileName(InsFileName)
+{
+	rLogFile = new fstream(sFilePath + sFileName, iBitFlagMode);
+
+	Initialization();
 }
 
 Log::Log(
@@ -14,62 +26,66 @@ Log::Log(
 	const string& InsFileName,
 	int32 IniBitFlagMode) :
 	sLogName(InsLogName),
-	cTimeBuffer(""),
-	cErrorMsg(""),
 	iBitFlagMode(IniBitFlagMode),
 	sFilePath(InsFilePath),
-	sFileName(InsFileName)
-	
+	sFileName(InsFileName)	
 {
-
-	//If folder does not exists, create it
-	if (!exists(sFilePath))
-	{
-		if (!create_directory(InsFilePath, rErrorCode))
-			ShowErrorCode("Failed to create directory");
-	}
-
-	//if the file does not exists, create it
-	if (!exists(sFilePath + sFileName))
-	{
-		LogFile.open(sFilePath + sFileName, iBitFlagMode);
-		LogFile.close();
-	}
-
-	//custom check file to see if previous steps are ok
-	if (CheckFile())
-	{
-		if (!LogFile)
-			cerr << "File object handler failed to init " << LogFile.rdstate() << "\r\n";
-	}
-		
-
-	rTime = time(0);
+	rLogFile = new fstream(sFilePath + sFileName, iBitFlagMode);
+	Initialization();
 }
 
-Log::Log(Log&& InrLog)
+Log::Log(Log&& InrLog) noexcept : 
+	sLogName(InrLog.sLogName),
+	sFileName(InrLog.sFileName),
+	sFilePath(InrLog.sFilePath),
+	iBitFlagMode(InrLog.iBitFlagMode)
 {
+	rLogFile = InrLog.rLogFile;
 
+	InrLog.rLogFile = nullptr;
 }
 
-Log::Log(const Log& InrLog)
+Log::Log(const Log& InrLog) :
+	sLogName(InrLog.sLogName),
+	sFilePath(InrLog.sFilePath),
+	sFileName(InrLog.sFileName),
+	iBitFlagMode(InrLog.iBitFlagMode)
 {
-
+	rLogFile = InrLog.rLogFile;
 }
 
 Log::~Log()
 {
-	//if at some point for some reason the file was not closed
-	if (LogFile.is_open())
-		LogFile.close();
+	if (rLogFile != nullptr)
+	{
+		delete rLogFile;
 
-	LogFile.clear();
+		rLogFile = nullptr;
+	}
+}
+
+Log& Log::operator=(Log&& InrLog) noexcept
+{
+	if (this != &InrLog)
+	{
+		delete rLogFile;
+
+		rLogFile = InrLog.rLogFile;
+		sLogName = InrLog.sLogName;
+		sFilePath = InrLog.sFilePath;
+		sFileName = InrLog.sFileName;
+		iBitFlagMode = InrLog.iBitFlagMode;
+
+		InrLog.rLogFile = nullptr;
+	}
+
+	return *this;
 }
 
 bool Log::Write(const string& InsData)
 {
 	//if pass custom checks and input data is not empty
-	if (CheckFile() && !InsData.empty())
+	if (CheckFile() && !InsData.empty() && rLogFile != nullptr)
 	{
 		errno_t iErrorCode = 1;
 		tm rTimeStruct;
@@ -77,7 +93,7 @@ bool Log::Write(const string& InsData)
 
 		TranslateSeverity(ELogSeverity::ELS_Info, sSeverity);
 
-		LogFile.open(sFilePath + sFileName, iBitFlagMode);
+		rLogFile->open(sFilePath + sFileName, iBitFlagMode);
 
 		//get time since eppoch using C function
 		iErrorCode = localtime_s(&rTimeStruct, &rTime);
@@ -93,9 +109,9 @@ bool Log::Write(const string& InsData)
 		strftime(cTimeBuffer, sizeof(cTimeBuffer), "%d/%m/%y - %T", &rTimeStruct);
 
 
-		LogFile << "[" << sLogName << "] " << "[" << sSeverity << "] " << "[" << cTimeBuffer << "]: " << InsData << "\r\n";
+		*rLogFile << "[" << sLogName << "] " << "[" << sSeverity << "] " << "[" << cTimeBuffer << "]: " << InsData << "\r\n";
 
-		LogFile.close();
+		rLogFile->close();
 
 		return true;
 	}
@@ -109,7 +125,7 @@ bool Log::Write(const string& InsData)
 bool Log::Write(const string& InsData, ELogSeverity IneLogSeverity)
 {
 	//if pass custom checks and input data is not empty
-	if (CheckFile() && !InsData.empty())
+	if (CheckFile() && !InsData.empty() && rLogFile != nullptr)
 	{
 		errno_t iErrorCode = 1;
 		tm rTimeStruct;
@@ -117,7 +133,7 @@ bool Log::Write(const string& InsData, ELogSeverity IneLogSeverity)
 
 		TranslateSeverity(IneLogSeverity, sSeverity);
 
-		LogFile.open(sFilePath + sFileName, iBitFlagMode);
+		rLogFile->open(sFilePath + sFileName, iBitFlagMode);
 
 		//get time since eppoch using C function
 		iErrorCode = localtime_s(&rTimeStruct, &rTime);
@@ -132,9 +148,9 @@ bool Log::Write(const string& InsData, ELogSeverity IneLogSeverity)
 		//format the eppoch time to a string format with structure date and time
 		strftime(cTimeBuffer, sizeof(cTimeBuffer), "%d/%m/%y - %T", &rTimeStruct);
 
-		LogFile << "[" << sLogName << "] " << "[" << sSeverity << "] " << "[" << cTimeBuffer << "]: " << InsData << "\r\n";
+		*rLogFile << "[" << sLogName << "] " << "[" << sSeverity << "] " << "[" << cTimeBuffer << "]: " << InsData << "\r\n";
 
-		LogFile.close();
+		rLogFile->close();
 
 		return true;
 	}
@@ -147,7 +163,7 @@ bool Log::Write(const string& InsData, ELogSeverity IneLogSeverity)
 bool Log::WriteAndDisplay(const string& InsData)
 {
 	//if pass custom checks and input data is not empty
-	if (CheckFile() && !InsData.empty())
+	if (CheckFile() && !InsData.empty() && rLogFile != nullptr)
 	{
 		errno_t iErrorCode = 1;
 		tm rTimeStruct;
@@ -155,7 +171,7 @@ bool Log::WriteAndDisplay(const string& InsData)
 
 		TranslateSeverity(ELogSeverity::ELS_Info, sSeverity);
 
-		LogFile.open(sFilePath + sFileName, iBitFlagMode);
+		rLogFile->open(sFilePath + sFileName, iBitFlagMode);
 
 		//get time since eppoch using C function
 		iErrorCode = localtime_s(&rTimeStruct, &rTime);
@@ -171,10 +187,10 @@ bool Log::WriteAndDisplay(const string& InsData)
 		strftime(cTimeBuffer, sizeof(cTimeBuffer), "%d/%m/%y - %T", &rTimeStruct);
 
 
-		LogFile << "[" << sLogName << "] " << "[" << sSeverity << "] " << "[" << cTimeBuffer << "]: " << InsData << "\r\n";
+		*rLogFile << "[" << sLogName << "] " << "[" << sSeverity << "] " << "[" << cTimeBuffer << "]: " << InsData << "\r\n";
 		cerr << "[" << sLogName << "] " << "[" << sSeverity << "] " << "[" << cTimeBuffer << "]: " << InsData << "\r\n";
 
-		LogFile.close();
+		rLogFile->close();
 
 		return true;
 	}
@@ -187,7 +203,7 @@ bool Log::WriteAndDisplay(const string& InsData)
 bool Log::WriteAndDisplay(const string& InsData, ELogSeverity IneLogSeverity)
 {
 	//if pass custom checks and input data is not empty
-	if (CheckFile() && !InsData.empty())
+	if (CheckFile() && !InsData.empty() && rLogFile != nullptr)
 	{
 		errno_t iErrorCode = 1;
 		tm rTimeStruct;
@@ -195,7 +211,7 @@ bool Log::WriteAndDisplay(const string& InsData, ELogSeverity IneLogSeverity)
 
 		TranslateSeverity(IneLogSeverity, sSeverity);
 
-		LogFile.open(sFilePath + sFileName, iBitFlagMode);
+		rLogFile->open(sFilePath + sFileName, iBitFlagMode);
 
 		//get time since eppoch using C function
 		iErrorCode = localtime_s(&rTimeStruct, &rTime);
@@ -210,10 +226,10 @@ bool Log::WriteAndDisplay(const string& InsData, ELogSeverity IneLogSeverity)
 		//format the eppoch time to a string format with structure date and time
 		strftime(cTimeBuffer, sizeof(cTimeBuffer), "%d/%m/%y - %T", &rTimeStruct);
 
-		LogFile << "[" << sLogName << "] " << "[" << sSeverity << "] " << "[" << cTimeBuffer << "]: " << InsData << "\r\n";
+		*rLogFile << "[" << sLogName << "] " << "[" << sSeverity << "] " << "[" << cTimeBuffer << "]: " << InsData << "\r\n";
 		cerr << "[" << sLogName << "] " << "[" << sSeverity << "] " << "[" << cTimeBuffer << "]: " << InsData << "\r\n";
 
-		LogFile.close();
+		rLogFile->close();
 
 		return true;
 	}
@@ -228,14 +244,14 @@ string Log::Read()
 	string sReadData;
 	string Line;
 
-	if (CheckFile())
+	if (CheckFile() && rLogFile != nullptr)
 	{
-		LogFile.open(sFilePath + sFileName, iBitFlagMode);
+		rLogFile->open(sFilePath + sFileName, iBitFlagMode);
 
-		while (getline(LogFile, Line))
+		while (getline(*rLogFile, Line))
 			sReadData.append("\r\n" + Line);
 
-		LogFile.close();
+		rLogFile->close();
 	}
 	else
 		cerr << "Failed to read file\r\n";
@@ -247,14 +263,14 @@ void Log::Display()
 {
 	string Line;
 
-	if (CheckFile())
+	if (CheckFile() && rLogFile != nullptr)
 	{
-		LogFile.open(sFilePath + sFileName, iBitFlagMode);
+		rLogFile->open(sFilePath + sFileName, iBitFlagMode);
 
-		while (getline(LogFile, Line))
+		while (getline(*rLogFile, Line))
 			cout << Line << "\r\n";
 
-		LogFile.close();
+		rLogFile->close();
 	}
 	else
 		cerr << "Failed to read file\r\n";
@@ -303,8 +319,20 @@ bool Log::CheckFile()
 	//check drive if it has enough space (min 4mb)
 	if (DriveSpaceInfo.available > iMinFileSizeBytes)
 	{
-		if (exists(sFilePath + sFileName, rErrorCode))
-			return true;
+		if (exists(sFilePath + sFileName, rErrorCode) && rLogFile != nullptr)
+		{
+			switch (rLogFile->rdstate())
+			{
+			case ios_base::goodbit:
+			case ios_base::eofbit:
+				return true;
+			case ios_base::failbit:
+				cerr << "failbit detected\r\n";
+				return true;
+			case ios_base::badbit:
+				cerr << "badbit detected\r\n";
+			}
+		}
 		else
 			ShowErrorCode("File not found - Error Category");
 	}
@@ -318,4 +346,33 @@ void Log::ShowErrorCode(const string& InsCustomErrorMessage)
 {
 	cerr << InsCustomErrorMessage << ": Error Category" << rErrorCode.category().name() << ", Code : " << rErrorCode.value() << ", Error : " << rErrorCode.message() << "\r\n";
 	rErrorCode.clear();
+}
+
+void Log::Initialization()
+{
+	if (rLogFile != nullptr)
+	{
+		//If folder does not exists, create it
+		if (!exists(sFilePath))
+		{
+			if (!create_directory(sFilePath, rErrorCode))
+				ShowErrorCode("Failed to create directory");
+		}
+
+		//if the file does not exists, create it
+		if (!exists(sFilePath + sFileName))
+		{
+			rLogFile->open(sFilePath + sFileName, iBitFlagMode);
+			rLogFile->close();
+			rLogFile->clear();
+		}
+
+		//custom check file to see if previous steps are ok
+		if (!CheckFile())
+			cerr << "Failed to create file\r\n";
+
+		rTime = time(0);
+	}
+	else
+		cerr << "File object handler failed to init \r\n";
 }

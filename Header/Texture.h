@@ -9,8 +9,10 @@
 
 #include "Primitives.h"
 
+#include "Log.h"
+
 using KronosPrim::uint16, KronosPrim::int32, KronosPrim::uint32;
-using std::cout, std::string, std::cerr;
+using std::cout, std::string, std::cerr, std::to_string;
 
 enum class ETextureParameter:uint16
 {
@@ -147,7 +149,9 @@ public:
     Texture(const char* IncImagePath, aiTextureType IneTextureType, ETextureDataType IneTextureDataType, ETextureSlot IneTextureSlot);
     Texture(int IniWidth, int IniHeight, ETextureType IneTextureType, ETextureDataType IneTextureDataType, ETextureSlot IneTextureSlot, ETextureFormat IneTextureFormat);
 
+    ~Texture();
 
+    Texture operator=(const Texture& InrTexture);
 
     inline void SetId(uint32 IniTextureId);
 
@@ -186,16 +190,15 @@ protected:
     ETextureMinFilter eTextureMinFilter = ETextureMinFilter::ETMF_NearestMipMapNearest;
     ETextureMagFilter eTextureMagFilter = ETextureMagFilter::ETMF_Nearest;
 
+    Log rLog;
+
 private:
     unsigned char* PixelData = NULL;
 };
 
 
 
-inline void Texture::SetId(uint32 IniId)
-{
-    iTextureId = IniId;
-}
+inline void Texture::SetId(uint32 IniId) { iTextureId = IniId; }
 
 inline void Texture::SetTextureWrap(ETextureWrap IneTextureWrapS, ETextureWrap IneTextureWrapT)
 {
@@ -243,10 +246,7 @@ inline void Texture::SetTextureMagFilter(ETextureMagFilter IneTextureFilter)
     glTexParameteri(static_cast<GLenum>(eTextureDataType), static_cast<GLenum>(ETextureParameter::ETP_MagFilter), static_cast<GLint>(eTextureMagFilter));
 }
 
-inline void Texture::SetTextureType(ETextureType IneTextureType)
-{
-    eTextureType = IneTextureType;
-}
+inline void Texture::SetTextureType(ETextureType IneTextureType) { eTextureType = IneTextureType; }
 
 inline uint32 Texture::GetId() const { return iTextureId; }
 

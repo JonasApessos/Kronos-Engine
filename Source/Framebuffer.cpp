@@ -13,6 +13,8 @@ Framebuffer::Framebuffer(
 	rTexture(InrTexture),
 	iLevel(IniLevel)
 {
+	rLog = Log("LogTexture", "Log/", "Log.txt");
+
 	if (rTexture != nullptr)
 	{
 		glGenFramebuffers(1, &iFrameBufferID);
@@ -25,12 +27,12 @@ Framebuffer::Framebuffer(
 		GLenum CodeCheck = glCheckNamedFramebufferStatus(iFrameBufferID, eFramebufferOp);
 
 		if (CodeCheck == EFramebufferStatus::EFS_Complete)
-			cout << "Frame buffer created" << "\n";
+			rLog.WriteAndDisplay("Frame buffer created");
 		else
-			cerr << "Failed to init frame buffer with code: " << CodeCheck << "\n";
+			rLog.WriteAndDisplay("Failed to init frame buffer with code: " + to_string(CodeCheck), ELogSeverity::ELS_Error);
 	}
 	else
-		cerr << "Texture object returned null\n";
+		rLog.WriteAndDisplay("Texture object returned null");
 }
 
 Framebuffer::~Framebuffer()
@@ -41,4 +43,11 @@ Framebuffer::~Framebuffer()
 void Framebuffer::Destroy()
 {
 	glDeleteFramebuffers(1, &iFrameBufferID);
+
+	if (rTexture != nullptr)
+	{
+		delete rTexture;
+
+		rTexture = nullptr;
+	}
 }

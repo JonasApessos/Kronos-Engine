@@ -41,7 +41,7 @@ public:
 	vector<uint32> rIndices;
 	vector<Texture> rTextures;
 
-	Mesh(vector<Vertex> InrVertices, vector<uint32> InrIndices, vector<Texture> InrTextures);
+	Mesh(vector<Vertex> InrVertices, vector<uint32> InrIndices, const vector<Texture>& InrTextures);
 	void Draw(Shader& InrShader);
 
 private:

@@ -13,6 +13,10 @@ Texture::Texture(
     eTextureDataType(IneTextureDataType), 
     eTextureSlot(IneTextureSlot)
 {
+    rLog = Log("LogTexture", "Log/", "Log.txt");
+
+    rLog.WriteAndDisplay("test");
+
     glGenTextures(1, &iTextureId);
     glBindTexture(static_cast<GLenum>(eTextureDataType), GetId());
 
@@ -78,6 +82,8 @@ Texture::Texture(
     eTextureDataType(IneTextureDataType),
     eTextureSlot(IneTextureSlot)
 {
+    rLog = Log("LogTexture", "Log/", "Log.txt");
+
     stbi_set_flip_vertically_on_load(bInvertYOnLoad);
 
     PixelData = stbi_load(IncImagePath, &iWidth, &iHeight, &iChannels, 0);
@@ -95,44 +101,44 @@ Texture::Texture(
 
         switch (eTextureDataType)
         {
-            case ETextureDataType::ETDT_Texture1D:
-                glTexImage1D(
-                    static_cast<GLenum>(eTextureDataType),
-                    0,
-                    static_cast<GLint>(IneInternalFormat),
-                    iWidth,
-                    0,
-                    static_cast<GLint>(IneTextureFormat),
-                    GL_UNSIGNED_BYTE,
-                    PixelData);
-                break;
+        case ETextureDataType::ETDT_Texture1D:
+            glTexImage1D(
+                static_cast<GLenum>(eTextureDataType),
+                0,
+                static_cast<GLint>(IneInternalFormat),
+                iWidth,
+                0,
+                static_cast<GLint>(IneTextureFormat),
+                GL_UNSIGNED_BYTE,
+                PixelData);
+            break;
 
-            case ETextureDataType::ETDT_Texture2D:
-                glTexImage2D(
-                    static_cast<GLenum>(eTextureDataType),
-                    0,
-                    static_cast<GLint>(IneInternalFormat),
-                    iWidth,
-                    iHeight,
-                    0,
-                    static_cast<GLint>(IneTextureFormat),
-                    GL_UNSIGNED_BYTE,
-                    PixelData);
-                break;
+        case ETextureDataType::ETDT_Texture2D:
+            glTexImage2D(
+                static_cast<GLenum>(eTextureDataType),
+                0,
+                static_cast<GLint>(IneInternalFormat),
+                iWidth,
+                iHeight,
+                0,
+                static_cast<GLint>(IneTextureFormat),
+                GL_UNSIGNED_BYTE,
+                PixelData);
+            break;
 
-            case ETextureDataType::ETDT_Texture3D:
-                glTexImage3D(
-                    static_cast<GLenum>(eTextureDataType),
-                    0,
-                    static_cast<GLint>(IneInternalFormat),
-                    iWidth,
-                    iHeight,
-                    0,
-                    0,
-                    static_cast<GLint>(IneTextureFormat),
-                    GL_UNSIGNED_BYTE,
-                    PixelData);
-                break;
+        case ETextureDataType::ETDT_Texture3D:
+            glTexImage3D(
+                static_cast<GLenum>(eTextureDataType),
+                0,
+                static_cast<GLint>(IneInternalFormat),
+                iWidth,
+                iHeight,
+                0,
+                0,
+                static_cast<GLint>(IneTextureFormat),
+                GL_UNSIGNED_BYTE,
+                PixelData);
+            break;
         }
 
         if (bGenerateMipMap)
@@ -144,7 +150,7 @@ Texture::Texture(
         }
     }
     else
-        cerr << "Failed to load image" << "\n";
+        rLog.WriteAndDisplay("Failed to load image");
 
     stbi_image_free(PixelData);
 }
@@ -157,6 +163,8 @@ Texture::Texture(
     eTextureDataType(IneTextureDataType),
     eTextureSlot(IneTextureSlot)
 {
+    rLog = Log("LogTexture", "Log/", "Log.txt");
+
     stbi_set_flip_vertically_on_load(bInvertYOnLoad);
 
     PixelData = stbi_load(IncImagePath, &iWidth, &iHeight, &iChannels, 0);
@@ -242,7 +250,7 @@ Texture::Texture(
         }
     }
     else
-        cerr << "Failed to load image" << "\n";
+        rLog.WriteAndDisplay("Failed to load image");
 
     stbi_image_free(PixelData);
 }
@@ -255,6 +263,8 @@ Texture::Texture(
     eTextureDataType(IneTextureDataType),
     eTextureSlot(IneTextureSlot)
 {
+    rLog = Log("LogTexture", "Log/", "Log.txt");
+
     stbi_set_flip_vertically_on_load(bInvertYOnLoad);
 
     PixelData = stbi_load(IncImagePath, &iWidth, &iHeight, &iChannels, 0);
@@ -341,10 +351,17 @@ Texture::Texture(
         }
     }
     else
-        cerr << "Failed to load image" << "\n";
+        rLog.WriteAndDisplay("Failed to load image");
 
     stbi_image_free(PixelData);
 }
+
+Texture::~Texture()
+{
+
+}
+
+Texture Texture::operator=(const Texture& InrTexture) { return InrTexture; }
 
 void Texture::SetTextureType(aiTextureType IneTextureType)
 {
@@ -392,7 +409,7 @@ void Texture::SetTextureType(aiTextureType IneTextureType)
         
     default:
         eTextureType = ETextureType::ETT_Unknown;
-        cout << "Unknown Texture type" << IneTextureType << "\n";
+        rLog.WriteAndDisplay("Unknown Texture type");
         break;
     }
 }

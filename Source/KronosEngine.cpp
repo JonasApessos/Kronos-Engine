@@ -25,9 +25,11 @@ float DeltaTime = 0.0f, LastFrame = 0.0f;
 
 Texture* Test;
 
+Log rGlobalLog("Log", "Log/", "Log.txt");
+
 int GLFWInit()
 {
-	Log GLFWLog("GLFWLog", "Log/", "Log.txt", ios_base::in | ios_base::out | ios_base::app);
+	Log rGLFWLog("GLFWLog", "Log/", "Log.txt");
 
 	MainCamera.SetMinRotation(vec3(-360.0f, -89.0f, -360.0f));
 	MainCamera.SetMaxRotation(vec3(360.0f, 89.0f, 360.0f));
@@ -36,7 +38,7 @@ int GLFWInit()
 
 	if (!glfwInit())
 	{
-		GLFWLog.WriteAndDisplay("Failed to initialize GLFW", ELogSeverity::ELS_Critical);
+		rGLFWLog.WriteAndDisplay("Failed to initialize GLFW", ELogSeverity::ELS_Critical);
 
 		return -1;
 	}
@@ -52,11 +54,11 @@ int GLFWInit()
 
 int GLEWInit()
 {
-	Log GLEWLog("GLEWLog", "Log/", "Log.txt", ios_base::in | ios_base::out | ios_base::app);
+	Log rGLEWLog("GLEWLog", "Log/", "Log.txt");
 
 	if (glewInit() != GLEW_OK)
 	{
-		GLEWLog.WriteAndDisplay("Glew context failed to load", ELogSeverity::ELS_Critical);
+		rGLEWLog.WriteAndDisplay("Glew context failed to load", ELogSeverity::ELS_Critical);
 
 		glfwTerminate();
 
@@ -206,9 +208,9 @@ int main()
 		GLint nrAttributes;
 		glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
 
-		cout << "Maximum nr if vertex attributes supported: " << nrAttributes << "\n";
+		rGlobalLog.WriteAndDisplay("Maximum nr if vertex attributes supported: " + to_string(nrAttributes));
 
-		Texture FrameBufferTexture(
+		Texture* FrameBufferTexture = new Texture(
 			WindowWidth,
 			WindowHeight,
 			ETextureType::ETT_Albedo,
@@ -216,12 +218,14 @@ int main()
 			ETextureSlot::ETS_Slot0,
 			ETextureFormat::ETF_RGB);
 
-		Framebuffer rFramebuffer(
+		Framebuffer* rFramebuffer = new Framebuffer(
 			EFramebufferOp::EFO_FrameBuffer,
 			EFramebufferAttach::EFA_Color,
 			EFramebufferTex::EFT_Texture2D,
-			&FrameBufferTexture,
+			FrameBufferTexture,
 			0);
+
+		FrameBufferTexture = nullptr;
 
 		Shader rShaderLight("Resource/Shader/Light.vs", "Resource/Shader/Light.fs");
 		Shader rShaderCubeLight("Resource/Shader/LightColorCube.vs", "Resource/Shader/LightColorCube.fs");
@@ -264,7 +268,6 @@ int main()
 		vector<Texture> Textures = { GrassTexture };
 
 		Mesh PlanarGrass = Mesh(Vertices, Indices, Textures);
-
 
 		Vertices.at(0).VertexData.Position = Pos1.VertexData.Position + 1.f;
 		Vertices.at(1).VertexData.Position = Pos2.VertexData.Position + 1.f;
@@ -344,6 +347,8 @@ int main()
 		//glDeleteFramebuffers(1, &BufferID);
 
 		glfwTerminate();
+		
+		delete rFramebuffer;
 	}
 	else
 		return -1;

@@ -7,7 +7,9 @@
 #include "Texture.h"
 
 using KronosPrim::int32, KronosPrim::uint32, KronosPrim::uint16;
-using std::cout, std::cerr;
+using std::cout, std::cerr, std::to_string;
+
+class Log;
 
 enum EFramebufferStatus : uint16
 {
@@ -76,7 +78,9 @@ public:
 	
 	
 protected:
+	Log rLog;
 
 private:
+
 };
 

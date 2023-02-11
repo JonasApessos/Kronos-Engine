@@ -1,7 +1,7 @@
 #include "Mesh.h"
 
 
-Mesh::Mesh(vector<Vertex> InrVertices, vector<uint32> InrIndices, vector<Texture> InrTextures)
+Mesh::Mesh(vector<Vertex> InrVertices, vector<uint32> InrIndices, const vector<Texture>& InrTextures)
 {
 	rVertices = InrVertices;
 	rIndices = InrIndices;
