@@ -39,10 +39,13 @@ class Mesh
 public:
 	vector<Vertex> rVertices;
 	vector<uint32> rIndices;
-	vector<Texture> rTextures;
+	vector<Texture*>* rTextures;
 
-	Mesh(vector<Vertex> InrVertices, vector<uint32> InrIndices, const vector<Texture>& InrTextures);
+	Mesh(vector<Vertex> InrVertices, vector<uint32> InrIndices, vector<Texture*>* InrTextures);
 	void Draw(Shader& InrShader);
+
+protected:
+	Log rLog;
 
 private:
 	uint32 VAO, VBO, EBO;

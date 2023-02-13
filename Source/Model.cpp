@@ -4,11 +4,15 @@
 Model::Model(char* IncPath)
 {
     LoadModel(IncPath);
+
+    rLog = Log("LogModel");
 }
 
 Model::Model(const char* IncPath)
 {
     LoadModel(IncPath);
+
+    rLog = Log("LogModel");
 }
 
 void Model::Draw(Shader& InrShader)
@@ -25,7 +29,7 @@ void Model::LoadModel(string InsPath)
 
     if (!rScene || rScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !rScene->mRootNode)
     {
-        cerr << "ERROR::ASSIMP::" << rImporter.GetErrorString() << "\n";
+        rLog.WriteAndDisplay("ERROR::ASSIMP::" + *rImporter.GetErrorString());
 
         return;
     }
@@ -53,7 +57,7 @@ Mesh Model::ProcessMesh(aiMesh* InrMesh, const aiScene* InrScene)
 {
     vector<Vertex> rVertices;
     vector<uint32> rIndices;
-    vector<Texture> rTextures;
+    vector<Texture> rTempTextures;
 
     for (uint32 i = 0; i < InrMesh->mNumVertices; i++)
     {
@@ -94,10 +98,10 @@ Mesh Model::ProcessMesh(aiMesh* InrMesh, const aiScene* InrScene)
         aiMaterial* rMaterial = InrScene->mMaterials[InrMesh->mMaterialIndex];
 
         vector<Texture> rDiffuseMaps = LoadMaterialTextures(rMaterial, aiTextureType_DIFFUSE);
-        rTextures.insert(rTextures.end(), rDiffuseMaps.begin(), rDiffuseMaps.end());
+        rTempTextures.insert(rTempTextures.end(), rDiffuseMaps.begin(), rDiffuseMaps.end());
 
         vector<Texture> rSpecularMaps = LoadMaterialTextures(rMaterial, aiTextureType_SPECULAR);
-        rTextures.insert(rTextures.end(), rSpecularMaps.begin(), rSpecularMaps.end());
+        rTempTextures.insert(rTempTextures.end(), rSpecularMaps.begin(), rSpecularMaps.end());
     }
 
     return Mesh(rVertices, rIndices, rTextures);
@@ -123,9 +127,9 @@ vector<Texture> Model::LoadMaterialTextures(aiMaterial* InrMat, aiTextureType In
         TempPath.append("/");
         TempPath.append(sStr.C_Str());
 
-        for (uint32 j = 0; j < rTextures.size(); j++)
+        for (uint32 j = 0; j < rTextures->size(); j++)
         {
-            if (rTextures[j].sPath == TempPath)
+            if (rTextures->at(j)->sPath == TempPath)
                 continue;
         }
 

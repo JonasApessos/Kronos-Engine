@@ -14,13 +14,16 @@ public:
 
 	void Draw(Shader& InrShader);
 
+protected:
+	Log rLog;
+
 private:
 	vector<Mesh> rMeshes;
 	string sDirectory;
 
 	Importer rImporter;
 
-	vector<Texture> rTextures;
+	vector<Texture*>* rTextures;
 
 	const aiScene* rScene;
 

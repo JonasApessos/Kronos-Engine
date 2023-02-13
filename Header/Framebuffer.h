@@ -54,7 +54,7 @@ enum EFramebufferTex : uint16
 	EFT_Texture1D = GL_TEXTURE_1D,
 	EFT_Texture2D = GL_TEXTURE_2D,
 	EFT_Texture3D = GL_TEXTURE_3D,
-	EFT_TextureRect = GL_TEXTURE_RECTANGLE,
+	EFT_TextureRect = GL_TEXTURE_RECTANGLE,	
 	EFT_Texture2DMultisample = GL_TEXTURE_2D_MULTISAMPLE
 };
 

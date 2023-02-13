@@ -1,8 +1,10 @@
 #include "Mesh.h"
 
 
-Mesh::Mesh(vector<Vertex> InrVertices, vector<uint32> InrIndices, const vector<Texture>& InrTextures)
+Mesh::Mesh(vector<Vertex> InrVertices, vector<uint32> InrIndices, vector<Texture*>* InrTextures)
 {
+	rLog = Log("LogMesh");
+
 	rVertices = InrVertices;
 	rIndices = InrIndices;
 	rTextures = InrTextures;
@@ -44,19 +46,19 @@ void Mesh::Draw(Shader& InrShader)
 	uint32 DiffuseNr = 1;
 	uint32 SpecularNr = 1;
 
-	for (uint32 i = 0; i < rTextures.size(); i++)
+	for (uint32 i = 0; i < rTextures->size(); i++)
 	{
 		glActiveTexture(GL_TEXTURE0 + i);
 
 		string Number;
 		
-		if (rTextures[i].GetTextureType() == ETextureType::ETT_Albedo)
+		if (rTextures->at(i)->GetTextureType() == ETextureType::ETT_Albedo)
 			Number = to_string(DiffuseNr++);
-		else if (rTextures[i].GetTextureType() == ETextureType::ETT_Specular)
+		else if (rTextures->at(i)->GetTextureType() == ETextureType::ETT_Specular)
 			Number = to_string(SpecularNr++);
 
-		InrShader.SetInt(("Material." + to_string((int32)rTextures[i].GetTextureType()) + "." + Number).c_str(), i);
-		glBindTexture(static_cast<GLenum>(rTextures[i].GetTextureDataType()), rTextures[i].GetId());
+		InrShader.SetInt(("Material." + to_string((int32)rTextures->at(i)->GetTextureType()) + "." + Number).c_str(), i);
+		glBindTexture(static_cast<GLenum>(rTextures->at(i)->GetTextureDataType()), rTextures->at(i)->GetId());
 	}
 
 	glActiveTexture(GL_TEXTURE0);

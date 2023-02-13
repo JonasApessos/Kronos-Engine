@@ -16,9 +16,9 @@ class Vertex
 public:
 	FVertex VertexData;
 
-	Vertex();
-	Vertex(const Vertex& InrVertex);
-	Vertex(const Vertex&& InrVertex);
+	Vertex() noexcept;
+	Vertex(const Vertex& InrVertex) noexcept;
+	Vertex(const Vertex&& InrVertex) noexcept;
 
 	virtual void Move(Vertex&& InrVertex);
 

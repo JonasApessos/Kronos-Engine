@@ -13,9 +13,7 @@ Texture::Texture(
     eTextureDataType(IneTextureDataType), 
     eTextureSlot(IneTextureSlot)
 {
-    rLog = Log("LogTexture", "Log/", "Log.txt");
-
-    rLog.WriteAndDisplay("test");
+    rLog = Log("LogTexture");
 
     glGenTextures(1, &iTextureId);
     glBindTexture(static_cast<GLenum>(eTextureDataType), GetId());
@@ -82,7 +80,7 @@ Texture::Texture(
     eTextureDataType(IneTextureDataType),
     eTextureSlot(IneTextureSlot)
 {
-    rLog = Log("LogTexture", "Log/", "Log.txt");
+    rLog = Log("LogTexture");
 
     stbi_set_flip_vertically_on_load(bInvertYOnLoad);
 
@@ -163,7 +161,7 @@ Texture::Texture(
     eTextureDataType(IneTextureDataType),
     eTextureSlot(IneTextureSlot)
 {
-    rLog = Log("LogTexture", "Log/", "Log.txt");
+    rLog = Log("LogTexture");
 
     stbi_set_flip_vertically_on_load(bInvertYOnLoad);
 
@@ -263,7 +261,7 @@ Texture::Texture(
     eTextureDataType(IneTextureDataType),
     eTextureSlot(IneTextureSlot)
 {
-    rLog = Log("LogTexture", "Log/", "Log.txt");
+    rLog = Log("LogTexture");
 
     stbi_set_flip_vertically_on_load(bInvertYOnLoad);
 

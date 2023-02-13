@@ -13,7 +13,7 @@ Framebuffer::Framebuffer(
 	rTexture(InrTexture),
 	iLevel(IniLevel)
 {
-	rLog = Log("LogTexture", "Log/", "Log.txt");
+	rLog = Log("LogFrameBuffer");
 
 	if (rTexture != nullptr)
 	{

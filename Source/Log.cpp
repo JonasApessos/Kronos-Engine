@@ -4,7 +4,16 @@
 
 Log::Log() 
 {
-	rLogFile = new fstream(sFilePath + sFileName, iBitFlagMode);
+	rLogFile = new fstream();
+
+	Initialization();
+}
+
+Log::Log(const string& InsLogName) : sLogName(InsLogName)
+{
+	rLogFile = new fstream();
+
+	Initialization();
 }
 
 Log::Log(
@@ -15,7 +24,7 @@ Log::Log(
 	sFilePath(InsFilePath),
 	sFileName(InsFileName)
 {
-	rLogFile = new fstream(sFilePath + sFileName, iBitFlagMode);
+	rLogFile = new fstream();
 
 	Initialization();
 }
@@ -30,7 +39,7 @@ Log::Log(
 	sFilePath(InsFilePath),
 	sFileName(InsFileName)	
 {
-	rLogFile = new fstream(sFilePath + sFileName, iBitFlagMode);
+	rLogFile = new fstream();
 	Initialization();
 }
 

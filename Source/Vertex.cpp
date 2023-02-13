@@ -1,21 +1,21 @@
 #include "Vertex.h"
 
 
-Vertex::Vertex()
+Vertex::Vertex() noexcept
 {
 	VertexData.Position = vec3(0.0f);
 	VertexData.Normal = vec3(0.0f);
 	VertexData.TexCoords = vec2(0.0f);
 }
 
-Vertex::Vertex(const Vertex& InrVertex)
+Vertex::Vertex(const Vertex& InrVertex) noexcept
 {
 	VertexData.Position = InrVertex.VertexData.Position;
 	VertexData.Normal = InrVertex.VertexData.Normal;
 	VertexData.TexCoords = InrVertex.VertexData.TexCoords;
 }
 
-Vertex::Vertex(const Vertex&& InrVertex)
+Vertex::Vertex(const Vertex&& InrVertex) noexcept
 {
 	VertexData.Position = InrVertex.VertexData.Position;
 	VertexData.Normal = InrVertex.VertexData.Normal;

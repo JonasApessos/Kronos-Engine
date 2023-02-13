@@ -261,20 +261,22 @@ int main()
 			2, 3, 0
 		};
 
-		Texture GrassTexture("Resource/Img/grass.png", ETextureType::ETT_Albedo, ETextureDataType::ETDT_Texture2D, ETextureSlot::ETS_Slot0);
+		Texture* rGrassTexture = new Texture("Resource/Img/grass.png", ETextureType::ETT_Albedo, ETextureDataType::ETDT_Texture2D, ETextureSlot::ETS_Slot0);
 
-		GrassTexture.SetTextureWrap(ETextureWrap::ETW_Clip);
+		rGrassTexture->SetTextureWrap(ETextureWrap::ETW_Clip);
 
-		vector<Texture> Textures = { GrassTexture };
+		vector<Texture*> rTextures;
 
-		Mesh PlanarGrass = Mesh(Vertices, Indices, Textures);
+		rTextures.push_back(rGrassTexture);
+
+		Mesh PlanarGrass = Mesh(Vertices, Indices, &rTextures);
 
 		Vertices.at(0).VertexData.Position = Pos1.VertexData.Position + 1.f;
 		Vertices.at(1).VertexData.Position = Pos2.VertexData.Position + 1.f;
 		Vertices.at(2).VertexData.Position = Pos3.VertexData.Position + 1.f;
 		Vertices.at(3).VertexData.Position = Pos4.VertexData.Position + 1.f;
 
-		Mesh PlanarGrass2 = Mesh(Vertices, Indices, Textures);
+		Mesh PlanarGrass2 = Mesh(Vertices, Indices, &rTextures);
 
 
 		glEnable(GL_DEPTH_TEST);
@@ -349,6 +351,7 @@ int main()
 		glfwTerminate();
 		
 		delete rFramebuffer;
+		delete rGrassTexture;
 	}
 	else
 		return -1;

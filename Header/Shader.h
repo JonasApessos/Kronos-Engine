@@ -14,6 +14,8 @@
 
 #include "Primitives.h"
 
+#include "Log.h"
+
 using KronosPrim::int32, KronosPrim::uint32, KronosPrim::uint8;
 using glm::vec3, glm::mat2, glm::mat3, glm::mat4;
 using std::cout, std::string, std::ifstream, std::stringstream;
@@ -58,6 +60,7 @@ public:
     inline void SetMat4(const string& InsName, mat4& InfVaule) const;
 
 protected:
+    Log rLog;
 
 private:
 
