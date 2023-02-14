@@ -39,6 +39,7 @@ public:
 
 	~Log();
 
+	Log& operator=(const Log& InrLog) noexcept;
 	Log& operator=(Log&& InrLog) noexcept;
 
 	//Write to log file at specified file in construction

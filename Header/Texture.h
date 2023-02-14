@@ -148,11 +148,16 @@ public:
     Texture(const char* IncImagePath, ETextureType IneTextureType, ETextureDataType IneTextureDataType, ETextureSlot IneTextureSlot);
     Texture(const char* IncImagePath, aiTextureType IneTextureType, ETextureDataType IneTextureDataType, ETextureSlot IneTextureSlot);
     Texture(int IniWidth, int IniHeight, ETextureType IneTextureType, ETextureDataType IneTextureDataType, ETextureSlot IneTextureSlot, ETextureFormat IneTextureFormat);
+    Texture(const Texture&);
+    Texture(Texture&& InrTexture);
+    
+
+    Texture operator=(const Texture&& InrTexture);
 
     ~Texture();
 
-    Texture operator=(const Texture& InrTexture);
 
+    //Set
     inline void SetId(uint32 IniTextureId);
 
     inline void SetTextureWrap(ETextureWrap IneTextureWrapS, ETextureWrap IneTextureWrapT);
@@ -167,6 +172,7 @@ public:
     inline void SetTextureMinFilter(ETextureMinFilter IneTextureFilter);
     inline void SetTextureMagFilter(ETextureMagFilter IneTextureFilter);
 
+    //Get
     inline uint32 GetId() const;
 
     inline ETextureWrap GetTextureWrapS() const;

@@ -91,6 +91,21 @@ Log& Log::operator=(Log&& InrLog) noexcept
 	return *this;
 }
 
+Log& Log::operator=(const Log& InrLog) noexcept
+{
+	if (this != &InrLog)
+	{
+		rLogFile = InrLog.rLogFile;
+
+		sLogName = InrLog.sLogName;
+		sFilePath = InrLog.sFilePath;
+		sFileName = InrLog.sFileName;
+		iBitFlagMode = InrLog.iBitFlagMode;
+	}
+
+	return *this;
+}
+
 bool Log::Write(const string& InsData)
 {
 	//if pass custom checks and input data is not empty
@@ -337,9 +352,15 @@ bool Log::CheckFile()
 				return true;
 			case ios_base::failbit:
 				cerr << "failbit detected\r\n";
-				return true;
+				break;
 			case ios_base::badbit:
 				cerr << "badbit detected\r\n";
+				break;
+			case ios_base::failbit | ios_base::badbit:
+				cerr << "failbit and badbit detected\r\n";
+				break;
+			default:
+				cout << "No state detected\r\n";
 			}
 		}
 		else
@@ -359,6 +380,8 @@ void Log::ShowErrorCode(const string& InsCustomErrorMessage)
 
 void Log::Initialization()
 {
+	rLogFile->exceptions(ios_base::failbit | ios_base::badbit);
+
 	if (rLogFile != nullptr)
 	{
 		//If folder does not exists, create it

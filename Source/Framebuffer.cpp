@@ -35,6 +35,50 @@ Framebuffer::Framebuffer(
 		rLog.WriteAndDisplay("Texture object returned null");
 }
 
+Framebuffer::Framebuffer(const Framebuffer& InrFramebuffer) :
+	iFrameBufferID(InrFramebuffer.iFrameBufferID),
+	eFramebufferOp(InrFramebuffer.eFramebufferOp),
+	eFramebufferAttach(InrFramebuffer.eFramebufferAttach),
+	eFramebufferTex(InrFramebuffer.eFramebufferTex),
+	iLevel(InrFramebuffer.iLevel)
+{
+	if (rTexture != nullptr)
+		delete rTexture;
+
+	rTexture = new Texture(*InrFramebuffer.rTexture);
+}
+
+Framebuffer::Framebuffer(Framebuffer&& InrFramebuffer) noexcept :
+	eFramebufferOp(InrFramebuffer.eFramebufferOp), 
+	eFramebufferAttach(InrFramebuffer.eFramebufferAttach),
+	eFramebufferTex(InrFramebuffer.eFramebufferTex),
+	iLevel(InrFramebuffer.iLevel)
+{
+	rTexture = InrFramebuffer.rTexture;
+
+	InrFramebuffer.rTexture = nullptr;
+}
+
+Framebuffer& Framebuffer::operator=(Framebuffer&& InrFramebuffer) noexcept
+{
+	if (this != &InrFramebuffer)
+	{
+		if(rTexture != nullptr)
+			delete rTexture;
+
+		iFrameBufferID = InrFramebuffer.iFrameBufferID;
+		eFramebufferOp = InrFramebuffer.eFramebufferOp;
+		eFramebufferAttach = InrFramebuffer.eFramebufferAttach;
+		eFramebufferTex = InrFramebuffer.eFramebufferTex;
+		iLevel = InrFramebuffer.iLevel;
+
+		rTexture = InrFramebuffer.rTexture;
+		InrFramebuffer.rTexture = nullptr;
+	}
+
+	return *this;
+}
+
 Framebuffer::~Framebuffer()
 {
 	Destroy();

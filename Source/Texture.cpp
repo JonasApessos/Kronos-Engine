@@ -354,12 +354,62 @@ Texture::Texture(
     stbi_image_free(PixelData);
 }
 
+Texture::Texture(const Texture& InrTexture) :
+    eTextureDataType(InrTexture.eTextureDataType),
+    eTextureMagFilter(InrTexture.eTextureMagFilter),
+    eTextureMinFilter(InrTexture.eTextureMinFilter),
+    eTextureSlot(InrTexture.eTextureSlot),
+    eTextureType(InrTexture.eTextureType),
+    eTextureWrapS(InrTexture.eTextureWrapS),
+    eTextureWrapT(InrTexture.eTextureWrapT),
+    iChannels(InrTexture.iChannels),
+    iHeight(InrTexture.iHeight),
+    iWidth(InrTexture.iWidth),
+    iTextureId(InrTexture.iTextureId)
+{
+    rLog = InrTexture.rLog;
+}
+
+Texture::Texture(Texture&& InrTexture) :
+    eTextureDataType(InrTexture.eTextureDataType),
+    eTextureMagFilter(InrTexture.eTextureMagFilter),
+    eTextureMinFilter(InrTexture.eTextureMinFilter),
+    eTextureSlot(InrTexture.eTextureSlot),
+    eTextureType(InrTexture.eTextureType),
+    eTextureWrapS(InrTexture.eTextureWrapS),
+    eTextureWrapT(InrTexture.eTextureWrapT),
+    iChannels(InrTexture.iChannels),
+    iHeight(InrTexture.iHeight),
+    iWidth(InrTexture.iWidth),
+    iTextureId(InrTexture.iTextureId)
+{
+    rLog = InrTexture.rLog;
+}
+
+Texture Texture::operator=(const Texture&& InrTexture)
+{
+    eTextureDataType = InrTexture.eTextureDataType;
+    eTextureMagFilter = InrTexture.eTextureMagFilter;
+    eTextureMinFilter = InrTexture.eTextureMinFilter;
+    eTextureSlot = InrTexture.eTextureSlot;
+    eTextureType = InrTexture.eTextureType;
+    eTextureWrapS = InrTexture.eTextureWrapS;
+    eTextureWrapT = InrTexture.eTextureWrapT;
+    iChannels = InrTexture.iChannels;
+    iHeight = InrTexture.iHeight;
+    iWidth = InrTexture.iWidth;
+    iTextureId = InrTexture.iTextureId;
+    rLog = InrTexture.rLog;
+
+    return InrTexture;
+}
+
 Texture::~Texture()
 {
 
 }
 
-Texture Texture::operator=(const Texture& InrTexture) { return InrTexture; }
+
 
 void Texture::SetTextureType(aiTextureType IneTextureType)
 {

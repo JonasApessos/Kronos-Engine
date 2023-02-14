@@ -68,19 +68,53 @@ public:
 	EFramebufferAttach eFramebufferAttach = EFramebufferAttach::EFA_Color;
 	EFramebufferTex eFramebufferTex = EFramebufferTex::EFT_Texture2D;
 
-	Texture* rTexture;
-
 	Framebuffer(EFramebufferOp IneFrameBufferOp, EFramebufferAttach IneFramebufferAttach, EFramebufferTex IneFramebufferTex, Texture* InrTexture, int32 IniLevel);
-	
+	Framebuffer(const Framebuffer& InrFramebuffer);
+	Framebuffer(Framebuffer&& InrFramebuffer) noexcept;
+
+	Framebuffer& operator=(Framebuffer&& InrFramebuffer) noexcept;
+
 	~Framebuffer();
 
 	void Destroy();
+
+	//Set
+	inline void SetLevel(int32 IniLevel) noexcept;
+
+	inline void SetTexture(Texture* InrTexture) noexcept;
+
+	inline void SetFramebufferOp(EFramebufferOp IneFramebufferOp) noexcept;
+	inline void SetFramebufferAttach(EFramebufferAttach IneFramebufferAttach) noexcept;
+	inline void SetFramebufferTex(EFramebufferTex IneFramebufferTex) noexcept;
+
+	//Get
+	inline int32 GetLevel() const noexcept;
+
+	inline Texture& GetTexture() const noexcept;
+
+	inline EFramebufferOp GetFramebufferOp() const noexcept;
+	inline EFramebufferAttach GetFramebufferAttach() const noexcept;
+	inline EFramebufferTex GetFramebufferTex() const noexcept;
 	
 	
 protected:
 	Log rLog;
 
+	Texture* rTexture;
+
 private:
 
 };
 
+
+inline void Framebuffer::SetLevel(int32 IniLevel) noexcept { iLevel = IniLevel; }
+inline void Framebuffer::SetTexture(Texture* InrTexture) noexcept { rTexture = InrTexture; }
+inline void Framebuffer::SetFramebufferOp(EFramebufferOp IneFramebufferOp) noexcept { eFramebufferOp = IneFramebufferOp; }
+inline void Framebuffer::SetFramebufferAttach(EFramebufferAttach IneFramebufferAttach) noexcept { eFramebufferAttach = IneFramebufferAttach; }
+inline void Framebuffer::SetFramebufferTex(EFramebufferTex IneFramebufferTex) noexcept { eFramebufferTex = IneFramebufferTex; }
+
+inline int32 Framebuffer::GetLevel() const noexcept { return iLevel; }
+inline Texture& Framebuffer::GetTexture() const noexcept { return *rTexture; }
+inline EFramebufferOp Framebuffer::GetFramebufferOp() const noexcept { return eFramebufferOp; }
+inline EFramebufferAttach Framebuffer::GetFramebufferAttach() const noexcept { return eFramebufferAttach; }
+inline EFramebufferTex Framebuffer::GetFramebufferTex() const noexcept { return eFramebufferTex; }

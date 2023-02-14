@@ -175,7 +175,7 @@ GLvoid WindowRenderLoop()
 	MainCamera.Update();
 }
 
-int main()
+int main(int argc, char **argv)
 {	
 	if (GLFWInit())
 	{
