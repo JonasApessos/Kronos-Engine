@@ -140,14 +140,14 @@ public:
 
     uint32 iTextureId = 0;
 
-    int32 iWidth = 0, iHeight = 0, iChannels = 0;
+    int32 iWidth = 1024, iHeight = iWidth * (9/16), iChannels = 0;
 
     string sPath;
 
     Texture(const char* IncImagePath, ETextureType IneTextureType, ETextureDataType IneTextureDataType, ETextureSlot IneTextureSlot, ETextureFormat IneTextureFormat, ETextureFormat IneInternalFormat);
     Texture(const char* IncImagePath, ETextureType IneTextureType, ETextureDataType IneTextureDataType, ETextureSlot IneTextureSlot);
     Texture(const char* IncImagePath, aiTextureType IneTextureType, ETextureDataType IneTextureDataType, ETextureSlot IneTextureSlot);
-    Texture(int IniWidth, int IniHeight, ETextureType IneTextureType, ETextureDataType IneTextureDataType, ETextureSlot IneTextureSlot, ETextureFormat IneTextureFormat);
+    Texture(int32 IniWidth, int32 IniHeight, ETextureType IneTextureType, ETextureDataType IneTextureDataType, ETextureSlot IneTextureSlot, ETextureFormat IneTextureFormat);
     Texture(const Texture&);
     Texture(Texture&& InrTexture);
     
@@ -166,7 +166,7 @@ public:
     inline void SetTextureWrapT(ETextureWrap IneTextureWrap);
 
     inline void SetTextureType(ETextureType IneTextureType);
-    void SetTextureType(aiTextureType IneTextureType);
+    inline void SetTextureType(aiTextureType IneTextureType);
 
     inline void SetTextureMinMagFilter(ETextureMinFilter IneTextureMinFilter, ETextureMagFilter IneTextureMagFilter);
     inline void SetTextureMinFilter(ETextureMinFilter IneTextureFilter);
@@ -195,8 +195,12 @@ protected:
     ETextureWrap eTextureWrapS = ETextureWrap::ETW_Repeat, eTextureWrapT = ETextureWrap::ETW_Repeat;
     ETextureMinFilter eTextureMinFilter = ETextureMinFilter::ETMF_NearestMipMapNearest;
     ETextureMagFilter eTextureMagFilter = ETextureMagFilter::ETMF_Nearest;
+    ETextureFormat eTextureFormat = ETextureFormat::ETF_RGB;
+    ETextureFormat eTextureInternalFormat = ETextureFormat::ETF_RGB;
 
     Log rLog;
+
+    void Initialization();
 
 private:
     unsigned char* PixelData = NULL;
@@ -253,6 +257,7 @@ inline void Texture::SetTextureMagFilter(ETextureMagFilter IneTextureFilter)
 }
 
 inline void Texture::SetTextureType(ETextureType IneTextureType) { eTextureType = IneTextureType; }
+inline void Texture::SetTextureType(aiTextureType InaiTextureType) { eTextureType = static_cast<ETextureType>(InaiTextureType); }
 
 inline uint32 Texture::GetId() const { return iTextureId; }
 

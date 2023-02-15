@@ -65,6 +65,6 @@ void Mesh::Draw(Shader& InrShader)
 
 
 	glBindVertexArray(VAO);
-	glDrawElements(GL_TRIANGLES, rIndices.size(), GL_UNSIGNED_INT, (void*)NULL);
+	glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(rIndices.size()), GL_UNSIGNED_INT, (void*)NULL);
 	glBindVertexArray(0);
 }

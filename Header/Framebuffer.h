@@ -1,9 +1,9 @@
 #pragma once
 #include <GL/glew.h>
 #include <iostream>
-#include "Log.h"
-
 #include "Primitives.h"
+#include "Log.h"
+#include "Standard.h"
 #include "Texture.h"
 
 using KronosPrim::int32, KronosPrim::uint32, KronosPrim::uint16;
@@ -78,6 +78,10 @@ public:
 
 	void Destroy();
 
+	void RecreateBuffer();
+
+	void CheckFramebufferState();
+
 	//Set
 	inline void SetLevel(int32 IniLevel) noexcept;
 
@@ -101,6 +105,8 @@ protected:
 	Log rLog;
 
 	Texture* rTexture;
+
+	void CreateBuffer();
 
 private:
 
