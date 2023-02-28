@@ -16,6 +16,8 @@
 
 #include "Standard.h"
 
+#include "Window.h"
+
 #include "Texture.h"
 
 #include "Framebuffer.h"

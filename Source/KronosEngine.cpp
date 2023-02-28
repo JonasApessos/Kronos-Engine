@@ -40,6 +40,8 @@ int GLFWInit()
 	{
 		rGLFWLog.WriteAndDisplay("Failed to initialize GLFW", ELogSeverity::ELS_Critical);
 
+		glfwTerminate();
+
 		return -1;
 	}
 
@@ -60,17 +62,16 @@ int GLEWInit()
 	{
 		rGLEWLog.WriteAndDisplay("Glew context failed to load", ELogSeverity::ELS_Critical);
 
-		glfwTerminate();
-
 		return -2;
 	}
 
 	return true;
 }
 
-void OnWindowResize(GLFWwindow* InrWindow, int32 IniWindowWidth, int32 IniWidthHeight) noexcept
+void OnWindowResize(GLFWwindow* InrWindow, int32 IniWindowWidth, int32 IniWindowHeight) noexcept
 {
-	glViewport(0, 0, static_cast<GLsizei>(IniWindowWidth), static_cast<GLsizei>(IniWidthHeight));
+	glViewport(0, 0, static_cast<GLsizei>(IniWindowWidth), static_cast<GLsizei>(IniWindowHeight));
+	glfwSetWindowSize(InrWindow, IniWindowWidth, IniWindowHeight);
 }
 
 void ProcessInput(GLFWwindow* InrWindow)
@@ -175,35 +176,46 @@ GLvoid WindowRenderLoop()
 	MainCamera.Update();
 }
 
+/*void TestFunc()
+{
+	cout << "test\n";
+}*/
+
 int main(int argc, char **argv)
 {	
+	//void (*PointerFunc0)() = &TestFunc;
+
+	//void (*PointerFunc)() = PointerFunc0;
+
 	if (GLFWInit())
 	{
+		//PointerFunc();
+
+		Window* MainWindow = new Window(1024, (1024 * (9.0f / 16.0f)), "Tutorial 01");
 
 		// Open a window and create its OpenGL context
-		GLFWwindow* Window = glfwCreateWindow(WindowWidth, WindowHeight, "Tutorial 01", NULL, NULL); // (In the accompanying source code, this variable is global for simplicity)
+		//GLFWwindow* Window = glfwCreateWindow(WindowWidth, WindowHeight, "Tutorial 01", NULL, NULL); // (In the accompanying source code, this variable is global for simplicity)
 
-		if (Window == NULL)
+		/*if (Window == NULL)
 		{
 			fprintf(stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n");
 			glfwTerminate();
 			return 1;
-		}
+		}*/
 
-		glfwMakeContextCurrent(Window);
+		//glfwMakeContextCurrent(Window);
 
-		glfwSetWindowAspectRatio(Window, 16, 9);
-		glfwSetInputMode(Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
+		//glfwSetWindowAspectRatio(Window, 16, 9);
+		//glfwSetInputMode(Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 		if (!GLEWInit())
 			return -2;
 
-		glViewport(0, 0, WindowWidth, WindowHeight);
+		glViewport(0, 0, MainWindow->GetWidth(), MainWindow->GetHeight());
 
-		glfwSetFramebufferSizeCallback(Window, OnWindowResize);
-		glfwSetCursorPosCallback(Window, MouseCallback);
-		glfwSetScrollCallback(Window, ScrollCallback);
+		glfwSetFramebufferSizeCallback(MainWindow->GetWindow(), OnWindowResize);
+		glfwSetCursorPosCallback(MainWindow->GetWindow(), MouseCallback);
+		glfwSetScrollCallback(MainWindow->GetWindow(), ScrollCallback);
 
 		GLint nrAttributes;
 		glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
@@ -224,6 +236,8 @@ int main(int argc, char **argv)
 			EFramebufferTex::EFT_Texture2D,
 			FrameBufferTexture,
 			0);
+
+		Renderer* rRenderer = new Renderer();
 
 		FrameBufferTexture = nullptr;
 
@@ -261,7 +275,12 @@ int main(int argc, char **argv)
 			2, 3, 0
 		};
 
-		Texture* rGrassTexture = new Texture("Resource/Img/grass.png", ETextureType::ETT_Albedo, ETextureDataType::ETDT_Texture2D, ETextureSlot::ETS_Slot0);
+		Texture* rGrassTexture = new Texture(
+			"Resource/Img/grass.png",
+			ETextureType::ETT_Albedo,
+			ETextureDataType::ETDT_Texture2D,
+			ETextureSlot::ETS_Slot0,
+			ETextureFormat::ETF_RGBA);
 
 		rGrassTexture->SetTextureWrap(ETextureWrap::ETW_Clip);
 
@@ -279,29 +298,27 @@ int main(int argc, char **argv)
 		Mesh PlanarGrass2 = Mesh(Vertices, Indices, &rTextures);
 
 
-		glEnable(GL_DEPTH_TEST);
+		rRenderer->EnableMode(EGLEnable::EGLE_DepthTest, true);
+		rRenderer->EnableMode(EGLEnable::EGLE_StencilTest, true);
+		rRenderer->EnableMode(EGLEnable::EGLE_CullFace, true);
 
-		glEnable(GL_STENCIL_TEST);
+		rRenderer->SetCullFace(EGLCullFace::EGLCF_Back);
 
-		glEnable(GL_CULL_FACE);
+		rRenderer->EnableDepthMask(true);
+		rRenderer->SetDepthFunc(EGLFunc::EGLDF_Less);
 
-		glCullFace(GL_BACK);
+		rRenderer->SetStencilMask(0xFF);
+		rRenderer->SetStencilFunc(EGLFunc::EGLDF_GEqual, 1, 0xFF);
 
-		glDepthMask(GL_TRUE);
+		rRenderer->SetStencilOp(EGLStencilOp::EGLSO_Keep);
 
-		glDepthFunc(GL_LESS);
+		rRenderer->SetPolygonMode(EGLCullFace::EGLCF_FrontAndBack, EGLPolygonMode::EGLP_Fill);
 
-		glStencilMask(0xFF);
+		rRenderer->SetClearColor(.2f * 0.3f, .4f * 0.3f, .3f * 0.3f, 1.f);
 
-		glStencilFunc(GL_GEQUAL, 1, 0xFF);
-
-		glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		rRenderer->SetClearBuffer(EGLClearBuffer::EGLC_ColorBufferBit | EGLClearBuffer::EGLC_DepthBufferBit | EGLClearBuffer::EGLC_StencilBufferBit);
 
 		glfwSwapInterval(1);
-
-		glClearColor(.2f * 0.3f, .4f * 0.3f, .3f * 0.3f, 1.f);
 
 		MainCamera.SetYaw(-89.0f);
 
@@ -309,11 +326,11 @@ int main(int argc, char **argv)
 
 		rShaderLight.Use();
 		//Main loop
-		while (!glfwWindowShouldClose(Window))
+		while (!glfwWindowShouldClose(MainWindow->GetWindow()))
 		{
-			ProcessInput(Window);
+			ProcessInput(MainWindow->GetWindow());
 
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+			rRenderer->Clear();
 
 			WindowRenderLoop();
 
@@ -342,16 +359,18 @@ int main(int argc, char **argv)
 
 			//NewModel.Draw(rShaderLight);
 
-			glfwSwapBuffers(Window);
+			glfwSwapBuffers(MainWindow->GetWindow());
 			glfwPollEvents();
 		}
 
 		//glDeleteFramebuffers(1, &BufferID);
 
+		glfwDestroyWindow(MainWindow->GetWindow());
 		glfwTerminate();
 		
 		delete rFramebuffer;
 		delete rGrassTexture;
+		delete rRenderer;
 	}
 	else
 		return -1;

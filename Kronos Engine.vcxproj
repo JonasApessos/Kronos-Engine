@@ -143,6 +143,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\InputHandler.cpp" />
+    <ClCompile Include="Source\InputManager.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\Framebuffer.cpp" />
     <ClCompile Include="Source\KronosEngine.cpp" />
@@ -154,6 +156,7 @@
     <ClCompile Include="Source\Standard.cpp" />
     <ClCompile Include="Source\Texture.cpp" />
     <ClCompile Include="Source\Vertex.cpp" />
+    <ClCompile Include="Source\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\Camera.h" />
@@ -168,6 +171,9 @@
     <ClInclude Include="Header\Standard.h" />
     <ClInclude Include="Header\Texture.h" />
     <ClInclude Include="Header\Vertex.h" />
+    <ClInclude Include="Header\Window.h" />
+    <ClInclude Include="Header\InputManager.h" />
+    <ClInclude Include="Header\InputHandler.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Shader\Light.fs" />

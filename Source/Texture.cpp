@@ -27,6 +27,33 @@ Texture::Texture(
     ETextureType IneTextureType,
     ETextureDataType IneTextureDataType,
     ETextureSlot IneTextureSlot,
+    ETextureFormat IneTextureFormat) :
+    sPath(IncImagePath),
+    eTextureType(IneTextureType),
+    eTextureDataType(IneTextureDataType),
+    eTextureSlot(IneTextureSlot),
+    eTextureFormat(IneTextureFormat),
+    eTextureInternalFormat(IneTextureFormat)
+{
+    rLog = Log("LogTexture");
+
+    stbi_set_flip_vertically_on_load(bInvertYOnLoad);
+
+    PixelData = stbi_load(sPath.c_str(), &iWidth, &iHeight, &iChannels, 0);
+
+    if (PixelData)
+        Initialization();
+    else
+        rLog.WriteAndDisplay("Failed to load image");
+
+    stbi_image_free(PixelData);
+}
+
+Texture::Texture(
+    const char* IncImagePath,
+    ETextureType IneTextureType,
+    ETextureDataType IneTextureDataType,
+    ETextureSlot IneTextureSlot,
     ETextureFormat IneTextureFormat,
     ETextureFormat IneInternalFormat) : 
     sPath(IncImagePath),
@@ -184,7 +211,7 @@ Texture Texture::operator=(const Texture&& InrTexture)
 
 Texture::~Texture()
 {
-
+    glDeleteTextures(1, &iTextureId);
 }
 
 void Texture::Initialization()
