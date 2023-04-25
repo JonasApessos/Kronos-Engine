@@ -3,9 +3,9 @@
 #include <GLFW/glfw3.h>
 #include "Primitives.h"
 #include "Log.h"
+#include "InputManager.h"
 
 using KronosPrim::uint32;
-
 
 enum EGLFWHints : uint32
 {
@@ -103,27 +103,23 @@ protected:
 
 	Log rLog;
 
-	GLFWwindow* rWindow;
-	GLFWmonitor* rMonitor;
+	GLFWwindow* rWindow = nullptr;
+	GLFWmonitor* rMonitor = nullptr;
 	GLFWvidmode rVidMode;
 
 	inline void CreateWindow();
 
-	//virtual void OnResize(GLFWwindow* InrWindow, int32 IniWidth, int32 IniHeight);
-	//virtual void MouseInput(GLFWwindow* InrWindow, double IniPosX, double IniPosY);
-	//virtual void ScrollInput(GLFWwindow* InrWindow, double IniOffsetX, double IniOffsetY);
+	static void OnResize(GLFWwindow* InrWindow, int32 IniWidth, int32 IniHeight);
 
 private:
 
 	void Initialize();
-
 };
-
 
 inline void Window::CreateWindow()
 {
 	// Open a window and create its OpenGL context
-	rWindow = glfwCreateWindow((int)iWidth, (int)iHeight, sTitle.c_str(), NULL, NULL); // (In the accompanying source code, this variable is global for simplicity)
+	rWindow = glfwCreateWindow(static_cast<int>(iWidth), static_cast<int>(iHeight), sTitle.c_str(), NULL, NULL);
 }
 
 inline void Window::SetIsAspectLocked(bool InbIsApsectLocked) { bIsAspectLocked = InbIsApsectLocked; }

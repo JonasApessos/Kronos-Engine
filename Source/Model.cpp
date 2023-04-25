@@ -29,7 +29,9 @@ void Model::LoadModel(string InsPath)
 
     if (!rScene || rScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !rScene->mRootNode)
     {
-        rLog.WriteAndDisplay("ERROR::ASSIMP::" + *rImporter.GetErrorString());
+        string ErrorMsg = "ERROR::ASSIMP::";
+
+        rLog.WriteAndDisplay(ErrorMsg.append(rImporter.GetErrorString()));
 
         return;
     }

@@ -143,6 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\App.cpp" />
     <ClCompile Include="Source\InputHandler.cpp" />
     <ClCompile Include="Source\InputManager.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
@@ -159,6 +160,7 @@
     <ClCompile Include="Source\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Header\App.h" />
     <ClInclude Include="Header\Camera.h" />
     <ClInclude Include="Header\Framebuffer.h" />
     <ClInclude Include="Header\KronosEngine.h" />

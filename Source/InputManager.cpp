@@ -1,7 +1,17 @@
 #include "InputManager.h"
 
+EGLFWInputKey InputManager::eKeyPressed = EGLFWInputKey::EGLFWIK_0;
+uint32 InputManager::iScanCode = 0;
+EGLFWInputState InputManager::eAction = EGLFWInputState::EGLFWIS_Press;
+uint32 InputManager::iMods = 0;
 
-InputManager* InputManager::GetInputManagerInstance()
+uint64 InputManager::iInputHandlerID = 0;
+
+GLFWwindow* InputManager::rCurrentWindowInputP = nullptr;
+
+InputManager* InputManager::rSingletonInputManagerP = new InputManager();
+
+InputManager* InputManager::GetInstance()
 {
 	return rSingletonInputManagerP;
 }
@@ -9,12 +19,12 @@ InputManager* InputManager::GetInputManagerInstance()
 void InputManager::Destroy()
 {
 	//TODO:Fix memory leak in vector class!!!
-	if (rInputHandleMap != nullptr)
+	/*if (rInputHandleMap != nullptr)
 	{
 		delete rInputHandleMap;
 
 		rInputHandleMap = nullptr;
-	}
+	}*/
 
 	if (rSingletonInputManagerP != nullptr)
 	{
@@ -22,36 +32,20 @@ void InputManager::Destroy()
 
 		rSingletonInputManagerP = nullptr;
 	}
+
+	rCurrentWindowInputP = nullptr;
 }
 
-//TODO:Temp code, make it more robust.
-void InputManager::BindKey(const string& InsHandleName, EGLFWInputKey IneInputKey, void (*InrCallbackFunc)())
+void InputManager::RecordInput(GLFWwindow* InrWindow, int IniKeyCode, int IniScanCode, int IniAction, int IniMods)
 {
-	vector<InputKeyHandler*> rKeyHandlerList = rInputHandleMap->at(static_cast<EGLFWInputKey>(IneInputKey));
-
-	for (InputKeyHandler* rKeyHandler : rKeyHandlerList)
-	{
-		if (rKeyHandler->GetName() == InsHandleName)
-		{
-			rKeyHandlerList.push_back(new InputKeyHandler(InsHandleName, IneInputKey, 0));
-		}
-
-	}
-}
-
-void InputManager::ProcessInput(GLFWwindow* InrWindowP, int Inikey, int IniScanCode, int IniAction, int IniMods)
-{
-	vector<InputKeyHandler*> rKeyHandlerList = rInputHandleMap->at(static_cast<EGLFWInputKey>(Inikey));
-
-	for (InputKeyHandler* rKeyHandler : rKeyHandlerList)
-	{
-		if (rKeyHandler != nullptr)
-			rKeyHandler->ExecInputEvent(IniAction);
-	}
+	InputManager::eKeyPressed = static_cast<EGLFWInputKey>(IniKeyCode);
+	InputManager::iScanCode = static_cast<uint32>(IniScanCode);
+	InputManager::eAction = static_cast<EGLFWInputState>(IniAction);
+	InputManager::iMods = static_cast<uint32>(IniMods);
 }
 
 InputManager::InputManager()
 {
-	if (rCurrentWindowInputP != nullptr)
-		glfwSetKeyCallback(rCurrentWindowInputP, InputManager::ProcessInput);
+	if(rCurrentWindowInputP != nullptr)
+		glfwSetKeyCallback(rCurrentWindowInputP, InputManager::RecordInput);
 }

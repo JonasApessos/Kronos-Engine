@@ -139,6 +139,7 @@ enum EGLFWInputState : int16
 	EGLFWIS_Press = GLFW_PRESS
 };
 
+template<typename T, typename ObjectReference>
 class InputKeyHandler
 {
 public:
@@ -148,9 +149,9 @@ public:
 
 	~InputKeyHandler();
 
-	void BindCallback(EGLFWInputState IneInputState, void (*InrCallbackFunc)());
+	void BindCallback(EGLFWInputState IneInputState, ObjectReference* InrCallee, T (ObjectReference::*InrCallbackFunc)());
 
-	void ExecInputEvent(int32 IniAction);
+	void ExecInputEvent(EGLFWInputState IneInputState);
 
 	inline string GetName() const;
 
@@ -159,22 +160,64 @@ protected:
 
 	EGLFWInputKey eKeyCode;
 
+	ObjectReference* rCalleeClass;
+
 	virtual inline void OnPressed();
 	virtual inline void OnContinued();
 	virtual inline void OnRelease();
 
 private:
 
-	void (*OnPressedFuncCallback)() = nullptr;
-	void (*OnContinuedFuncCallback)() = nullptr;
-	void (*OnReleaseFuncCallback)() = nullptr;
+	T (ObjectReference::*OnPressedFuncCallback)() = nullptr;
+	T (ObjectReference::*OnContinuedFuncCallback)() = nullptr;
+	T (ObjectReference::*OnReleaseFuncCallback)() = nullptr;
 };
 
-inline string InputKeyHandler::GetName() const { return sName; }
+template<typename T, typename ObjectReference>
+inline string InputKeyHandler<T, ObjectReference>::GetName() const { return sName; }
 
 //TODO:Add Error logs on false.
-inline void InputKeyHandler::OnPressed() { (OnPressedFuncCallback != nullptr) ? OnPressedFuncCallback : false; }
+template<typename T, typename ObjectReference>
+inline void InputKeyHandler<T, ObjectReference>::OnPressed()
+{ 
+	if (OnPressedFuncCallback != nullptr)
+		(rCalleeClass->*OnPressedFuncCallback)();
+}
+
 //TODO:Add Error logs on false.
-inline void InputKeyHandler::OnContinued() { (OnContinuedFuncCallback != nullptr) ? OnContinuedFuncCallback : false; }
+template<typename T, typename ObjectReference>
+inline void InputKeyHandler<T, ObjectReference>::OnContinued()
+{ 
+	if (OnContinuedFuncCallback != nullptr)
+		(rCalleeClass->*OnContinuedFuncCallback)();
+}
+
 //TODO:Add Error logs on false.
-inline void InputKeyHandler::OnRelease() { (OnReleaseFuncCallback != nullptr) ? OnReleaseFuncCallback : false; }
+template<typename T, typename ObjectReference>
+inline void InputKeyHandler<T, ObjectReference>::OnRelease()
+{ 
+	if (OnReleaseFuncCallback != nullptr)
+		(rCalleeClass->*OnReleaseFuncCallback)();
+}
+
+
+template<typename T, typename ObjectReference>
+void InputKeyHandler<T, ObjectReference>::BindCallback(EGLFWInputState IneInputState, ObjectReference* InrCallee, T (ObjectReference::*InrCallbackFunc)())
+{
+	rCalleeClass = InrCallee;
+
+	switch (IneInputState)
+	{
+	case EGLFWInputState::EGLFWIS_Press:
+		OnPressedFuncCallback = InrCallbackFunc;
+		break;
+
+	case EGLFWInputState::EGLFWIS_Release:
+		OnContinuedFuncCallback = InrCallbackFunc;
+		break;
+
+	case EGLFWInputState::EGLFWIS_Repeat:
+		OnReleaseFuncCallback = InrCallbackFunc;
+		break;
+	}
+}

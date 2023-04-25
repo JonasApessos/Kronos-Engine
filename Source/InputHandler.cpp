@@ -1,7 +1,7 @@
 #include "InputHandler.h"
 
-
-InputKeyHandler::InputKeyHandler(const string& InsName, EGLFWInputKey IneKeyCode, uint32 IniHandlerID) :
+template<typename T, typename ObjectReference>
+InputKeyHandler<T, ObjectReference>::InputKeyHandler(const string& InsName, EGLFWInputKey IneKeyCode, uint32 IniHandlerID) :
 	sName(InsName),
 	eKeyCode(IneKeyCode),
 	iHandlerID(IniHandlerID),
@@ -11,34 +11,18 @@ InputKeyHandler::InputKeyHandler(const string& InsName, EGLFWInputKey IneKeyCode
 {
 }
 
-InputKeyHandler::~InputKeyHandler()
+template<typename T, typename ObjectReference>
+InputKeyHandler<T, ObjectReference>::~InputKeyHandler()
 {
 	OnPressedFuncCallback = nullptr;
 	OnContinuedFuncCallback = nullptr;
 	OnReleaseFuncCallback = nullptr;
 }
 
-void InputKeyHandler::BindCallback(EGLFWInputState IneInputState, void (*InrCallbackFunc)())
+template<typename T, typename ObjectReference>
+void InputKeyHandler<T, ObjectReference>::ExecInputEvent(EGLFWInputState IneInputState)
 {
 	switch (IneInputState)
-	{
-	case EGLFWInputState::EGLFWIS_Press:
-		OnPressedFuncCallback = InrCallbackFunc;
-		break;
-
-	case EGLFWInputState::EGLFWIS_Release:
-		OnContinuedFuncCallback = InrCallbackFunc;
-		break;
-
-	case EGLFWInputState::EGLFWIS_Repeat:
-		OnReleaseFuncCallback = InrCallbackFunc;
-		break;
-	}
-}
-
-void InputKeyHandler::ExecInputEvent(int32 IniAction)
-{
-	switch (IniAction)
 	{
 	case EGLFWInputState::EGLFWIS_Press:
 		OnPressed();

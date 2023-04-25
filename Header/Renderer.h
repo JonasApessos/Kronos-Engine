@@ -216,10 +216,12 @@ inline void Renderer::SetClearColor(float InfRGB, float InfAlpha)
 { 
 	glClearColor(static_cast<GLclampf>(InfRGB), static_cast<GLclampf>(InfRGB), static_cast<GLclampf>(InfRGB), static_cast<GLclampf>(InfAlpha));
 }
+
 inline void Renderer::SetClearColor(float InfR, float InfG, float InfB, float InfAlpha) 
 { 
 	glClearColor(static_cast<GLclampf>(InfR), static_cast<GLclampf>(InfG), static_cast<GLclampf>(InfB), static_cast<GLclampf>(InfAlpha));
 }
+
 inline void Renderer::SetClearColor(const vec3& InrColor, float InfAlpha) 
 { 
 	glClearColor(static_cast<GLclampf>(InrColor.r), static_cast<GLclampf>(InrColor.g), static_cast<GLclampf>(InrColor.b), static_cast<GLclampf>(InfAlpha));

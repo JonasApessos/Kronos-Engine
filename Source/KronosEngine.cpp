@@ -13,23 +13,20 @@ using glm::vec3, glm::vec2 , glm::mat4;
 
 using std::cout;
 
-
 int WindowWidth = 1024;
 int WindowHeight = static_cast<int>(WindowWidth * static_cast<float>(9.0f / 16.0f));
 
-float MouseLastX = WindowWidth / 2, MouseLastY = WindowHeight / 2;
+float_t MouseLastX = WindowWidth / 2, MouseLastY = WindowHeight / 2;
 
 Camera MainCamera(vec3(0.0f, 0.0f, 10.0f), vec3(0.0f, 0.0f, 1.0f), vec3(0.0f, 1.0f, 0.0f), 45.0f, (16.0f / 9.0f), 10.0f, 0.1f, 100.0f);
 
 float DeltaTime = 0.0f, LastFrame = 0.0f;
 
-Texture* Test;
-
-Log rGlobalLog("Log", "Log/", "Log.txt");
+Log rGlobalLog("Log");
 
 int GLFWInit()
 {
-	Log rGLFWLog("GLFWLog", "Log/", "Log.txt");
+	Log rGLFWLog("GLFWLog");
 
 	MainCamera.SetMinRotation(vec3(-360.0f, -89.0f, -360.0f));
 	MainCamera.SetMaxRotation(vec3(360.0f, 89.0f, 360.0f));
@@ -45,9 +42,9 @@ int GLFWInit()
 		return -1;
 	}
 
-	glfwWindowHint(GLFW_SAMPLES, 2); // 4x antialiasing
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4); // We want OpenGL 4.5
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+	glfwWindowHint(GLFW_SAMPLES, 2); // 2x antialiasing
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4); // We want OpenGL 4.6
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // We don't want the old OpenGL 
 
@@ -56,7 +53,7 @@ int GLFWInit()
 
 int GLEWInit()
 {
-	Log rGLEWLog("GLEWLog", "Log/", "Log.txt");
+	Log rGLEWLog("GLEWLog");
 
 	if (glewInit() != GLEW_OK)
 	{
@@ -66,12 +63,6 @@ int GLEWInit()
 	}
 
 	return true;
-}
-
-void OnWindowResize(GLFWwindow* InrWindow, int32 IniWindowWidth, int32 IniWindowHeight) noexcept
-{
-	glViewport(0, 0, static_cast<GLsizei>(IniWindowWidth), static_cast<GLsizei>(IniWindowHeight));
-	glfwSetWindowSize(InrWindow, IniWindowWidth, IniWindowHeight);
 }
 
 void ProcessInput(GLFWwindow* InrWindow)
@@ -84,13 +75,6 @@ void ProcessInput(GLFWwindow* InrWindow)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	else if (glfwGetKey(InrWindow, GLFW_KEY_1) == GLFW_RELEASE)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-	if (Test && glfwGetKey(InrWindow, GLFW_KEY_2) == GLFW_PRESS)
-		Test->SetTextureMinFilter(ETextureMinFilter::ETMF_Linear);
-	else if (Test && glfwGetKey(InrWindow, GLFW_KEY_3) == GLFW_PRESS)
-		Test->SetTextureMinFilter(ETextureMinFilter::ETMF_Nearest);
-	else if (Test && glfwGetKey(InrWindow, GLFW_KEY_4) == GLFW_PRESS)
-		Test->SetTextureMinFilter(ETextureMinFilter::ETMF_NearestMipMapLinear);
 
 	if (glfwGetKey(InrWindow, GLFW_KEY_W) == GLFW_PRESS)
 		MainCamera.TravelForwards(1.0f * DeltaTime);
@@ -176,44 +160,26 @@ GLvoid WindowRenderLoop()
 	MainCamera.Update();
 }
 
-/*void TestFunc()
-{
-	cout << "test\n";
-}*/
-
 int main(int argc, char **argv)
-{	
-	//void (*PointerFunc0)() = &TestFunc;
+{
+	App* KronosApp = new App(argc, argv);
 
-	//void (*PointerFunc)() = PointerFunc0;
-
-	if (GLFWInit())
+	if (KronosApp->IsInitSuccess())
 	{
-		//PointerFunc();
+		MainCamera.SetMinRotation(vec3(-360.0f, -89.0f, -360.0f));
+		MainCamera.SetMaxRotation(vec3(360.0f, 89.0f, 360.0f));
 
-		Window* MainWindow = new Window(1024, (1024 * (9.0f / 16.0f)), "Tutorial 01");
+		Window* MainWindow = new Window(1024, (1024 * (9.0f / 16.0f)), "Kronos Engine");
 
-		// Open a window and create its OpenGL context
-		//GLFWwindow* Window = glfwCreateWindow(WindowWidth, WindowHeight, "Tutorial 01", NULL, NULL); // (In the accompanying source code, this variable is global for simplicity)
-
-		/*if (Window == NULL)
+		if (glewInit() == GLEW_OK)
+			glewExperimental = true; // Needed for core profile
+		else
 		{
-			fprintf(stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n");
-			glfwTerminate();
-			return 1;
-		}*/
-
-		//glfwMakeContextCurrent(Window);
-
-		//glfwSetWindowAspectRatio(Window, 16, 9);
-		//glfwSetInputMode(Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-		if (!GLEWInit())
+			rGlobalLog.WriteAndDisplay("Glew context failed to load", ELogSeverity::ELS_Critical);
+			KronosApp->Destroy();
 			return -2;
+		}
 
-		glViewport(0, 0, MainWindow->GetWidth(), MainWindow->GetHeight());
-
-		glfwSetFramebufferSizeCallback(MainWindow->GetWindow(), OnWindowResize);
 		glfwSetCursorPosCallback(MainWindow->GetWindow(), MouseCallback);
 		glfwSetScrollCallback(MainWindow->GetWindow(), ScrollCallback);
 
@@ -322,9 +288,10 @@ int main(int argc, char **argv)
 
 		MainCamera.SetYaw(-89.0f);
 
-		//Model NewModel("cube/cube.obj");
+		Model NewModel("Resource/Object/Cube/Cube.obj");
 
 		rShaderLight.Use();
+
 		//Main loop
 		while (!glfwWindowShouldClose(MainWindow->GetWindow()))
 		{
@@ -341,7 +308,7 @@ int main(int argc, char **argv)
 			vec3 CameraPosition = -MainCamera.GetLocation();
 			vec3 CameraFront = MainCamera.GetFront();
 
-			rShaderLight.Use();
+			//rShaderLight.Use();
 			rShaderLight.SetVec3("ViewPos", CameraPosition);
 
 			rShaderLight.SetVec3("DirLight.Direction", CameraPosition);
@@ -357,20 +324,17 @@ int main(int argc, char **argv)
 			PlanarGrass2.Draw(rShaderLight);
 
 
-			//NewModel.Draw(rShaderLight);
+			NewModel.Draw(rShaderLight);
 
 			glfwSwapBuffers(MainWindow->GetWindow());
 			glfwPollEvents();
 		}
 
-		//glDeleteFramebuffers(1, &BufferID);
-
-		glfwDestroyWindow(MainWindow->GetWindow());
-		glfwTerminate();
-		
-		delete rFramebuffer;
 		delete rGrassTexture;
+		delete rFramebuffer;
 		delete rRenderer;
+		delete MainWindow;
+		delete KronosApp;
 	}
 	else
 		return -1;

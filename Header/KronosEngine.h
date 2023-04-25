@@ -1,8 +1,10 @@
 #pragma once
-#include <stdint.h>
 
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
+#define K_MAJOR_VERSION 0
+#define K_MINOR_VERSION 3
+#define K_PATCH 0
+
+#include <stdint.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -15,6 +17,10 @@
 #include "Log.h"
 
 #include "Standard.h"
+
+#include "App.h"
+
+#include "InputManager.h"
 
 #include "Window.h"
 
