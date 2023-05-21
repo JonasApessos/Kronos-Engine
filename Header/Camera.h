@@ -4,14 +4,24 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-using namespace std;
-using namespace glm;
+using glm::vec3, glm::mat4;
+using glm::perspective, glm::normalize, glm::radians, glm::lookAt;
 
 class Camera
 {
 public:
 
-	Camera(vec3 InrCameraLoc, vec3 InrCameraFront, vec3 InrCameraUp, float InfFOV, float InfAspectRatio, float InfTravelSpeed, float InfNearClip, float InfFarClip);
+	bool bClampRotation = false;
+
+	Camera(
+		vec3 InrCameraLoc,
+		vec3 InrCameraFront,
+		vec3 InrCameraUp,
+		float InfFOV,
+		float InfAspectRatio,
+		float InfTravelSpeed,
+		float InfNearClip,
+		float InfFarClip);
 
 	inline void TravelForwards(float InfTravelSpeed);
 	inline void TravelSideways(float InfTravelSpeed);
@@ -57,13 +67,13 @@ protected:
 	float fFOV = 45.0f, fAspectRation = 16.0f/9.0f, fTravelSpeed = 0.001f;
 	float fNearClip = 0.1f, fFarClip = 100.0f;
 
-	vec3 rLoc;
-	vec3 rRotation;
+	vec3 rLoc = vec3(0.0f);
+	vec3 rRotation = vec3(0.0f);
 	vec3 rMaxRotation = vec3(0.0f), rMinRotation = vec3(0.0f);
 
 private:
-	vec3 rCameraFront;
-	vec3 rCameraUp;
+	vec3 rCameraFront = vec3(0.0f, 0.0f, 1.0f);
+	vec3 rCameraUp = vec3(0.0f, 1.0f, 0.0f);
 	mat4 rCameraView = mat4(1.0f);
 	mat4 rCameraProjection = mat4(1.0f);
 
@@ -102,30 +112,39 @@ inline void Camera::AddYaw(float InfYaw)
 {
 	rRotation.x += InfYaw;
 
-	if (rRotation.x < rMinRotation.x)
-		rRotation.x = rMinRotation.x;
-	else if (rRotation.x > rMaxRotation.x)
-		rRotation.x = rMaxRotation.x;
+	if (bClampRotation)
+	{
+		if (rRotation.x < rMinRotation.x)
+			rRotation.x = rMinRotation.x;
+		else if (rRotation.x > rMaxRotation.x)
+			rRotation.x = rMaxRotation.x;
+	}
 }
 
 inline void Camera::AddPitch(float InfPitch)
 {
 	rRotation.y += InfPitch;
 
-	if (rRotation.y < rMinRotation.y)
-		rRotation.y = rMinRotation.y;
-	else if (rRotation.y > rMaxRotation.y)
-		rRotation.y = rMaxRotation.y;
+	if (bClampRotation)
+	{
+		if (rRotation.y < rMinRotation.y)
+			rRotation.y = rMinRotation.y;
+		else if (rRotation.y > rMaxRotation.y)
+			rRotation.y = rMaxRotation.y;
+	}
 }
 
 inline void Camera::AddRoll(float InfRoll)
 {
 	rRotation.z += InfRoll;
 
-	if (rRotation.z < rMinRotation.z)
-		rRotation.z = rMinRotation.z;
-	else if (rRotation.z > rMaxRotation.z)
-		rRotation.z = rMaxRotation.z;
+	if (bClampRotation)
+	{
+		if (rRotation.z < rMinRotation.z)
+			rRotation.z = rMinRotation.z;
+		else if (rRotation.z > rMaxRotation.z)
+			rRotation.z = rMaxRotation.z;
+	}
 }
 
 inline void Camera::SetLocation(vec3 InrVectorLoc)

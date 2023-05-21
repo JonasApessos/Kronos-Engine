@@ -1,4 +1,9 @@
 #pragma once
+#include "GL/glew.h"
+#include "Primitives.h"
+#include "Log.h"
+
+using KronosPrim::uint16;
 
 enum EGLError : uint16
 {
@@ -11,3 +16,8 @@ enum EGLError : uint16
 	EGLE_StackUnderflow = GL_STACK_UNDERFLOW,
 	EGLE_StackOverflow = GL_STACK_OVERFLOW
 };
+
+
+bool GLError(uint16 IniGLError);
+
+void DisplayAllGLError();

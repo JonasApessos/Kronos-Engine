@@ -7,9 +7,14 @@
 
 #include "stb_image.h"
 
-using namespace std;
+#include "Primitives.h"
 
-enum class ETextureParameter:GLenum
+#include "Log.h"
+
+using KronosPrim::uint16, KronosPrim::int32, KronosPrim::uint32;
+using std::cout, std::string, std::cerr, std::to_string;
+
+enum class ETextureParameter:uint16
 {
     ETP_DepthStencilTextureMode = GL_DEPTH_STENCIL_TEXTURE_MODE,
     ETP_BaseLevel = GL_TEXTURE_BASE_LEVEL,
@@ -32,7 +37,7 @@ enum class ETextureParameter:GLenum
     ETP_SwizzleRGBA = GL_TEXTURE_SWIZZLE_RGBA
 };
 
-enum class ETextureWrap:GLenum
+enum class ETextureWrap:uint16
 {
     ETW_Repeat = GL_REPEAT,
     ETW_Mirror = GL_MIRRORED_REPEAT,
@@ -40,13 +45,13 @@ enum class ETextureWrap:GLenum
     ETW_Border = GL_CLAMP_TO_BORDER
 };
 
-enum class ETextureMagFilter:GLenum
+enum class ETextureMagFilter:uint16
 {
     ETMF_Linear = GL_LINEAR,
     ETMF_Nearest = GL_NEAREST
 };
 
-enum class ETextureMinFilter:GLenum
+enum class ETextureMinFilter:uint16
 {
     ETMF_Linear = GL_LINEAR,
     ETMF_Nearest = GL_NEAREST,
@@ -56,7 +61,7 @@ enum class ETextureMinFilter:GLenum
     ETMF_LinearMipMapLinear = GL_LINEAR_MIPMAP_LINEAR
 };
 
-enum class ETextureSlot:GLenum
+enum class ETextureSlot:uint16
 {
     ETS_Slot0 = GL_TEXTURE0,
     ETS_Slot1 = GL_TEXTURE1,
@@ -76,7 +81,7 @@ enum class ETextureSlot:GLenum
     ETS_Slot15 = GL_TEXTURE15
 };
 
-enum class ETextureDataType:GLenum
+enum class ETextureDataType:uint16
 {
     ETDT_Texture1D = GL_TEXTURE_1D,
     ETDT_Texture1DArray = GL_TEXTURE_1D_ARRAY,
@@ -89,7 +94,7 @@ enum class ETextureDataType:GLenum
     ETDT_TextureCubeMapArray = GL_TEXTURE_CUBE_MAP_ARRAY,
 };
 
-enum class ETextureType:GLenum
+enum class ETextureType:uint16
 {
     ETT_Diffuse = aiTextureType::aiTextureType_DIFFUSE,
     ETT_Albedo = aiTextureType::aiTextureType_BASE_COLOR,
@@ -117,7 +122,7 @@ enum class ETextureType:GLenum
     ETT_RGBA_Mask = 23
 };
 
-enum class ETextureFormat:GLenum
+enum class ETextureFormat:uint16
 {
     ETF_RED = GL_RED,
     ETF_GREEN = GL_GREEN,
@@ -133,18 +138,29 @@ public:
     bool bGenerateMipMap = true;
     static bool bInvertYOnLoad;
 
-    GLint iWidth = 0, iHeight = 0, iChannels = 0;
+    uint32 iTextureId = 0;
+
+    int32 iWidth = 1024, iHeight = iWidth * (9/16), iChannels = 0;
 
     string sPath;
 
+    Texture(const char* IncImagePath, ETextureType IneTextureType, ETextureDataType IneTextureDataType, ETextureSlot IneTextureSlot, ETextureFormat IneTextureFormat);
     Texture(const char* IncImagePath, ETextureType IneTextureType, ETextureDataType IneTextureDataType, ETextureSlot IneTextureSlot, ETextureFormat IneTextureFormat, ETextureFormat IneInternalFormat);
     Texture(const char* IncImagePath, ETextureType IneTextureType, ETextureDataType IneTextureDataType, ETextureSlot IneTextureSlot);
     Texture(const char* IncImagePath, aiTextureType IneTextureType, ETextureDataType IneTextureDataType, ETextureSlot IneTextureSlot);
-    Texture(int IniWidth, int IniHeight, ETextureType IneTextureType, ETextureDataType IneTextureDataType, ETextureSlot IneTextureSlot, ETextureFormat IneTextureFormat);
+    Texture(int32 IniWidth, int32 IniHeight, ETextureType IneTextureType, ETextureDataType IneTextureDataType, ETextureSlot IneTextureSlot, ETextureFormat IneTextureFormat);
+    Texture(const Texture&);
+    Texture(Texture&& InrTexture);
+    
+
+    Texture operator=(Texture&& InrTexture);
+    Texture operator=(const Texture& InrTexture);
+
+    ~Texture();
 
 
-
-    inline void SetId(GLuint IniTextureId);
+    //Set
+    inline void SetId(uint32 IniTextureId);
 
     inline void SetTextureWrap(ETextureWrap IneTextureWrapS, ETextureWrap IneTextureWrapT);
     inline void SetTextureWrap(ETextureWrap IneTextureWrap);
@@ -152,13 +168,14 @@ public:
     inline void SetTextureWrapT(ETextureWrap IneTextureWrap);
 
     inline void SetTextureType(ETextureType IneTextureType);
-    void SetTextureType(aiTextureType IneTextureType);
+    inline void SetTextureType(aiTextureType IneTextureType);
 
     inline void SetTextureMinMagFilter(ETextureMinFilter IneTextureMinFilter, ETextureMagFilter IneTextureMagFilter);
     inline void SetTextureMinFilter(ETextureMinFilter IneTextureFilter);
     inline void SetTextureMagFilter(ETextureMagFilter IneTextureFilter);
 
-    inline GLuint GetId() const;
+    //Get
+    inline uint32 GetId() const;
 
     inline ETextureWrap GetTextureWrapS() const;
     inline ETextureWrap GetTextureWrapT() const;
@@ -174,25 +191,26 @@ public:
     inline void Use();
 
 protected:
-    ETextureType eTextureType;
-    ETextureDataType eTextureDataType;
-    ETextureSlot eTextureSlot;
-    ETextureWrap eTextureWrapS, eTextureWrapT;
-    ETextureMinFilter eTextureMinFilter;
-    ETextureMagFilter eTextureMagFilter;
+    ETextureType eTextureType = ETextureType::ETT_Albedo;
+    ETextureDataType eTextureDataType = ETextureDataType::ETDT_Texture2D;
+    ETextureSlot eTextureSlot = ETextureSlot::ETS_Slot0;
+    ETextureWrap eTextureWrapS = ETextureWrap::ETW_Repeat, eTextureWrapT = ETextureWrap::ETW_Repeat;
+    ETextureMinFilter eTextureMinFilter = ETextureMinFilter::ETMF_NearestMipMapNearest;
+    ETextureMagFilter eTextureMagFilter = ETextureMagFilter::ETMF_Nearest;
+    ETextureFormat eTextureFormat = ETextureFormat::ETF_RGB;
+    ETextureFormat eTextureInternalFormat = ETextureFormat::ETF_RGB;
+
+    Log* rLog = new Log("LogTexture");
+
+    void Initialization();
 
 private:
-    GLuint iTextureId = 0;
-
-    unsigned char* PixelData;
+    unsigned char* PixelData = NULL;
 };
 
 
 
-inline void Texture::SetId(GLuint IniId)
-{
-    iTextureId = IniId;
-}
+inline void Texture::SetId(uint32 IniId) { iTextureId = IniId; }
 
 inline void Texture::SetTextureWrap(ETextureWrap IneTextureWrapS, ETextureWrap IneTextureWrapT)
 {
@@ -210,14 +228,14 @@ inline void Texture::SetTextureWrapS(ETextureWrap IneTextureWrap)
 {
     eTextureWrapS = IneTextureWrap;
 
-    glTexParameteri((GLenum)eTextureDataType, (GLenum)ETextureParameter::ETP_WrapS, (GLint)eTextureWrapS);
+    glTexParameteri(static_cast<GLenum>(eTextureDataType), static_cast<GLenum>(ETextureParameter::ETP_WrapS), static_cast<GLint>(eTextureWrapS));
 }
 
 inline void Texture::SetTextureWrapT(ETextureWrap IneTextureWrap)
 {
     eTextureWrapT = IneTextureWrap;
 
-    glTexParameteri((GLenum)eTextureDataType, (GLenum)ETextureParameter::ETP_WrapT, (GLint)eTextureWrapT);
+    glTexParameteri(static_cast<GLenum>(eTextureDataType), static_cast<GLenum>(ETextureParameter::ETP_WrapT), static_cast<GLint>(eTextureWrapT));
 }
 
 inline void Texture::SetTextureMinMagFilter(ETextureMinFilter IneTextureMinFilter, ETextureMagFilter IneTextureMagFilter)
@@ -230,22 +248,20 @@ inline void Texture::SetTextureMinFilter(ETextureMinFilter IneTextureFilter)
 {
     eTextureMinFilter = IneTextureFilter;
 
-    glTexParameteri((GLenum)eTextureDataType, (GLenum)ETextureParameter::ETP_MinFilter, (GLint)eTextureMinFilter);
+    glTexParameteri(static_cast<GLenum>(eTextureDataType), static_cast<GLenum>(ETextureParameter::ETP_MinFilter), static_cast<GLint>(eTextureMinFilter));
 }
 
 inline void Texture::SetTextureMagFilter(ETextureMagFilter IneTextureFilter)
 {
     eTextureMagFilter = IneTextureFilter;
 
-    glTexParameteri((GLenum)eTextureDataType, (GLenum)ETextureParameter::ETP_MagFilter, (GLint)eTextureMagFilter);
+    glTexParameteri(static_cast<GLenum>(eTextureDataType), static_cast<GLenum>(ETextureParameter::ETP_MagFilter), static_cast<GLint>(eTextureMagFilter));
 }
 
-inline void Texture::SetTextureType(ETextureType IneTextureType)
-{
-    eTextureType = IneTextureType;
-}
+inline void Texture::SetTextureType(ETextureType IneTextureType) { eTextureType = IneTextureType; }
+inline void Texture::SetTextureType(aiTextureType InaiTextureType) { eTextureType = static_cast<ETextureType>(InaiTextureType); }
 
-inline GLuint Texture::GetId() const { return iTextureId; }
+inline uint32 Texture::GetId() const { return iTextureId; }
 
 inline ETextureWrap Texture::GetTextureWrapS() const { return eTextureWrapS; }
 inline ETextureWrap Texture::GetTextureWrapT() const { return eTextureWrapT; }
@@ -258,6 +274,6 @@ inline ETextureSlot Texture::GetTextureSlot() const { return eTextureSlot; }
 inline ETextureType Texture::GetTextureType() const { return eTextureType; }
 inline ETextureDataType Texture::GetTextureDataType() const { return eTextureDataType; }
 
-inline void Texture::Active() { glActiveTexture((GLenum)eTextureSlot); }
+inline void Texture::Active() { glActiveTexture(static_cast<GLenum>(eTextureSlot)); }
 
-inline void Texture::Use() { glBindTexture((GLenum)ETextureDataType::ETDT_Texture2D, iTextureId); }
+inline void Texture::Use() { glBindTexture(static_cast<GLenum>(ETextureDataType::ETDT_Texture2D), iTextureId); }
