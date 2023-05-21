@@ -20,10 +20,10 @@ Window::Window(Window&& InrWindow) noexcept :
 	rVidMode(InrWindow.rVidMode)
 {
 	rWindow = InrWindow.rWindow;
-	rWindow = nullptr;
+	InrWindow.rWindow = nullptr;
 
 	rMonitor = InrWindow.rMonitor;
-	rMonitor = nullptr;
+	InrWindow.rMonitor = nullptr;
 }
 
 Window::Window(const Window& InrWindow) noexcept :
@@ -120,12 +120,10 @@ void Window::OnResize(GLFWwindow* InrWindow, int32 IniWidth, int32 IniHeight)
 
 void Window::Initialize()
 {
-	rLog = Log("LogWindow");
-
 	CreateWindow();
 
-	if (rWindow == nullptr)
-		rLog.WriteAndDisplay("Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible.\n");
+	if (rWindow == nullptr && rLog != nullptr)
+		rLog->WriteAndDisplay("Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible.\n");
 
 	glfwMakeContextCurrent(rWindow);
 

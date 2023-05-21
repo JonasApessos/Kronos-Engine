@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <exception>
 
 #include <iomanip>
 
@@ -11,7 +12,7 @@
 
 using glm::vec3, glm::vec2 , glm::mat4;
 
-using std::cout;
+using std::cout, std::exception;
 
 int WindowWidth = 1024;
 int WindowHeight = static_cast<int>(WindowWidth * static_cast<float>(9.0f / 16.0f));
@@ -162,182 +163,190 @@ GLvoid WindowRenderLoop()
 
 int main(int argc, char **argv)
 {
-	App* KronosApp = new App(argc, argv);
-
-	if (KronosApp->IsInitSuccess())
+	try 
 	{
-		MainCamera.SetMinRotation(vec3(-360.0f, -89.0f, -360.0f));
-		MainCamera.SetMaxRotation(vec3(360.0f, 89.0f, 360.0f));
+		App* KronosApp = new App(argc, argv);
 
-		Window* MainWindow = new Window(1024, (1024 * (9.0f / 16.0f)), "Kronos Engine");
+		if (KronosApp->IsInitSuccess())
+		{
+			MainCamera.SetMinRotation(vec3(-360.0f, -89.0f, -360.0f));
+			MainCamera.SetMaxRotation(vec3(360.0f, 89.0f, 360.0f));
 
-		if (glewInit() == GLEW_OK)
-			glewExperimental = true; // Needed for core profile
+			Window* MainWindow = new Window(1024, (1024 * (9.0f / 16.0f)), "Kronos Engine");
+			
+
+			if (glewInit() == GLEW_OK)
+				glewExperimental = true; // Needed for core profile
+			else
+			{
+				rGlobalLog.WriteAndDisplay("Glew context failed to load", ELogSeverity::ELS_Critical);
+				KronosApp->Destroy();
+				return -2;
+			}
+			
+			glfwSetCursorPosCallback(MainWindow->GetWindow(), MouseCallback);
+			glfwSetScrollCallback(MainWindow->GetWindow(), ScrollCallback);
+			
+			GLint nrAttributes;
+			glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
+			
+			rGlobalLog.WriteAndDisplay("Maximum nr if vertex attributes supported: " + to_string(nrAttributes));
+			
+			Texture* FrameBufferTexture = new Texture(
+				WindowWidth,
+				WindowHeight,
+				ETextureType::ETT_Albedo,
+				ETextureDataType::ETDT_Texture2D,
+				ETextureSlot::ETS_Slot0,
+				ETextureFormat::ETF_RGB);
+
+			Framebuffer* rFramebuffer = new Framebuffer(
+				EFramebufferOp::EFO_FrameBuffer,
+				EFramebufferAttach::EFA_Color,
+				EFramebufferTex::EFT_Texture2D,
+				FrameBufferTexture,
+				0);
+
+			Renderer* rRenderer = new Renderer();
+
+			FrameBufferTexture = nullptr;
+			
+
+			Shader rShaderLight("Resource/Shader/Light.vs", "Resource/Shader/Light.fs");
+			Shader rShaderCubeLight("Resource/Shader/LightColorCube.vs", "Resource/Shader/LightColorCube.fs");
+			Shader rShaderStencil("Resource/Shader/Stencil.vs", "Resource/Shader/Stencil.fs");
+			
+			FVector Pos1, Pos2, Pos3, Pos4;
+
+			Pos1.Position = vec3(0.0f, 0.0f, 0.0f);
+			Pos1.Normal = vec3(0.0f, 0.0f, 1.0f);
+			Pos1.TexCoords = vec2(0.0f, 0.0f);
+
+			Pos2.Position = vec3(1.0f, 0.0f, 0.0f);
+			Pos2.Normal = vec3(0.0f, 0.0f, 1.0f);
+			Pos2.TexCoords = vec2(1.0f, 0.0f);
+
+			Pos3.Position = vec3(1.0f, 1.0f, 0.0f);
+			Pos3.Normal = vec3(0.0f, 0.0f, 1.0f);
+			Pos3.TexCoords = vec2(1.0f, 1.0f);
+
+			Pos4.Position = vec3(0.0f, 1.0f, 0.0f);
+			Pos4.Normal = vec3(0.0f, 0.0f, 1.0f);
+			Pos4.TexCoords = vec2(0.0f, 1.0f);
+
+			vector<FVector> Vertices = {
+				Pos1,
+				Pos2,
+				Pos3,
+				Pos4
+			};
+
+			vector<uint32_t> Indices = {
+				0, 1, 2,
+				2, 3, 0
+			};
+
+			Texture* rGrassTexture = new Texture(
+				"Resource/Img/grass.png",
+				ETextureType::ETT_Albedo,
+				ETextureDataType::ETDT_Texture2D,
+				ETextureSlot::ETS_Slot0,
+				ETextureFormat::ETF_RGBA);
+
+			rGrassTexture->SetTextureWrap(ETextureWrap::ETW_Clip);
+
+			vector<Texture*> rTextures;
+
+			rTextures.push_back(rGrassTexture);
+
+			Mesh PlanarGrass = Mesh(Vertices, Indices, &rTextures);
+
+			Vertices.at(0).Position = Pos1.Position + 1.f;
+			Vertices.at(1).Position = Pos2.Position + 1.f;
+			Vertices.at(2).Position = Pos3.Position + 1.f;
+			Vertices.at(3).Position = Pos4.Position + 1.f;
+
+			Mesh PlanarGrass2 = Mesh(Vertices, Indices, &rTextures);
+
+
+			rRenderer->EnableMode(EGLEnable::EGLE_DepthTest, true);
+			rRenderer->EnableMode(EGLEnable::EGLE_StencilTest, true);
+			rRenderer->EnableMode(EGLEnable::EGLE_CullFace, true);
+
+			rRenderer->SetCullFace(EGLCullFace::EGLCF_Back);
+
+			rRenderer->EnableDepthMask(true);
+			rRenderer->SetDepthFunc(EGLFunc::EGLDF_Less);
+
+			rRenderer->SetStencilMask(0xFF);
+			rRenderer->SetStencilFunc(EGLFunc::EGLDF_GEqual, 1, 0xFF);
+
+			rRenderer->SetStencilOp(EGLStencilOp::EGLSO_Keep);
+
+			rRenderer->SetPolygonMode(EGLCullFace::EGLCF_FrontAndBack, EGLPolygonMode::EGLP_Fill);
+
+			rRenderer->SetClearColor(.2f * 0.3f, .4f * 0.3f, .3f * 0.3f, 1.f);
+
+			rRenderer->SetClearBuffer(EGLClearBuffer::EGLC_ColorBufferBit | EGLClearBuffer::EGLC_DepthBufferBit | EGLClearBuffer::EGLC_StencilBufferBit);
+
+			glfwSwapInterval(1);
+
+			MainCamera.SetYaw(-89.0f);
+
+			Model NewModel("Resource/Object/Cube/Cube.obj");
+
+			rShaderLight.Use();
+
+			//Main loop
+			while (!glfwWindowShouldClose(MainWindow->GetWindow()))
+			{
+				ProcessInput(MainWindow->GetWindow());
+
+				rRenderer->Clear();
+
+				WindowRenderLoop();
+
+				mat4 View = MainCamera.GetView();
+				mat4 Projection = MainCamera.GetProjection();
+				mat4 Model = mat4(1.0f);
+
+				vec3 CameraPosition = -MainCamera.GetLocation();
+				vec3 CameraFront = MainCamera.GetFront();
+				
+				//rShaderLight.Use();
+				rShaderLight.SetVec3("ViewPos", CameraPosition);
+				
+				rShaderLight.SetVec3("DirLight.Direction", CameraPosition);
+				rShaderLight.SetVec3("DirLight.Diffuse", 1.0f);
+				rShaderLight.SetVec3("DirLight.Specular", 1.0f);
+				rShaderLight.SetVec3("DirLight.Ambient", 0.3f);
+				
+				rShaderLight.SetMat4("View", View);
+				rShaderLight.SetMat4("Projection", Projection);
+				rShaderLight.SetMat4("Model", Model);
+				
+				PlanarGrass.Draw(rShaderLight);
+				PlanarGrass2.Draw(rShaderLight);
+				
+
+				NewModel.Draw(rShaderLight);
+				
+				glfwSwapBuffers(MainWindow->GetWindow());
+				glfwPollEvents();
+			}
+
+			delete rGrassTexture;
+			delete rFramebuffer;
+			delete rRenderer;
+			delete MainWindow;
+			delete KronosApp;
+		}
 		else
-		{
-			rGlobalLog.WriteAndDisplay("Glew context failed to load", ELogSeverity::ELS_Critical);
-			KronosApp->Destroy();
-			return -2;
-		}
-
-		glfwSetCursorPosCallback(MainWindow->GetWindow(), MouseCallback);
-		glfwSetScrollCallback(MainWindow->GetWindow(), ScrollCallback);
-
-		GLint nrAttributes;
-		glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
-
-		rGlobalLog.WriteAndDisplay("Maximum nr if vertex attributes supported: " + to_string(nrAttributes));
-
-		Texture* FrameBufferTexture = new Texture(
-			WindowWidth,
-			WindowHeight,
-			ETextureType::ETT_Albedo,
-			ETextureDataType::ETDT_Texture2D,
-			ETextureSlot::ETS_Slot0,
-			ETextureFormat::ETF_RGB);
-
-		Framebuffer* rFramebuffer = new Framebuffer(
-			EFramebufferOp::EFO_FrameBuffer,
-			EFramebufferAttach::EFA_Color,
-			EFramebufferTex::EFT_Texture2D,
-			FrameBufferTexture,
-			0);
-
-		Renderer* rRenderer = new Renderer();
-
-		FrameBufferTexture = nullptr;
-
-		Shader rShaderLight("Resource/Shader/Light.vs", "Resource/Shader/Light.fs");
-		Shader rShaderCubeLight("Resource/Shader/LightColorCube.vs", "Resource/Shader/LightColorCube.fs");
-		Shader rShaderStencil("Resource/Shader/Stencil.vs", "Resource/Shader/Stencil.fs");
-
-		Vertex Pos1, Pos2, Pos3, Pos4;
-
-		Pos1.VertexData.Position = vec3(0.0f, 0.0f, 0.0f);
-		Pos1.VertexData.Normal = vec3(0.0f, 0.0f, 1.0f);
-		Pos1.VertexData.TexCoords = vec2(0.0f, 0.0f);
-
-		Pos2.VertexData.Position = vec3(1.0f, 0.0f, 0.0f);
-		Pos2.VertexData.Normal = vec3(0.0f, 0.0f, 1.0f);
-		Pos2.VertexData.TexCoords = vec2(1.0f, 0.0f);
-
-		Pos3.VertexData.Position = vec3(1.0f, 1.0f, 0.0f);
-		Pos3.VertexData.Normal = vec3(0.0f, 0.0f, 1.0f);
-		Pos3.VertexData.TexCoords = vec2(1.0f, 1.0f);
-
-		Pos4.VertexData.Position = vec3(0.0f, 1.0f, 0.0f);
-		Pos4.VertexData.Normal = vec3(0.0f, 0.0f, 1.0f);
-		Pos4.VertexData.TexCoords = vec2(0.0f, 1.0f);
-
-		vector<Vertex> Vertices = {
-			Pos1,
-			Pos2,
-			Pos3,
-			Pos4
-		};
-
-		vector<uint32_t> Indices = {
-			0, 1, 2,
-			2, 3, 0
-		};
-
-		Texture* rGrassTexture = new Texture(
-			"Resource/Img/grass.png",
-			ETextureType::ETT_Albedo,
-			ETextureDataType::ETDT_Texture2D,
-			ETextureSlot::ETS_Slot0,
-			ETextureFormat::ETF_RGBA);
-
-		rGrassTexture->SetTextureWrap(ETextureWrap::ETW_Clip);
-
-		vector<Texture*> rTextures;
-
-		rTextures.push_back(rGrassTexture);
-
-		Mesh PlanarGrass = Mesh(Vertices, Indices, &rTextures);
-
-		Vertices.at(0).VertexData.Position = Pos1.VertexData.Position + 1.f;
-		Vertices.at(1).VertexData.Position = Pos2.VertexData.Position + 1.f;
-		Vertices.at(2).VertexData.Position = Pos3.VertexData.Position + 1.f;
-		Vertices.at(3).VertexData.Position = Pos4.VertexData.Position + 1.f;
-
-		Mesh PlanarGrass2 = Mesh(Vertices, Indices, &rTextures);
-
-
-		rRenderer->EnableMode(EGLEnable::EGLE_DepthTest, true);
-		rRenderer->EnableMode(EGLEnable::EGLE_StencilTest, true);
-		rRenderer->EnableMode(EGLEnable::EGLE_CullFace, true);
-
-		rRenderer->SetCullFace(EGLCullFace::EGLCF_Back);
-
-		rRenderer->EnableDepthMask(true);
-		rRenderer->SetDepthFunc(EGLFunc::EGLDF_Less);
-
-		rRenderer->SetStencilMask(0xFF);
-		rRenderer->SetStencilFunc(EGLFunc::EGLDF_GEqual, 1, 0xFF);
-
-		rRenderer->SetStencilOp(EGLStencilOp::EGLSO_Keep);
-
-		rRenderer->SetPolygonMode(EGLCullFace::EGLCF_FrontAndBack, EGLPolygonMode::EGLP_Fill);
-
-		rRenderer->SetClearColor(.2f * 0.3f, .4f * 0.3f, .3f * 0.3f, 1.f);
-
-		rRenderer->SetClearBuffer(EGLClearBuffer::EGLC_ColorBufferBit | EGLClearBuffer::EGLC_DepthBufferBit | EGLClearBuffer::EGLC_StencilBufferBit);
-
-		glfwSwapInterval(1);
-
-		MainCamera.SetYaw(-89.0f);
-
-		Model NewModel("Resource/Object/Cube/Cube.obj");
-
-		rShaderLight.Use();
-
-		//Main loop
-		while (!glfwWindowShouldClose(MainWindow->GetWindow()))
-		{
-			ProcessInput(MainWindow->GetWindow());
-
-			rRenderer->Clear();
-
-			WindowRenderLoop();
-
-			mat4 View = MainCamera.GetView();
-			mat4 Projection = MainCamera.GetProjection();
-			mat4 Model = mat4(1.0f);
-
-			vec3 CameraPosition = -MainCamera.GetLocation();
-			vec3 CameraFront = MainCamera.GetFront();
-
-			//rShaderLight.Use();
-			rShaderLight.SetVec3("ViewPos", CameraPosition);
-
-			rShaderLight.SetVec3("DirLight.Direction", CameraPosition);
-			rShaderLight.SetVec3("DirLight.Diffuse", 1.0f);
-			rShaderLight.SetVec3("DirLight.Specular", 1.0f);
-			rShaderLight.SetVec3("DirLight.Ambient", 0.3f);
-
-			rShaderLight.SetMat4("View", View);
-			rShaderLight.SetMat4("Projection", Projection);
-			rShaderLight.SetMat4("Model", Model);
-
-			PlanarGrass.Draw(rShaderLight);
-			PlanarGrass2.Draw(rShaderLight);
-
-
-			NewModel.Draw(rShaderLight);
-
-			glfwSwapBuffers(MainWindow->GetWindow());
-			glfwPollEvents();
-		}
-
-		delete rGrassTexture;
-		delete rFramebuffer;
-		delete rRenderer;
-		delete MainWindow;
-		delete KronosApp;
+			return -1;
+	} catch (exception &e)
+	{
+		cerr << e.what() << "\n";
 	}
-	else
-		return -1;
 
 	return 0;
 }

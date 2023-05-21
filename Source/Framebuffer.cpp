@@ -13,8 +13,6 @@ Framebuffer::Framebuffer(
 	rTexture(InrTexture),
 	iLevel(IniLevel)
 {
-	rLog = Log("LogFrameBuffer");
-
 	CreateBuffer();
 }
 
@@ -89,7 +87,9 @@ void Framebuffer::RecreateBuffer()
 	}
 	else
 	{
-		rLog.WriteAndDisplay("buffer id not detected at recreation, attempting to create buffer anyway.", ELogSeverity::ELS_Warning);
+		if(rLog != nullptr)
+			rLog->WriteAndDisplay("buffer id not detected at recreation, attempting to create buffer anyway.", ELogSeverity::ELS_Warning);
+
 		CreateBuffer();
 	}
 }
@@ -101,43 +101,53 @@ void Framebuffer::CheckFramebufferState()
 	switch (eStatusCode)
 	{
 	case EFramebufferStatus::EFS_Complete:
-		rLog.WriteAndDisplay("Framebuffer creation complete", ELogSeverity::ELS_Info);
+		if(rLog != nullptr)
+			rLog->WriteAndDisplay("Framebuffer creation complete", ELogSeverity::ELS_Info);
 		break;
 
 	case EFramebufferStatus::EFS_IncompleteAttachment:
-		rLog.WriteAndDisplay("Framebuffer attachment points incomplete", ELogSeverity::ELS_Error);
+		if(rLog != nullptr)
+			rLog->WriteAndDisplay("Framebuffer attachment points incomplete", ELogSeverity::ELS_Error);
 		break;
 
 	case EFramebufferStatus::EFS_IncompleteDrawBuffer:
-		rLog.WriteAndDisplay("Framebuffer draw buffer incomplete", ELogSeverity::ELS_Error);
+		if(rLog != nullptr)
+			rLog->WriteAndDisplay("Framebuffer draw buffer incomplete", ELogSeverity::ELS_Error);
 		break;
 
 	case EFramebufferStatus::EFS_IncompleteLayerTargets:
-		rLog.WriteAndDisplay("Framebuffer layer targets incomplete", ELogSeverity::ELS_Error);
+		if(rLog != nullptr)
+			rLog->WriteAndDisplay("Framebuffer layer targets incomplete", ELogSeverity::ELS_Error);
 		break;
 
 	case EFramebufferStatus::EFS_IncompleteMissingAttachment:
-		rLog.WriteAndDisplay("framebuffer no image detected, you need at least one image assigned to you framebuffer", ELogSeverity::ELS_Error);
+		if(rLog != nullptr)
+			rLog->WriteAndDisplay("framebuffer no image detected, you need at least one image assigned to you framebuffer", ELogSeverity::ELS_Error);
 		break;
 
 	case EFramebufferStatus::EFS_IncompleteMultisample:
-		rLog.WriteAndDisplay("framebuffer GL_TEXTURE_FIXED_SAMPLE_LOCATION not the same on all textures or populated collor attachments not the same from textures target", ELogSeverity::ELS_Error);
+		if(rLog != nullptr)
+			rLog->WriteAndDisplay("framebuffer GL_TEXTURE_FIXED_SAMPLE_LOCATION not the same on all textures or populated collor attachments not the same from textures target", ELogSeverity::ELS_Error);
 		break;
 
 	case EFramebufferStatus::EFS_IncompleteReadBuffer:
-		rLog.WriteAndDisplay("framebuffer GL_READ_BUFFER is not GL_NONE and GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE is GL_NONE for color attachment point named by GL_READ_BUFFER", ELogSeverity::ELS_Error);
+		if(rLog != nullptr)
+			rLog->WriteAndDisplay("framebuffer GL_READ_BUFFER is not GL_NONE and GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE is GL_NONE for color attachment point named by GL_READ_BUFFER", ELogSeverity::ELS_Error);
 		break;
 
 	case EFramebufferStatus::EFS_Undefined:
-		rLog.WriteAndDisplay("specified default framebuffer does not exists", ELogSeverity::ELS_Error);
+		if(rLog != nullptr)
+			rLog->WriteAndDisplay("specified default framebuffer does not exists", ELogSeverity::ELS_Error);
 		break;
 
 	case EFramebufferStatus::EFS_Unsupported:
-		rLog.WriteAndDisplay("combination of internal format and attached image violates implementation-dependent set of restrictions", ELogSeverity::ELS_Error);
+		if(rLog != nullptr)
+			rLog->WriteAndDisplay("combination of internal format and attached image violates implementation-dependent set of restrictions", ELogSeverity::ELS_Error);
 		break;
 
 	default:
-		rLog.WriteAndDisplay("Unknown error", ELogSeverity::ELS_Error);
+		if(rLog != nullptr)
+			rLog->WriteAndDisplay("Unknown error", ELogSeverity::ELS_Error);
 		break;
 	}
 }
@@ -160,5 +170,8 @@ void Framebuffer::CreateBuffer()
 
 	}
 	else
-		rLog.WriteAndDisplay("Texture object returned null, abording Buffer creation");
+	{
+		if(rLog != nullptr)
+			rLog->WriteAndDisplay("Texture object returned null, abording Buffer creation");
+	}
 }

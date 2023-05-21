@@ -102,7 +102,7 @@ public:
 	
 	
 protected:
-	Log rLog;
+	Log* rLog = new Log("LogFrameBuffer");
 
 	Texture* rTexture;
 

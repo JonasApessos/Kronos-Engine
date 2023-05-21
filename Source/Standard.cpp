@@ -33,7 +33,7 @@ bool GLError(uint16 IniGLError)
 		rGLLog.WriteAndDisplay("attemped operation that could cause an overflow", ELogSeverity::ELS_Critical);
 		break;
 	default:
-		rGLLog.WriteAndDisplay("Multyple Errors Detected", ELogSeverity::ELS_Critical);
+		rGLLog.WriteAndDisplay("Multiple Errors Detected", ELogSeverity::ELS_Critical);
 	}
 
 	return true;

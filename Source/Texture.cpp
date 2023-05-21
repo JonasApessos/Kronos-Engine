@@ -17,8 +17,6 @@ Texture::Texture(
     eTextureFormat(IneTextureFormat),
     eTextureInternalFormat(IneTextureFormat)
 {
-    rLog = Log("LogTexture");
-
     Initialization();
 }
 
@@ -35,8 +33,6 @@ Texture::Texture(
     eTextureFormat(IneTextureFormat),
     eTextureInternalFormat(IneTextureFormat)
 {
-    rLog = Log("LogTexture");
-
     stbi_set_flip_vertically_on_load(bInvertYOnLoad);
 
     PixelData = stbi_load(sPath.c_str(), &iWidth, &iHeight, &iChannels, 0);
@@ -44,7 +40,7 @@ Texture::Texture(
     if (PixelData)
         Initialization();
     else
-        rLog.WriteAndDisplay("Failed to load image");
+        rLog->WriteAndDisplay("Failed to load image");
 
     stbi_image_free(PixelData);
 }
@@ -63,8 +59,6 @@ Texture::Texture(
     eTextureFormat(IneTextureFormat),
     eTextureInternalFormat(IneInternalFormat)
 {
-    rLog = Log("LogTexture");
-
     stbi_set_flip_vertically_on_load(bInvertYOnLoad);
 
     PixelData = stbi_load(sPath.c_str(), &iWidth, &iHeight, &iChannels, 0);
@@ -72,7 +66,7 @@ Texture::Texture(
     if (PixelData)
         Initialization();
     else
-        rLog.WriteAndDisplay("Failed to load image");
+        rLog->WriteAndDisplay("Failed to load image");
 
     stbi_image_free(PixelData);
 }
@@ -87,8 +81,6 @@ Texture::Texture(
     eTextureSlot(IneTextureSlot),
     eTextureType(IneTextureType)
 {
-    rLog = Log("LogTexture");
-
     stbi_set_flip_vertically_on_load(bInvertYOnLoad);
 
     PixelData = stbi_load(sPath.c_str(), &iWidth, &iHeight, &iChannels, 0);
@@ -113,7 +105,10 @@ Texture::Texture(
         Initialization();
     }
     else
-        rLog.WriteAndDisplay("Failed to load image");
+    {
+        if(rLog != nullptr)
+            rLog->WriteAndDisplay("Failed to load image");
+    }
 
     stbi_image_free(PixelData);
 }
@@ -128,8 +123,6 @@ Texture::Texture(
     eTextureSlot(IneTextureSlot),
     eTextureType(static_cast<ETextureType>(IneTextureType))
 {
-    rLog = Log("LogTexture");
-
     stbi_set_flip_vertically_on_load(bInvertYOnLoad);
 
     PixelData = stbi_load(sPath.c_str(), &iWidth, &iHeight, &iChannels, 0);
@@ -154,7 +147,10 @@ Texture::Texture(
         Initialization();
     }
     else
-        rLog.WriteAndDisplay("Failed to load image");
+    {
+        if(rLog != nullptr)
+            rLog->WriteAndDisplay("Failed to load image");
+    }
 
     stbi_image_free(PixelData);
 }
@@ -189,10 +185,36 @@ Texture::Texture(Texture&& InrTexture) :
     iTextureId(InrTexture.iTextureId)
 {
     rLog = InrTexture.rLog;
+
+    InrTexture.rLog = nullptr;
 }
 
-Texture Texture::operator=(const Texture&& InrTexture)
+Texture Texture::operator=(Texture&& InrTexture)
 {
+    if(this != &InrTexture)
+    {
+        eTextureDataType = InrTexture.eTextureDataType;
+        eTextureMagFilter = InrTexture.eTextureMagFilter;
+        eTextureMinFilter = InrTexture.eTextureMinFilter;
+        eTextureSlot = InrTexture.eTextureSlot;
+        eTextureType = InrTexture.eTextureType;
+        eTextureWrapS = InrTexture.eTextureWrapS;
+        eTextureWrapT = InrTexture.eTextureWrapT;
+        iChannels = InrTexture.iChannels;
+        iHeight = InrTexture.iHeight;
+        iWidth = InrTexture.iWidth;
+        iTextureId = InrTexture.iTextureId;
+        rLog = InrTexture.rLog;
+
+        InrTexture.rLog = nullptr;
+    }
+
+    return InrTexture;
+}
+
+Texture Texture::operator=(const Texture& InrTexture)
+{
+    eTextureDataType = InrTexture.eTextureDataType;
     eTextureDataType = InrTexture.eTextureDataType;
     eTextureMagFilter = InrTexture.eTextureMagFilter;
     eTextureMinFilter = InrTexture.eTextureMinFilter;
@@ -212,6 +234,9 @@ Texture Texture::operator=(const Texture&& InrTexture)
 Texture::~Texture()
 {
     glDeleteTextures(1, &iTextureId);
+
+    if(rLog != nullptr)
+        delete rLog;
 }
 
 void Texture::Initialization()

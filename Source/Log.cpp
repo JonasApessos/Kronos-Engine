@@ -1,5 +1,3 @@
-#pragma once
-
 #include "Log.h"
 
 Log::Log() 
@@ -111,26 +109,35 @@ bool Log::Write(const string& InsData)
 	//if pass custom checks and input data is not empty
 	if (CheckFile() && !InsData.empty() && rLogFile != nullptr)
 	{
-		errno_t iErrorCode = 1;
-		tm rTimeStruct;
+		ERRORCODE iErrorCode = 0;
+		tm* rTimeStruct;
 		string sSeverity;
 
 		TranslateSeverity(ELogSeverity::ELS_Info, sSeverity);
 
-		rLogFile->open(sFilePath + sFileName, iBitFlagMode);
+		rLogFile->open(sFilePath + sFileName, static_cast<ios_base::openmode>(iBitFlagMode));
 
 		//get time since eppoch using C function
-		iErrorCode = localtime_s(&rTimeStruct, &rTime);
+		rTimeStruct = localtime(&rTime);
 
 		//check if localtime_s returned an error code
+		#ifdef _WIN32
 		if (iErrorCode)
 		{
 			strerror_s(cErrorMsg, sizeof(cErrorMsg), iErrorCode);
-			cerr << cErrorMsg << "\r\n";
+			cerr << "[LogException] " << cErrorMsg << "\r\n";
 		}
+		#elif defined __linux__
+		//check if localtime_s returned an error code
+		if (iErrorCode)
+		{
+			cErrorMsg = strerror(iErrorCode);
+			cerr << "[LogException] " << cErrorMsg << "\r\n";
+		}
+		#endif
 
 		//format the eppoch time to a string format with structure date and time
-		strftime(cTimeBuffer, sizeof(cTimeBuffer), "%d/%m/%y - %T", &rTimeStruct);
+		strftime(cTimeBuffer, sizeof(cTimeBuffer), "%d/%m/%y - %T", rTimeStruct);
 
 
 		*rLogFile << "[" << sLogName << "] " << "[" << sSeverity << "] " << "[" << cTimeBuffer << "]: " << InsData << "\r\n";
@@ -140,7 +147,7 @@ bool Log::Write(const string& InsData)
 		return true;
 	}
 	else
-		cerr << "Failed to write to file\r\n";
+		cerr << "[LogException] " << "Failed to write to file\r\n";
 
 	return false;
 
@@ -151,26 +158,35 @@ bool Log::Write(const string& InsData, ELogSeverity IneLogSeverity)
 	//if pass custom checks and input data is not empty
 	if (CheckFile() && !InsData.empty() && rLogFile != nullptr)
 	{
-		errno_t iErrorCode = 1;
-		tm rTimeStruct;
+		ERRORCODE iErrorCode = 0;
+		tm* rTimeStruct;
 		string sSeverity;
 
 		TranslateSeverity(IneLogSeverity, sSeverity);
 
-		rLogFile->open(sFilePath + sFileName, iBitFlagMode);
+		rLogFile->open(sFilePath + sFileName, static_cast<ios_base::openmode>(iBitFlagMode));
 
 		//get time since eppoch using C function
-		iErrorCode = localtime_s(&rTimeStruct, &rTime);
+		rTimeStruct = localtime(&rTime);
 
 		//check if localtime_s returned an error code
+		#ifdef _WIN32
 		if (iErrorCode)
 		{
 			strerror_s(cErrorMsg, sizeof(cErrorMsg), iErrorCode);
-			cerr << cErrorMsg << "\r\n";
+			cerr << "[LogException] " << cErrorMsg << "\r\n";
 		}
+		#elif defined __linux__
+		//check if localtime_s returned an error code
+		if (iErrorCode)
+		{
+			cErrorMsg = strerror(iErrorCode);
+			cerr << "[LogException] " << cErrorMsg << "\r\n";
+		}
+		#endif
 		
 		//format the eppoch time to a string format with structure date and time
-		strftime(cTimeBuffer, sizeof(cTimeBuffer), "%d/%m/%y - %T", &rTimeStruct);
+		strftime(cTimeBuffer, sizeof(cTimeBuffer), "%d/%m/%y - %T", rTimeStruct);
 
 		*rLogFile << "[" << sLogName << "] " << "[" << sSeverity << "] " << "[" << cTimeBuffer << "]: " << InsData << "\r\n";
 
@@ -179,7 +195,7 @@ bool Log::Write(const string& InsData, ELogSeverity IneLogSeverity)
 		return true;
 	}
 	else
-		cerr << "Failed to write to file\r\n";
+		cerr << "[LogException] " << "Failed to write to file\r\n";
 
 	return false;
 }
@@ -189,26 +205,35 @@ bool Log::WriteAndDisplay(const string& InsData)
 	//if pass custom checks and input data is not empty
 	if (CheckFile() && !InsData.empty() && rLogFile != nullptr)
 	{
-		errno_t iErrorCode = 1;
-		tm rTimeStruct;
+		ERRORCODE iErrorCode = 0;
+		tm* rTimeStruct;
 		string sSeverity;
 
 		TranslateSeverity(ELogSeverity::ELS_Info, sSeverity);
 
-		rLogFile->open(sFilePath + sFileName, iBitFlagMode);
-
+		rLogFile->open(sFilePath + sFileName, static_cast<ios_base::openmode>(iBitFlagMode));
+		
 		//get time since eppoch using C function
-		iErrorCode = localtime_s(&rTimeStruct, &rTime);
+		rTimeStruct = localtime(&rTime);
 
 		//check if localtime_s returned an error code
+		#ifdef _WIN32
 		if (iErrorCode)
 		{
 			strerror_s(cErrorMsg, sizeof(cErrorMsg), iErrorCode);
-			cerr << cErrorMsg << "\r\n";
+			cerr << "[LogException] " << cErrorMsg << "\r\n";
 		}
-
+		#elif defined __linux__
+		//check if localtime_s returned an error codes
+		if (iErrorCode)
+		{
+			cErrorMsg = strerror(iErrorCode);
+			cerr << "[LogException] " << cErrorMsg << "\r\n";
+		}
+		#endif
+		
 		//format the eppoch time to a string format with structure date and time
-		strftime(cTimeBuffer, sizeof(cTimeBuffer), "%d/%m/%y - %T", &rTimeStruct);
+		strftime(cTimeBuffer, sizeof(cTimeBuffer), "%d/%m/%y - %T", rTimeStruct);
 
 
 		*rLogFile << "[" << sLogName << "] " << "[" << sSeverity << "] " << "[" << cTimeBuffer << "]: " << InsData << "\r\n";
@@ -219,7 +244,7 @@ bool Log::WriteAndDisplay(const string& InsData)
 		return true;
 	}
 	else
-		cerr << "Failed to write to file\r\n";
+		cerr << "[LogException] " << "Failed to write to file\r\n";
 
 	return false;
 }
@@ -229,26 +254,35 @@ bool Log::WriteAndDisplay(const string& InsData, ELogSeverity IneLogSeverity)
 	//if pass custom checks and input data is not empty
 	if (CheckFile() && !InsData.empty() && rLogFile != nullptr)
 	{
-		errno_t iErrorCode = 1;
-		tm rTimeStruct;
+		ERRORCODE iErrorCode = 0;
+		tm* rTimeStruct;
 		string sSeverity;
 
 		TranslateSeverity(IneLogSeverity, sSeverity);
 
-		rLogFile->open(sFilePath + sFileName, iBitFlagMode);
+		rLogFile->open(sFilePath + sFileName, static_cast<ios_base::openmode>(iBitFlagMode));
 
 		//get time since eppoch using C function
-		iErrorCode = localtime_s(&rTimeStruct, &rTime);
+		rTimeStruct = localtime(&rTime);
 
 		//check if localtime_s returned an error code
+		#ifdef _WIN32
 		if (iErrorCode)
 		{
 			strerror_s(cErrorMsg, sizeof(cErrorMsg), iErrorCode);
-			cerr << cErrorMsg << "\r\n";
+			cerr << "[LogException] " << cErrorMsg << "\r\n";
 		}
+		#elif defined __linux__
+		//check if localtime_s returned an error code
+		if (iErrorCode)
+		{
+			cErrorMsg = strerror(iErrorCode);
+			cerr << "[LogException] " << cErrorMsg << "\r\n";
+		}
+		#endif
 
 		//format the eppoch time to a string format with structure date and time
-		strftime(cTimeBuffer, sizeof(cTimeBuffer), "%d/%m/%y - %T", &rTimeStruct);
+		strftime(cTimeBuffer, sizeof(cTimeBuffer), "%d/%m/%y - %T", rTimeStruct);
 
 		*rLogFile << "[" << sLogName << "] " << "[" << sSeverity << "] " << "[" << cTimeBuffer << "]: " << InsData << "\r\n";
 		cerr << "[" << sLogName << "] " << "[" << sSeverity << "] " << "[" << cTimeBuffer << "]: " << InsData << "\r\n";
@@ -258,7 +292,7 @@ bool Log::WriteAndDisplay(const string& InsData, ELogSeverity IneLogSeverity)
 		return true;
 	}
 	else
-		cerr << "Failed to write to file\r\n";
+		cerr << "[LogException] " << "Failed to write to file\r\n";
 
 	return false;
 }
@@ -270,7 +304,7 @@ string Log::Read()
 
 	if (CheckFile() && rLogFile != nullptr)
 	{
-		rLogFile->open(sFilePath + sFileName, iBitFlagMode);
+		rLogFile->open(sFilePath + sFileName, static_cast<ios_base::openmode>(iBitFlagMode));
 
 		while (getline(*rLogFile, Line))
 			sReadData.append("\r\n" + Line);
@@ -278,7 +312,7 @@ string Log::Read()
 		rLogFile->close();
 	}
 	else
-		cerr << "Failed to read file\r\n";
+		cerr << "[LogException] " << "Failed to read file\r\n";
 
 	return sReadData;
 }
@@ -289,7 +323,7 @@ void Log::Display()
 
 	if (CheckFile() && rLogFile != nullptr)
 	{
-		rLogFile->open(sFilePath + sFileName, iBitFlagMode);
+		rLogFile->open(sFilePath + sFileName, static_cast<ios_base::openmode>(iBitFlagMode));
 
 		while (getline(*rLogFile, Line))
 			cout << Line << "\r\n";
@@ -297,7 +331,7 @@ void Log::Display()
 		rLogFile->close();
 	}
 	else
-		cerr << "Failed to read file\r\n";
+		cerr << "[LogException] " << "Failed to read file\r\n";
 }
 
 void Log::TranslateSeverity(ELogSeverity IneLogSeverity, string& InsTranslatedSeverity)
@@ -367,14 +401,14 @@ bool Log::CheckFile()
 			ShowErrorCode("File not found - Error Category");
 	}
 	else
-		cerr << "Not enough space on current drive \r\n";
+		cerr << "[LogException] " << "Not enough space on current drive \r\n";
 
 	return false;
 }
 
 void Log::ShowErrorCode(const string& InsCustomErrorMessage)
 {
-	cerr << InsCustomErrorMessage << ": Error Category" << rErrorCode.category().name() << ", Code : " << rErrorCode.value() << ", Error : " << rErrorCode.message() << "\r\n";
+	cerr << "[LogException] " << InsCustomErrorMessage << ": Error Category" << rErrorCode.category().name() << ", Code : " << rErrorCode.value() << ", Error : " << rErrorCode.message() << "\r\n";
 	rErrorCode.clear();
 }
 
@@ -394,17 +428,17 @@ void Log::Initialization()
 		//if the file does not exists, create it
 		if (!exists(sFilePath + sFileName))
 		{
-			rLogFile->open(sFilePath + sFileName, iBitFlagMode);
+			rLogFile->open(sFilePath + sFileName, static_cast<ios_base::openmode>(iBitFlagMode));
 			rLogFile->close();
 			rLogFile->clear();
 		}
 
 		//custom check file to see if previous steps are ok
 		if (!CheckFile())
-			cerr << "Failed to create file\r\n";
+			cerr << "[LogException] " << "Failed to create file\r\n";
 
 		rTime = time(0);
 	}
 	else
-		cerr << "File object handler failed to init \r\n";
+		cerr << "[LogException] " << "File object handler failed to init \r\n";
 }

@@ -4,15 +4,19 @@
 Model::Model(char* IncPath)
 {
     LoadModel(IncPath);
-
-    rLog = Log("LogModel");
 }
 
 Model::Model(const char* IncPath)
 {
     LoadModel(IncPath);
+}
 
-    rLog = Log("LogModel");
+Model::~Model()
+{
+    if(rTextures != nullptr)
+    {
+        delete rTextures;
+    }
 }
 
 void Model::Draw(Shader& InrShader)
@@ -31,7 +35,8 @@ void Model::LoadModel(string InsPath)
     {
         string ErrorMsg = "ERROR::ASSIMP::";
 
-        rLog.WriteAndDisplay(ErrorMsg.append(rImporter.GetErrorString()));
+        if(rLog != nullptr)
+            rLog->WriteAndDisplay(ErrorMsg.append(rImporter.GetErrorString()));
 
         return;
     }
@@ -57,30 +62,30 @@ void Model::ProcessNode(aiNode* InrNode, const aiScene* InrScene)
 
 Mesh Model::ProcessMesh(aiMesh* InrMesh, const aiScene* InrScene)
 {
-    vector<Vertex> rVertices;
+    vector<FVector> rVertices;
     vector<uint32> rIndices;
     vector<Texture> rTempTextures;
 
     for (uint32 i = 0; i < InrMesh->mNumVertices; i++)
     {
-        Vertex rVertex;
+        FVector rVertex;
 
         
-        rVertex.VertexData.Position.x = InrMesh->mVertices[i].x;
-        rVertex.VertexData.Position.y = InrMesh->mVertices[i].y;
-        rVertex.VertexData.Position.z = InrMesh->mVertices[i].z;
+        rVertex.Position.x = InrMesh->mVertices[i].x;
+        rVertex.Position.y = InrMesh->mVertices[i].y;
+        rVertex.Position.z = InrMesh->mVertices[i].z;
 
-        rVertex.VertexData.Normal.x = InrMesh->mNormals[i].x;
-        rVertex.VertexData.Normal.y = InrMesh->mNormals[i].y;
-        rVertex.VertexData.Normal.z = InrMesh->mNormals[i].z;
+        rVertex.Normal.x = InrMesh->mNormals[i].x;
+        rVertex.Normal.y = InrMesh->mNormals[i].y;
+        rVertex.Normal.z = InrMesh->mNormals[i].z;
 
         if (InrMesh->mTextureCoords[0])
         {
-            rVertex.VertexData.TexCoords.x = InrMesh->mTextureCoords[0][i].x;
-            rVertex.VertexData.TexCoords.y = InrMesh->mTextureCoords[0][i].y;
+            rVertex.TexCoords.x = InrMesh->mTextureCoords[0][i].x;
+            rVertex.TexCoords.y = InrMesh->mTextureCoords[0][i].y;
         }
         else
-            rVertex.VertexData.TexCoords = vec2(0.0f, 0.0f);
+            rVertex.TexCoords = vec2(0.0f, 0.0f);
 
         rVertices.push_back(rVertex);
     }
@@ -100,10 +105,10 @@ Mesh Model::ProcessMesh(aiMesh* InrMesh, const aiScene* InrScene)
         aiMaterial* rMaterial = InrScene->mMaterials[InrMesh->mMaterialIndex];
 
         vector<Texture> rDiffuseMaps = LoadMaterialTextures(rMaterial, aiTextureType_DIFFUSE);
-        rTempTextures.insert(rTempTextures.end(), rDiffuseMaps.begin(), rDiffuseMaps.end());
+        //rTextures->insert(rTempTextures.end(), rDiffuseMaps.begin(), rDiffuseMaps.end());
 
         vector<Texture> rSpecularMaps = LoadMaterialTextures(rMaterial, aiTextureType_SPECULAR);
-        rTempTextures.insert(rTempTextures.end(), rSpecularMaps.begin(), rSpecularMaps.end());
+        //rTextures->insert(rTempTextures.end(), rSpecularMaps.begin(), rSpecularMaps.end());
     }
 
     return Mesh(rVertices, rIndices, rTextures);
@@ -132,7 +137,7 @@ vector<Texture> Model::LoadMaterialTextures(aiMaterial* InrMat, aiTextureType In
         for (uint32 j = 0; j < rTextures->size(); j++)
         {
             if (rTextures->at(j)->sPath == TempPath)
-                continue;
+                cout << rTextures->at(j)->sPath << std::endl;
         }
 
         Texture NewTexture(TempPath.c_str(), InrType, ETextureDataType::ETDT_Texture2D, ETextureSlot::ETS_Slot0);

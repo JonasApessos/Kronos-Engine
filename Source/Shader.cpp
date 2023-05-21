@@ -2,8 +2,6 @@
 
 Shader::Shader(const char* IncVertPath, const char* IncFragPath)
 {
-    rLog = Log("LogShader");
-
     sShaderFile = IncVertPath;
     string sVertCode, sFragCode;
 
@@ -30,7 +28,8 @@ Shader::Shader(const char* IncVertPath, const char* IncFragPath)
     }
     catch (ifstream::failure e)
     {
-        rLog.WriteAndDisplay("ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ - " + *e.what(), ELogSeverity::ELS_Error);
+        if(rLog != nullptr)
+            rLog->WriteAndDisplay("ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ - " + *e.what(), ELogSeverity::ELS_Error);
     }
 
     const char* cVertShaderCode = sVertCode.c_str();
@@ -78,8 +77,11 @@ void Shader::CompileShader(uint32& IniShaderID, const char* IncShaderCode, EShad
     {
         glGetShaderInfoLog(IniShaderID, 512, NULL, cInfoLog);
 
-        rLog.WriteAndDisplay("FILE::" + sShaderFile);
-        rLog.WriteAndDisplay("ERROR::SHADER::VERTEX::COMPILATION_FAILED" + *cInfoLog, ELogSeverity::ELS_Error);
+        if(rLog != nullptr)
+        {
+            rLog->WriteAndDisplay("FILE::" + sShaderFile);
+            rLog->WriteAndDisplay("ERROR::SHADER::VERTEX::COMPILATION_FAILED" + *cInfoLog, ELogSeverity::ELS_Error);
+        }
     }
 }
 
@@ -99,7 +101,8 @@ void Shader::CreateShaderProg(uint32& IniVertShaderID, uint32& IniFragShaderID)
     {
         glGetProgramInfoLog(iShaderProgID, 512, NULL, cInfoLog);
 
-        rLog.WriteAndDisplay("ERROR:SHADER::PROGRAM::LINKING_FAILED" + *cInfoLog, ELogSeverity::ELS_Error);
+        if(rLog != nullptr)
+            rLog->WriteAndDisplay("ERROR:SHADER::PROGRAM::LINKING_FAILED" + *cInfoLog, ELogSeverity::ELS_Error);
     }
 
     glDeleteShader(IniVertShaderID);

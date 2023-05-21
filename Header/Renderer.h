@@ -3,7 +3,7 @@
 #include "Primitives.h"
 #include "Log.h"
 #include "Standard.h"
-#include "Vertex.h"
+#include "Vector.h"
 
 using KronosPrim::uint8, KronosPrim::uint16, KronosPrim::uint32;
 
@@ -153,8 +153,8 @@ public:
 	
 
 protected:
-	//TODO: Set it as a pointer, as in the future there will be a factory class making those!
-	Log rLog;
+	//TODO: in the future there will be a factory class making those!
+	Log* rLog = new Log("LogRenderer");
 
 private:
 	

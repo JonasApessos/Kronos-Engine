@@ -13,7 +13,6 @@ Renderer::~Renderer()
 
 void Renderer::Initialize()
 {
-	rLog = Log("LogRenderer");
 }
 
 bool Renderer::EnableMode(EGLEnable IneEnable, bool InbEnable)
@@ -24,7 +23,9 @@ bool Renderer::EnableMode(EGLEnable IneEnable, bool InbEnable)
 			glEnable(static_cast<GLenum>(IneEnable));
 		else
 		{
-			rLog.Write("Mode is already enabled");
+			if(rLog != nullptr)
+				rLog->Write("Mode is already enabled");
+				
 			return false;
 		}
 	}
@@ -34,7 +35,9 @@ bool Renderer::EnableMode(EGLEnable IneEnable, bool InbEnable)
 			glDisable(static_cast<GLenum>(IneEnable));
 		else
 		{
-			rLog.Write("Mode is already disabled");
+			if(rLog != nullptr)
+				rLog->Write("Mode is already disabled");
+
 			return false;
 		}
 	}

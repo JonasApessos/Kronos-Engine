@@ -1,8 +1,9 @@
 #pragma once
-#include "Mesh.h"
+
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
+#include "Mesh.h"
 
 using Assimp::Importer;
 
@@ -12,10 +13,12 @@ public:
 	Model(char* IncPath);
 	Model(const char* IncPath);
 
+	~Model();
+
 	void Draw(Shader& InrShader);
 
 protected:
-	Log rLog;
+	Log* rLog = new Log("LogModel");
 
 private:
 	vector<Mesh> rMeshes;
@@ -23,7 +26,7 @@ private:
 
 	Importer rImporter;
 
-	vector<Texture*>* rTextures;
+	vector<Texture*>* rTextures = new vector<Texture*>();
 
 	const aiScene* rScene;
 

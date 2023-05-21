@@ -101,7 +101,7 @@ protected:
 
 	string sTitle = "";
 
-	Log rLog;
+	Log* rLog = new Log("LogWindow");
 
 	GLFWwindow* rWindow = nullptr;
 	GLFWmonitor* rMonitor = nullptr;

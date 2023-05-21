@@ -153,7 +153,8 @@ public:
     Texture(Texture&& InrTexture);
     
 
-    Texture operator=(const Texture&& InrTexture);
+    Texture operator=(Texture&& InrTexture);
+    Texture operator=(const Texture& InrTexture);
 
     ~Texture();
 
@@ -199,7 +200,7 @@ protected:
     ETextureFormat eTextureFormat = ETextureFormat::ETF_RGB;
     ETextureFormat eTextureInternalFormat = ETextureFormat::ETF_RGB;
 
-    Log rLog;
+    Log* rLog = new Log("LogTexture");
 
     void Initialization();
 

@@ -63,6 +63,7 @@ inline void InputManager::SetCurrentWindow(GLFWwindow* InrWindowP)
 	if(rCurrentWindowInputP != nullptr )
 		glfwSetKeyCallback(rCurrentWindowInputP, InputManager::RecordInput); 
 }
+
 inline GLFWwindow* InputManager::GetCurrentWindow() { return rCurrentWindowInputP; }
 
 /*TODO:Temp code, make it more robust.
@@ -104,9 +105,9 @@ void InputManager::BindKey(const string& InsHandleName, EGLFWInputKey IneInputKe
 template<typename T, typename C>
 void InputManager::ProcessInput()
 {
-	if (rInputHandleMap->contains(eKeyPressed))
+	if (rInputHandleMap<T, C>->contains(eKeyPressed))
 	{
-		for (InputKeyHandler<T, C>* rKeyHandlerP : rInputHandleMap->at(eKeyPressed))
+		for (InputKeyHandler<T, C>* rKeyHandlerP : rInputHandleMap<T, C>->at(eKeyPressed))
 		{
 			if (rKeyHandlerP != nullptr)
 				rKeyHandlerP->ExecInputEvent(eAction);

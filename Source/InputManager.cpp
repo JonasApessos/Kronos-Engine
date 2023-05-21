@@ -18,7 +18,7 @@ InputManager* InputManager::GetInstance()
 
 void InputManager::Destroy()
 {
-	//TODO:Fix memory leak in vector class!!!
+	//FIXME:Fix memory leak in vector class!!!
 	/*if (rInputHandleMap != nullptr)
 	{
 		delete rInputHandleMap;

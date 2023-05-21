@@ -1,8 +1,15 @@
 #pragma once
 #include <stdint.h>
+#include <error.h>
+
 
 namespace KronosPrim
 {
+#ifdef _WIN32
+	#define ERRORCODE errno_t
+#elif defined __linux__
+	#define ERRORCODE error_t
+#endif
 
 	typedef uint8_t uint8;
 	typedef uint16_t uint16;

@@ -1,14 +1,19 @@
 #pragma once
+
+#define __STDC_WANT_LIB_EXT1__ 1
+
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <ctime>
 #include <filesystem>
+#include <cstring>
+#include <errno.h>
 #include "Primitives.h"
 
 using KronosPrim::uint8, KronosPrim::int32, KronosPrim::uint32;
 using std::cout, std::cerr;
-using std::ios_base, std::fstream, std::string, std::getline, std::error_code;
+using std::ios_base, std::fstream, std::string, std::getline, std::error_code, std::strerror;
 using std::filesystem::create_directory, std::filesystem::exists, std::filesystem::space, std::filesystem::space_info;
 
 enum ELogSeverity : uint8
@@ -78,7 +83,13 @@ public:
 
 protected:
 	char cTimeBuffer[32] = "";
+
+	#ifdef _WIN32
 	char cErrorMsg[256] = "";
+	#elif defined __linux__
+	char* cErrorMsg;
+	#endif
+	
 
 	uint32 iMinFileSizeBytes = 4194304;
 

@@ -60,7 +60,7 @@ public:
     inline void SetMat4(const string& InsName, mat4& InfVaule) const;
 
 protected:
-    Log rLog;
+    Log* rLog = new Log("LogShader");
 
 private:
 
