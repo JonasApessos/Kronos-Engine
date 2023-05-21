@@ -5,7 +5,7 @@
 #include <GL/glew.h>
 #include "assimp/scene.h"
 
-#include "stb_image.h"
+#include "stb/stb_image.h"
 
 #include "Primitives.h"
 
