@@ -11,22 +11,20 @@ struct FVector
 	vec2 TexCoords;
 
 	FVector() noexcept;
-	FVector(const vec3& InrPos, const vec3& InrNorm, const vec2& IntTexCoord) noexcept;
+	FVector(const vec3& InrPos, const vec3& InrNorm, const vec2& InrTexCoord) noexcept;
 	FVector(const FVector& InrVertex) noexcept;
-	FVector(const FVector&& InrVertex) noexcept;
+	FVector(FVector&& InrVertex) noexcept;
 
-	virtual void Move(FVector&& InrVertex);
-
-	inline virtual void operator +(const FVector& InrVertex);
-	inline virtual void operator +(const vec3& InrVector);
-	inline virtual void operator -(const FVector& InrVertex);
-	inline virtual void operator -(const vec3& InrVector);
-	inline virtual void operator *(const FVector& InrVertex);
-	inline virtual void operator *(const vec3& InrVector);
-	inline virtual void operator /(const FVector& InrVertex);
-	inline virtual void operator /(const vec3& InrVector);
-	virtual void operator =(const FVector& InrVertex);
-	virtual void operator =(FVector&& InrVertex);
+	inline void operator +(const FVector& InrVertex);
+	inline void operator +(const vec3& InrVector);
+	inline void operator -(const FVector& InrVertex);
+	inline void operator -(const vec3& InrVector);
+	inline void operator *(const FVector& InrVertex);
+	inline void operator *(const vec3& InrVector);
+	inline void operator /(const FVector& InrVertex);
+	inline void operator /(const vec3& InrVector);
+	void operator =(const FVector& InrVertex);
+	void operator =(FVector&& InrVertex);
 
 	inline void SetPosition(const vec3& InrPos);
 	inline void SetPosition(const float InrPosX, const float InrPosY, const float InrPosZ);

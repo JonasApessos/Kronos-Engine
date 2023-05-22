@@ -14,10 +14,10 @@ using glm::vec3, glm::vec2 , glm::mat4;
 
 using std::cout, std::exception;
 
-int WindowWidth = 1024;
-int WindowHeight = static_cast<int>(WindowWidth * static_cast<float>(9.0f / 16.0f));
+int32 WindowWidth = 1024;
+int32 WindowHeight = static_cast<int32>(static_cast<float>(WindowWidth) * static_cast<float>(9.0f / 16.0f));
 
-float_t MouseLastX = WindowWidth / 2, MouseLastY = WindowHeight / 2;
+float MouseLastX = WindowWidth / 2, MouseLastY = WindowHeight / 2;
 
 Camera MainCamera(vec3(0.0f, 0.0f, 10.0f), vec3(0.0f, 0.0f, 1.0f), vec3(0.0f, 1.0f, 0.0f), 45.0f, (16.0f / 9.0f), 10.0f, 0.1f, 100.0f);
 
@@ -46,7 +46,7 @@ int GLFWInit()
 	glfwWindowHint(GLFW_SAMPLES, 2); // 2x antialiasing
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4); // We want OpenGL 4.6
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // We don't want the old OpenGL 
 
 	return true;
@@ -68,8 +68,6 @@ int GLEWInit()
 
 void ProcessInput(GLFWwindow* InrWindow)
 {
-	const float CameraSpeed = 10.f * DeltaTime;
-
 	if (glfwGetKey(InrWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(InrWindow, true);
 	else if (glfwGetKey(InrWindow, GLFW_KEY_1) == GLFW_PRESS)
@@ -311,7 +309,6 @@ int main(int argc, char **argv)
 				mat4 Model = mat4(1.0f);
 
 				vec3 CameraPosition = -MainCamera.GetLocation();
-				vec3 CameraFront = MainCamera.GetFront();
 				
 				//rShaderLight.Use();
 				rShaderLight.SetVec3("ViewPos", CameraPosition);

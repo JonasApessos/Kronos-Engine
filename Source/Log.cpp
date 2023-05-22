@@ -390,9 +390,6 @@ bool Log::CheckFile()
 			case ios_base::badbit:
 				cerr << "badbit detected\r\n";
 				break;
-			case ios_base::failbit | ios_base::badbit:
-				cerr << "failbit and badbit detected\r\n";
-				break;
 			default:
 				cout << "No state detected\r\n";
 			}

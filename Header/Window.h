@@ -97,7 +97,7 @@ public:
 
 protected:
 	float iRatioX = 16.0f, iRatioY = 9.0f;
-	int32 iWidth = 1024, iHeight = 1024 * (iRatioY / iRatioX);
+	int32 iWidth = 1024, iHeight = 1024 * static_cast<int32>(iRatioY / iRatioX);
 
 	string sTitle = "";
 
@@ -126,7 +126,7 @@ inline void Window::SetIsAspectLocked(bool InbIsApsectLocked) { bIsAspectLocked 
 
 inline void Window::SetScreenSize(int32 IniWidth, int32 IniHeight) { iWidth = IniWidth; iHeight = IniHeight; }
 inline void Window::SetWidth(int32 IniWidth) { ((IniWidth > 0) ? iWidth = IniWidth : iWidth = 1024); }
-inline void Window::SetHeight(int32 IniHeight) { ((IniHeight > 0) ? iHeight = IniHeight : iHeight = GetAspectRatioHeight() * GetWidth()); }
+inline void Window::SetHeight(int32 IniHeight) { ((IniHeight > 0) ? iHeight = IniHeight : iHeight = static_cast<int32>(GetAspectRatioHeight() * static_cast<float>(GetWidth()))); }
 
 
 inline bool Window::GetIsAspectLocked() const { return bIsAspectLocked; }
