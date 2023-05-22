@@ -364,3 +364,5 @@ FodyWeavers.xsd
 KronosEngine.exe
 .vscode/settings.json
 .vscode/c_cpp_properties.json
+build-debug/KronosEngine
+build-rel/KronosEngine
