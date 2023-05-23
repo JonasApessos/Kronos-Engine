@@ -10,7 +10,7 @@ Import::Import(const char* IncPath)
     LoadModel(IncPath);
 }
 
-void Model::LoadModel(string InsPath)
+void Import::LoadModel(string InsPath)
 {
     Importer rImporter;
 

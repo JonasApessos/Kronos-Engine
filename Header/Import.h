@@ -2,8 +2,11 @@
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
+#include "Mesh.h"
 
 using Assimp::Importer;
+
+using std::string;
 
 //TODO:Create necessary methods for the importer to work!
 class Import
@@ -15,10 +18,16 @@ public:
 
 protected:
 
+    Log* rLog = new Log("LogImport");
+
 private:
     string sDirectory;
 
     const aiScene* rScene;
+
+    vector<Mesh> rMeshes;
+
+    vector<Texture*>* rTextures;
 
 	void LoadModel(string InsPath);
 	void ProcessNode(aiNode* InrNode, const aiScene* InrScene);
