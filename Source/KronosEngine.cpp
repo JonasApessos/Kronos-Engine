@@ -332,6 +332,7 @@ int main(int argc, char **argv)
 				glfwPollEvents();
 			}
 
+			delete NewModel;
 			delete rGrassTexture;
 			delete rFramebuffer;
 			delete rRenderer;
