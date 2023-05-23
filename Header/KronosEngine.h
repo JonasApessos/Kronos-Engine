@@ -1,7 +1,7 @@
 #pragma once
 
 #define K_MAJOR_VERSION 0
-#define K_MINOR_VERSION 3
+#define K_MINOR_VERSION 4
 #define K_PATCH 0
 
 #include <stdint.h>
@@ -34,4 +34,8 @@
 
 #include "Renderer.h"
 
+#include "Mesh.h"
+
 #include "Model.h"
+
+#include "Import.h"

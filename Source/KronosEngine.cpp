@@ -291,7 +291,7 @@ int main(int argc, char **argv)
 
 			MainCamera.SetYaw(-89.0f);
 
-			Model NewModel("Resource/Object/Cube/Cube.obj");
+			Model* NewModel = new Model("Resource/Object/Cube/Cube.obj");
 
 			rShaderLight.Use();
 
@@ -326,7 +326,7 @@ int main(int argc, char **argv)
 				PlanarGrass2.Draw(rShaderLight);
 				
 
-				NewModel.Draw(rShaderLight);
+				NewModel->Draw(rShaderLight);
 				
 				glfwSwapBuffers(MainWindow->GetWindow());
 				glfwPollEvents();
