@@ -1,40 +1,49 @@
 #include "Model.h"
 
-Model::Model()
-{
+Model::Model() : 
+rLog(new Log("LogModel")){}
 
-}
+Model::Model(vector<Mesh*>& InrMeshes) : 
+rLog(new Log("LogModel")),
+rMeshes(InrMeshes) {}
 
-Model::Model(const Model& InrModel)
-{
-    rLog = InrModel.rLog;
-    rTextures = InrModel.rTextures;
-}
+Model::Model(Model const& InrModel) : 
+rLog(InrModel.rLog),
+rMeshes(InrModel.rMeshes) {}
 
 Model::Model(Model&& InrModel)
 {
     if(this != &InrModel)
     {
         rLog = InrModel.rLog;
-        rTextures = InrModel.rTextures;
+        rMeshes = InrModel.rMeshes;
 
         InrModel.rLog = nullptr;
-        InrModel.rTextures = nullptr;
+        InrModel.rMeshes.clear();
     }
 }
 
-Model::~Model()
-{
-    if(rTextures != nullptr)
+Model::~Model() { Destroy(); }
+
+void Model::Destroy()
+{ 
+    vector<Mesh*>::iterator rIt = rMeshes.begin();
+
+    while(rIt != rMeshes.end())
     {
-        delete rTextures;
+        delete *rIt;
+
+        ++rIt;
     }
+
+    if(rLog != nullptr)
+        delete rLog;
 }
 
-Model Model::operator=(const Model& InrModel)
+Model Model::operator=(Model const& InrModel)
 {
     rLog = InrModel.rLog;
-    rTextures = InrModel.rTextures;
+    rMeshes = InrModel.rMeshes;
 
     return InrModel;
 }
@@ -44,10 +53,9 @@ Model& Model::operator=(Model&& InrModel)
     if(this != &InrModel)
     {
         rLog = InrModel.rLog;
-        rTextures = InrModel.rTextures;
+        rMeshes = InrModel.rMeshes;
 
         InrModel.rLog = nullptr;
-        InrModel.rTextures = nullptr;
     }
 
     return InrModel;
@@ -55,50 +63,47 @@ Model& Model::operator=(Model&& InrModel)
 
 void Model::Draw(Shader& InrShader)
 {
-    for (uint32 i = 0; i < rMeshes.size(); i++)
+    vector<Mesh*>::iterator rIt = rMeshes.begin();
+
+    while(rIt != rMeshes.end())
     {
-        rMeshes[i].Draw(InrShader);
+        static_cast<Mesh*>(*rIt)->Draw(InrShader);
+
+        ++rIt;
     }
 }
 
-//TODO:Add Mesh in the Model
-void Model::AddMesh(const Mesh& InrMesh)
+void Model::RemoveMesh(uint64 IniHash)
 {
+	vector<Mesh*>::iterator rIt = rMeshes.begin();
 
+	while(rIt != rMeshes.end())
+	{
+		if(*rIt != nullptr && static_cast<Mesh*>(*rIt)->GetHash() == IniHash)
+		{	
+			delete *rIt;
+
+			rMeshes.erase(rIt);
+
+			break;
+		}
+
+		++rIt;
+	}
 }
 
-//TODO:Get Mesh from the Model by id
-Mesh& Model::GetMesh(uint32 IniID)
+//Get Mesh from the Model by id
+Mesh* Model::GetMesh(uint64 IniHash)
 {
+	vector<Mesh*>::iterator rIt = rMeshes.begin();
 
-}
+	while(rIt != rMeshes.end())
+	{
+		if(*rIt != nullptr && static_cast<Mesh*>(*rIt)->GetHash() == IniHash)		
+			return *rIt;
 
-//TODO:Get Mesh from the Model by name
-Mesh& Model::GetMesh(const string InsName)
-{
+		++rIt;
+	}
 
-}
-
-//TODO:Get Texture from the Model by id
-Texture& Model::GetTexture(uint32 IniID)
-{
-
-}
-
-//TODO:Get Texture from the Model by name
-Texture& Model::GetTexture(const string InsName)
-{
-
-}
-
-//TODO:Get Mesh list from the Model
-vector<Mesh> Model::GetMeshList()
-{
-
-}
-
-//TODO:Get Texture list from the Model
-vector<Texture*>& Model::GetTextureList()
-{
-
+	return nullptr;
 }

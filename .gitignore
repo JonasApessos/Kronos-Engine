@@ -366,3 +366,4 @@ KronosEngine.exe
 .vscode/c_cpp_properties.json
 build-debug/KronosEngine
 build-rel/KronosEngine
+Resource/Object/Cube2.obj

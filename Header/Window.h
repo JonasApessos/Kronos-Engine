@@ -65,13 +65,13 @@ class Window
 public:
 	bool bIsAspectLocked = true;
 
-	Window(int32 IniWidth, int32 IniHeight, const string& InsTitle);
+	Window(int32 IniWidth, int32 IniHeight, string const& InsTitle);
 	Window(Window&& InrWindow) noexcept;
-	Window(const Window& InrWindow) noexcept;
+	Window(Window const& InrWindow) noexcept;
 
 	~Window();
 
-	Window& operator=(const Window & InrWindow) noexcept;
+	Window& operator=(Window const& InrWindow) noexcept;
 	Window& operator=(Window&& InrWindow) noexcept;
 
 	void Destroy();

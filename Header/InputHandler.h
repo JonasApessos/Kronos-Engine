@@ -3,10 +3,10 @@
 #include "GLFW/glfw3.h"
 #include "Primitives.h"
 
-using KronosPrim::int16, KronosPrim::uint32, KronosPrim::int32;
+using KronosPrim::uint32, KronosPrim::int32;
 using std::string;
 
-enum EGLFWInputKey : int16
+enum EGLFWInputKey : int32
 {
 	EGLFWIK_Unknown = GLFW_KEY_UNKNOWN,
 	EGLFWIK_Space = GLFW_KEY_SPACE,
@@ -132,7 +132,7 @@ enum EGLFWInputKey : int16
 	EGLFWIK_Last = GLFW_KEY_LAST,
 };
 
-enum EGLFWInputState : int16
+enum EGLFWInputState : int32
 {
 	EGLFWIS_Release = GLFW_RELEASE,
 	EGLFWIS_Repeat = GLFW_REPEAT,
@@ -145,7 +145,7 @@ class InputKeyHandler
 public:
 	uint32 iHandlerID;
 
-	InputKeyHandler(const string& InsName, EGLFWInputKey IneKeyCode, uint32 IniHandlerID);
+	InputKeyHandler(string const& InsName, EGLFWInputKey IneKeyCode, uint32 IniHandlerID);
 
 	~InputKeyHandler();
 

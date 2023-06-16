@@ -1,20 +1,49 @@
 #include "Mesh.h"
 
-MeshBase::MeshBase(vector<FVector>& InrVertices, vector<uint32> InrIndices, vector<Texture*>* InrTextures)
-{
-	rVertices = InrVertices;
-	rIndices = InrIndices;
-	rTextures = InrTextures;
-}
+uint64 MeshBase::iNumMeshes = 0;
 
-MeshBase::~MeshBase()
-{
-	
-}
+MeshBase::MeshBase(vector<SVector>& InrVertices, vector<uint32>& InrIndices, vector<Texture*>& InrTextures) :
+rVertices(InrVertices),
+rIndices(InrIndices),
+rTextures(InrTextures) { iHash = static_cast<uint64>(hash<std::string>{}(to_string(iID = ++iNumMeshes))); }
 
-Mesh::Mesh(vector<FVector>& InrVertices, vector<uint32> InrIndices, vector<Texture*>* InrTextures) : MeshBase(InrVertices, InrIndices, InrTextures)
+MeshBase::MeshBase(MeshBase const& InrMeshBase) : 
+VAO(InrMeshBase.VAO),
+VBO(InrMeshBase.VBO),
+EBO(InrMeshBase.EBO),
+rVertices(InrMeshBase.rVertices),
+rIndices(InrMeshBase.rIndices),
+rTextures(InrMeshBase.rTextures),
+iID(InrMeshBase.iID),
+iHash(InrMeshBase.iHash) {}
+
+MeshBase::MeshBase(MeshBase&& InrMeshBase) :
+VAO(InrMeshBase.VAO),
+VBO(InrMeshBase.VBO),
+EBO(InrMeshBase.EBO),
+rVertices(InrMeshBase.rVertices),
+rIndices(InrMeshBase.rIndices),
+rTextures(InrMeshBase.rTextures),
+iID(InrMeshBase.iID),
+iHash(InrMeshBase.iHash) {}
+
+MeshBase::~MeshBase() {}
+
+Mesh::Mesh(vector<SVector>& InrVertices, vector<uint32>& InrIndices, vector<Texture*>& InrTextures) : 
+MeshBase(InrVertices, InrIndices, InrTextures) { SetupMesh(); }
+
+Mesh::Mesh(const Mesh& InrMesh) : 
+MeshBase(InrMesh) { SetupMesh(); }
+
+Mesh::Mesh(Mesh&& InrMesh) : 
+MeshBase(InrMesh) {}
+
+Mesh::~Mesh() { Destroy(); }
+
+void Mesh::Destroy()
 {
-	SetupMesh();
+	if(rLog != nullptr)
+		delete rLog;
 }
 
 void Mesh::SetupMesh()
@@ -26,22 +55,22 @@ void Mesh::SetupMesh()
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-	glBufferData(GL_ARRAY_BUFFER, rVertices.size() * sizeof(FVector), &rVertices[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, rVertices.size() * sizeof(SVector), &rVertices[0], GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, rIndices.size() * sizeof(GL_UNSIGNED_INT), &rIndices[0], GL_STATIC_DRAW);
 
 	//Vertex Position
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(FVector), (void*)offsetof(FVector, FVector::Position));
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(SVector), (void*)offsetof(SVector, SVector::Position));
 
 	//Vertex Normal
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(FVector), (void*)offsetof(FVector, FVector::Normal));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(SVector), (void*)offsetof(SVector, SVector::Normal));
 
 	//Vertex Texture Coords
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(FVector), (void*)offsetof(FVector, FVector::TexCoords));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(SVector), (void*)offsetof(SVector, SVector::TexCoords));
 
 	glBindVertexArray(0);
 }
@@ -51,24 +80,33 @@ void Mesh::Draw(Shader& InrShader)
 	uint32 DiffuseNr = 1;
 	uint32 SpecularNr = 1;
 
-	if (rTextures != nullptr && !rTextures->empty())
+	if (!rTextures.empty())
 	{
-		for (uint32 i = 0; i < rTextures->size(); i++)
+		uint32 DrawLoop = 0;
+
+		string Number = "";
+
+		while(DrawLoop < rTextures.size())
 		{
-			glActiveTexture(GL_TEXTURE0 + i);
+			glActiveTexture(GL_TEXTURE0 + DrawLoop);
 
-			string Number;
-
-			if(rTextures->at(i) != nullptr)
+			if(rTextures[DrawLoop] != nullptr)
 			{
-				if (rTextures->at(i)->GetTextureType() == ETextureType::ETT_Albedo)
+				if (rTextures[DrawLoop]->GetTextureType() == ETextureType::ETT_Albedo)
 					Number = to_string(DiffuseNr++);
-				else if (rTextures->at(i)->GetTextureType() == ETextureType::ETT_Specular)
+				else if (rTextures[DrawLoop]->GetTextureType() == ETextureType::ETT_Specular)
 					Number = to_string(SpecularNr++);
 
-				InrShader.SetInt(("Material." + to_string((int32)rTextures->at(i)->GetTextureType()) + "." + Number).c_str(), i);
-				glBindTexture(static_cast<GLenum>(rTextures->at(i)->GetTextureDataType()), rTextures->at(i)->GetId());
+				InrShader.SetInt(
+					("Material." + to_string(static_cast<int32>(rTextures[DrawLoop]->GetTextureType())) + "." + Number).c_str(),
+					 DrawLoop);
+					 
+				glBindTexture(static_cast<GLenum>(rTextures[DrawLoop]->GetTextureDataType()), rTextures[DrawLoop]->GetId());
+
+				Number = "";
 			}
+
+			++DrawLoop;
 		}
 
 	}

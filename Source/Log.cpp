@@ -7,7 +7,7 @@ Log::Log()
 	Initialization();
 }
 
-Log::Log(const string& InsLogName) : sLogName(InsLogName)
+Log::Log(string const& InsLogName) : sLogName(InsLogName)
 {
 	rLogFile = new fstream();
 
@@ -15,9 +15,9 @@ Log::Log(const string& InsLogName) : sLogName(InsLogName)
 }
 
 Log::Log(
-	const string& InsLogName,
-	const string& InsFilePath,
-	const string& InsFileName) :
+	string const& InsLogName,
+	string const& InsFilePath,
+	string const& InsFileName) :
 	sLogName(InsLogName),
 	sFilePath(InsFilePath),
 	sFileName(InsFileName)
@@ -28,9 +28,9 @@ Log::Log(
 }
 
 Log::Log(
-	const string& InsLogName,
-	const string& InsFilePath,
-	const string& InsFileName,
+	string const& InsLogName,
+	string const& InsFilePath,
+	string const& InsFileName,
 	int32 IniBitFlagMode) :
 	sLogName(InsLogName),
 	iBitFlagMode(IniBitFlagMode),
@@ -52,7 +52,7 @@ Log::Log(Log&& InrLog) noexcept :
 	InrLog.rLogFile = nullptr;
 }
 
-Log::Log(const Log& InrLog) :
+Log::Log(Log const& InrLog) :
 	sLogName(InrLog.sLogName),
 	sFilePath(InrLog.sFilePath),
 	sFileName(InrLog.sFileName),
@@ -89,7 +89,7 @@ Log& Log::operator=(Log&& InrLog) noexcept
 	return *this;
 }
 
-Log& Log::operator=(const Log& InrLog) noexcept
+Log& Log::operator=(Log const& InrLog) noexcept
 {
 	if (this != &InrLog)
 	{
@@ -104,7 +104,7 @@ Log& Log::operator=(const Log& InrLog) noexcept
 	return *this;
 }
 
-bool Log::Write(const string& InsData)
+bool Log::Write(string const& InsData)
 {
 	//if pass custom checks and input data is not empty
 	if (CheckFile() && !InsData.empty() && rLogFile != nullptr)
@@ -153,7 +153,7 @@ bool Log::Write(const string& InsData)
 
 }
 
-bool Log::Write(const string& InsData, ELogSeverity IneLogSeverity)
+bool Log::Write(string const& InsData, ELogSeverity IneLogSeverity)
 {
 	//if pass custom checks and input data is not empty
 	if (CheckFile() && !InsData.empty() && rLogFile != nullptr)
@@ -200,7 +200,7 @@ bool Log::Write(const string& InsData, ELogSeverity IneLogSeverity)
 	return false;
 }
 
-bool Log::WriteAndDisplay(const string& InsData)
+bool Log::WriteAndDisplay(string const& InsData)
 {
 	//if pass custom checks and input data is not empty
 	if (CheckFile() && !InsData.empty() && rLogFile != nullptr)
@@ -249,7 +249,7 @@ bool Log::WriteAndDisplay(const string& InsData)
 	return false;
 }
 
-bool Log::WriteAndDisplay(const string& InsData, ELogSeverity IneLogSeverity)
+bool Log::WriteAndDisplay(string const& InsData, ELogSeverity IneLogSeverity)
 {
 	//if pass custom checks and input data is not empty
 	if (CheckFile() && !InsData.empty() && rLogFile != nullptr)
@@ -403,7 +403,7 @@ bool Log::CheckFile()
 	return false;
 }
 
-void Log::ShowErrorCode(const string& InsCustomErrorMessage)
+void Log::ShowErrorCode(string const& InsCustomErrorMessage)
 {
 	cerr << "[LogException] " << InsCustomErrorMessage << ": Error Category" << rErrorCode.category().name() << ", Code : " << rErrorCode.value() << ", Error : " << rErrorCode.message() << "\r\n";
 	rErrorCode.clear();

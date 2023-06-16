@@ -159,8 +159,111 @@ GLvoid WindowRenderLoop()
 	MainCamera.Update();
 }
 
+/*uint64 FOR_Fibonacci(uint64 Limit)
+{
+	uint64 A = 0;
+	uint64 B = 1;
+
+	uint64 Temp = 0;
+
+	uint64 LoopIndex = 0;
+
+	for(; LoopIndex < Limit; ++LoopIndex)
+	{
+		Temp = B;
+		B = A + B;
+		A = Temp;
+	}
+
+	return B;
+}
+
+uint64 WHILE_Fibonacci(uint64 Limit)
+{
+	uint64 A = 0;
+	uint64 B = 1;
+
+	uint64 Temp = 0;
+
+	uint64 LoopIndex = 0;
+
+	while(LoopIndex < Limit)
+	{
+		Temp = B;
+		B = A + B;
+		A = Temp;
+
+		++LoopIndex;
+	}
+
+	return B;
+}
+
+uint64 DOWHILE_Fibonacci(uint64 Limit)
+{
+	uint64 A = 0;
+	uint64 B = 1;
+
+	uint64 Temp = 0;
+
+	uint64 LoopIndex = 0;
+
+	do
+	{
+		Temp = B;
+		B = A + B;
+		A = Temp;
+
+		++LoopIndex;
+	}while(LoopIndex < Limit);
+
+	return B;
+}*/
+
 int main(int argc, char **argv)
 {
+	/*uint64 LoopLimit = 10000;
+	uint64 LoopIndex = 0;
+
+	uint64 FibResult = 0;
+
+	uint64 Iteration = 1000;
+
+	//std::cin >> Iteration;
+
+	std::chrono::steady_clock::time_point Begin;
+	std::chrono::steady_clock::time_point End;
+
+	Begin = std::chrono::steady_clock::now();                        
+
+	for(; LoopIndex < LoopLimit; ++LoopIndex)
+		FibResult = FOR_Fibonacci(Iteration);
+
+	End = std::chrono::steady_clock::now();
+
+	cout << FibResult << "\n";
+	cout << std::setprecision(16) << ((End - Begin).count() / 1000000.0) << " ms" << std::endl;
+
+	Begin = std::chrono::steady_clock::now();
+
+	for(; LoopIndex < LoopLimit; ++LoopIndex)
+		FibResult = WHILE_Fibonacci(Iteration);
+
+	End = std::chrono::steady_clock::now();
+
+	cout << FibResult << "\n";
+	cout << std::setprecision(16) << ((End - Begin).count() / 1000000.0) << " ms" << std::endl;
+
+	Begin = std::chrono::steady_clock::now();
+
+	for(; LoopIndex < LoopLimit; ++LoopIndex)
+		FibResult = DOWHILE_Fibonacci(Iteration);
+
+	End = std::chrono::steady_clock::now();
+
+	cout << FibResult << "\n";
+	cout << std::setprecision(16) << ((End - Begin).count() / 1000000.0) << " ms" << std::endl;*/
+
 	try 
 	{
 		App* KronosApp = new App(argc, argv);
@@ -208,13 +311,12 @@ int main(int argc, char **argv)
 			Renderer* rRenderer = new Renderer();
 
 			FrameBufferTexture = nullptr;
-			
 
 			Shader rShaderLight("Resource/Shader/Light.vs", "Resource/Shader/Light.fs");
 			Shader rShaderCubeLight("Resource/Shader/LightColorCube.vs", "Resource/Shader/LightColorCube.fs");
 			Shader rShaderStencil("Resource/Shader/Stencil.vs", "Resource/Shader/Stencil.fs");
 			
-			FVector Pos1, Pos2, Pos3, Pos4;
+			SVector Pos1, Pos2, Pos3, Pos4;
 
 			Pos1.Position = vec3(0.0f, 0.0f, 0.0f);
 			Pos1.Normal = vec3(0.0f, 0.0f, 1.0f);
@@ -232,7 +334,7 @@ int main(int argc, char **argv)
 			Pos4.Normal = vec3(0.0f, 0.0f, 1.0f);
 			Pos4.TexCoords = vec2(0.0f, 1.0f);
 
-			vector<FVector> Vertices = {
+			vector<SVector> Vertices = {
 				Pos1,
 				Pos2,
 				Pos3,
@@ -257,14 +359,14 @@ int main(int argc, char **argv)
 
 			rTextures.push_back(rGrassTexture);
 
-			Mesh PlanarGrass = Mesh(Vertices, Indices, &rTextures);
+			Mesh PlanarGrass = Mesh(Vertices, Indices, rTextures);
 
 			Vertices.at(0).Position = Pos1.Position + 1.f;
 			Vertices.at(1).Position = Pos2.Position + 1.f;
 			Vertices.at(2).Position = Pos3.Position + 1.f;
 			Vertices.at(3).Position = Pos4.Position + 1.f;
 
-			Mesh PlanarGrass2 = Mesh(Vertices, Indices, &rTextures);
+			Mesh PlanarGrass2 = Mesh(Vertices, Indices, rTextures);
 
 
 			rRenderer->EnableMode(EGLEnable::EGLE_DepthTest, true);
@@ -291,9 +393,19 @@ int main(int argc, char **argv)
 
 			MainCamera.SetYaw(-89.0f);
 
-			Model* NewModel = new Model("Resource/Object/Cube/Cube.obj");
+			Model* NewModel = new Model();
 
-			rShaderLight.Use();
+			Import::LoadModel("Resource/Object/Cube/Cube.obj", NewModel);
+
+			Export::ExportModel("Resource/Object/Cube2", NewModel, EExportType::EET_OBJ);
+
+			//rShaderLight.Use();
+
+			mat4 View = MainCamera.GetView();
+			mat4 Projection = MainCamera.GetProjection();
+			mat4 Model = mat4(1.0f);
+
+			vec3 CameraPosition = -MainCamera.GetLocation();
 
 			//Main loop
 			while (!glfwWindowShouldClose(MainWindow->GetWindow()))
@@ -304,13 +416,12 @@ int main(int argc, char **argv)
 
 				WindowRenderLoop();
 
-				mat4 View = MainCamera.GetView();
-				mat4 Projection = MainCamera.GetProjection();
-				mat4 Model = mat4(1.0f);
+				View = MainCamera.GetView();
+				Projection = MainCamera.GetProjection();
 
-				vec3 CameraPosition = -MainCamera.GetLocation();
+				CameraPosition = -MainCamera.GetLocation();
 				
-				//rShaderLight.Use();
+				rShaderLight.Use();
 				rShaderLight.SetVec3("ViewPos", CameraPosition);
 				
 				rShaderLight.SetVec3("DirLight.Direction", CameraPosition);
@@ -325,8 +436,17 @@ int main(int argc, char **argv)
 				PlanarGrass.Draw(rShaderLight);
 				PlanarGrass2.Draw(rShaderLight);
 				
+				
+				rShaderCubeLight.Use();
+				
+				rShaderCubeLight.SetVec3("LightColor", 1.0f, 0.0f, 0.0f);
 
-				NewModel->Draw(rShaderLight);
+				rShaderCubeLight.SetMat4("View", View);
+				rShaderCubeLight.SetMat4("Projection", Projection);
+				rShaderCubeLight.SetMat4("Model", Model);
+				
+				
+				NewModel->Draw(rShaderCubeLight);
 				
 				glfwSwapBuffers(MainWindow->GetWindow());
 				glfwPollEvents();

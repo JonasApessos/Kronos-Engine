@@ -1,9 +1,7 @@
 #pragma once
 
-#include <iostream>
-
 #include <GL/glew.h>
-#include "assimp/scene.h"
+#include <assimp/scene.h>
 
 #include "stb/stb_image.h"
 
@@ -11,10 +9,10 @@
 
 #include "Log.h"
 
-using KronosPrim::uint16, KronosPrim::int32, KronosPrim::uint32;
+using KronosPrim::uint32, KronosPrim::int32, KronosPrim::uint32;
 using std::cout, std::string, std::cerr, std::to_string;
 
-enum class ETextureParameter:uint16
+enum class ETextureParameter:uint32
 {
     ETP_DepthStencilTextureMode = GL_DEPTH_STENCIL_TEXTURE_MODE,
     ETP_BaseLevel = GL_TEXTURE_BASE_LEVEL,
@@ -37,7 +35,7 @@ enum class ETextureParameter:uint16
     ETP_SwizzleRGBA = GL_TEXTURE_SWIZZLE_RGBA
 };
 
-enum class ETextureWrap:uint16
+enum class ETextureWrap:uint32
 {
     ETW_Repeat = GL_REPEAT,
     ETW_Mirror = GL_MIRRORED_REPEAT,
@@ -45,13 +43,13 @@ enum class ETextureWrap:uint16
     ETW_Border = GL_CLAMP_TO_BORDER
 };
 
-enum class ETextureMagFilter:uint16
+enum class ETextureMagFilter:uint32
 {
     ETMF_Linear = GL_LINEAR,
     ETMF_Nearest = GL_NEAREST
 };
 
-enum class ETextureMinFilter:uint16
+enum class ETextureMinFilter:uint32
 {
     ETMF_Linear = GL_LINEAR,
     ETMF_Nearest = GL_NEAREST,
@@ -61,7 +59,7 @@ enum class ETextureMinFilter:uint16
     ETMF_LinearMipMapLinear = GL_LINEAR_MIPMAP_LINEAR
 };
 
-enum class ETextureSlot:uint16
+enum class ETextureSlot:uint32
 {
     ETS_Slot0 = GL_TEXTURE0,
     ETS_Slot1 = GL_TEXTURE1,
@@ -81,7 +79,7 @@ enum class ETextureSlot:uint16
     ETS_Slot15 = GL_TEXTURE15
 };
 
-enum class ETextureDataType:uint16
+enum class ETextureDataType:uint32
 {
     ETDT_Texture1D = GL_TEXTURE_1D,
     ETDT_Texture1DArray = GL_TEXTURE_1D_ARRAY,
@@ -94,7 +92,7 @@ enum class ETextureDataType:uint16
     ETDT_TextureCubeMapArray = GL_TEXTURE_CUBE_MAP_ARRAY,
 };
 
-enum class ETextureType:uint16
+enum class ETextureType:uint32
 {
     ETT_Diffuse = aiTextureType::aiTextureType_DIFFUSE,
     ETT_Albedo = aiTextureType::aiTextureType_BASE_COLOR,
@@ -122,7 +120,7 @@ enum class ETextureType:uint16
     ETT_RGBA_Mask = 23
 };
 
-enum class ETextureFormat:uint16
+enum class ETextureFormat:uint32
 {
     ETF_RED = GL_RED,
     ETF_GREEN = GL_GREEN,
@@ -140,21 +138,21 @@ public:
 
     uint32 iTextureId = 0;
 
-    int32 iWidth = 1024, iHeight = iWidth * (9/16), iChannels = 0;
+    int32 iWidth = 1024, iHeight = static_cast<int32>(static_cast<float>(iWidth) * (9/16)), iChannels = 0;
 
     string sPath;
 
-    Texture(const char* IncImagePath, ETextureType IneTextureType, ETextureDataType IneTextureDataType, ETextureSlot IneTextureSlot, ETextureFormat IneTextureFormat);
-    Texture(const char* IncImagePath, ETextureType IneTextureType, ETextureDataType IneTextureDataType, ETextureSlot IneTextureSlot, ETextureFormat IneTextureFormat, ETextureFormat IneInternalFormat);
-    Texture(const char* IncImagePath, ETextureType IneTextureType, ETextureDataType IneTextureDataType, ETextureSlot IneTextureSlot);
-    Texture(const char* IncImagePath, aiTextureType IneTextureType, ETextureDataType IneTextureDataType, ETextureSlot IneTextureSlot);
+    Texture(char const* IncImagePath, ETextureType IneTextureType, ETextureDataType IneTextureDataType, ETextureSlot IneTextureSlot, ETextureFormat IneTextureFormat);
+    Texture(char const* IncImagePath, ETextureType IneTextureType, ETextureDataType IneTextureDataType, ETextureSlot IneTextureSlot, ETextureFormat IneTextureFormat, ETextureFormat IneInternalFormat);
+    Texture(char const* IncImagePath, ETextureType IneTextureType, ETextureDataType IneTextureDataType, ETextureSlot IneTextureSlot);
+    Texture(char const* IncImagePath, aiTextureType IneTextureType, ETextureDataType IneTextureDataType, ETextureSlot IneTextureSlot);
     Texture(int32 IniWidth, int32 IniHeight, ETextureType IneTextureType, ETextureDataType IneTextureDataType, ETextureSlot IneTextureSlot, ETextureFormat IneTextureFormat);
-    Texture(const Texture&);
+    Texture(Texture const&);
     Texture(Texture&& InrTexture);
     
 
     Texture operator=(Texture&& InrTexture);
-    Texture operator=(const Texture& InrTexture);
+    Texture operator=(Texture const& InrTexture);
 
     ~Texture();
 

@@ -16,7 +16,7 @@ Framebuffer::Framebuffer(
 	CreateBuffer();
 }
 
-Framebuffer::Framebuffer(const Framebuffer& InrFramebuffer) :
+Framebuffer::Framebuffer(Framebuffer const& InrFramebuffer) :
 	iFrameBufferID(InrFramebuffer.iFrameBufferID),
 	eFramebufferOp(InrFramebuffer.eFramebufferOp),
 	eFramebufferAttach(InrFramebuffer.eFramebufferAttach),

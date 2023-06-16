@@ -1,134 +1,182 @@
 #include "Import.h"
 
-Import::Import(char* IncPath)
+Log* Import::rLog = new Log("LogImport");
+
+Import* Import::rImport = nullptr;
+
+Import::Import() {}
+
+//Load Object
+void Import::LoadModel(char const* InsPath, Model* InrModel)
 {
-    LoadModel(IncPath);
-}
-
-Import::Import(const char* IncPath)
-{
-    LoadModel(IncPath);
-}
-
-void Import::LoadModel(string InsPath)
-{
-    Importer rImporter;
-
-    rScene = rImporter.ReadFile(InsPath, aiProcess_Triangulate | aiProcess_FlipUVs);
-
-    if (!rScene || rScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !rScene->mRootNode)
+    if(InrModel != nullptr)
     {
-        string ErrorMsg = "ERROR::ASSIMP::";
+        Importer rImporter;
 
-        if(rLog != nullptr)
-            rLog->WriteAndDisplay(ErrorMsg.append(rImporter.GetErrorString()));
+        vector<Mesh*> rMeshes;
 
-        return;
-    }
+        string const sDirectory = string(InsPath).substr(0, string(InsPath).find_last_of("/"));
 
-    sDirectory = InsPath.substr(0, InsPath.find_last_of("/"));
+        aiScene const* rScene = rImporter.ReadFile(InsPath, aiProcess_Triangulate | aiProcess_FlipUVs);
 
-    ProcessNode(rScene->mRootNode, rScene);
-}
-
-void Import::ProcessNode(aiNode* InrNode, const aiScene* InrScene)
-{
-    for (uint32 i = 0; i < InrNode->mNumMeshes; i++)
-    {
-        aiMesh* rMesh = InrScene->mMeshes[InrNode->mMeshes[i]];
-        rMeshes.push_back(ProcessMesh(rMesh, InrScene));
-    }
-
-    for (uint32 i = 0; i < InrNode->mNumChildren; i++)
-    {
-        ProcessNode(InrNode->mChildren[i], InrScene);
-    }
-}
-
-Mesh Import::ProcessMesh(aiMesh* InrMesh, const aiScene* InrScene)
-{
-    vector<FVector> rVertices;
-    vector<uint32> rIndices;
-    vector<Texture> rTempTextures;
-
-    for (uint32 i = 0; i < InrMesh->mNumVertices; i++)
-    {
-        FVector rVertex;
-
-        
-        rVertex.Position.x = InrMesh->mVertices[i].x;
-        rVertex.Position.y = InrMesh->mVertices[i].y;
-        rVertex.Position.z = InrMesh->mVertices[i].z;
-
-        rVertex.Normal.x = InrMesh->mNormals[i].x;
-        rVertex.Normal.y = InrMesh->mNormals[i].y;
-        rVertex.Normal.z = InrMesh->mNormals[i].z;
-
-        if (InrMesh->mTextureCoords[0])
+        if (!rScene || rScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !rScene->mRootNode)
         {
-            rVertex.TexCoords.x = InrMesh->mTextureCoords[0][i].x;
-            rVertex.TexCoords.y = InrMesh->mTextureCoords[0][i].y;
+            string ErrorMsg = "ERROR::ASSIMP::";
+
+            if(rLog != nullptr)
+                rLog->WriteAndDisplay(ErrorMsg.append(rImporter.GetErrorString()), ELogSeverity::ELS_Error);
+        }
+
+        ProcessNode(sDirectory, rScene->mRootNode, rScene, rMeshes);
+
+        InrModel->SetMeshList(rMeshes);
+    }
+    else
+        rLog->WriteAndDisplay("Model object return null", ELogSeverity::ELS_Error);
+}
+
+Import* Import::GetInstance() 
+{ 
+    if(rImport == nullptr)
+        rImport = new Import();
+        
+    return rImport; 
+}
+
+//Process scene nodes
+void Import::ProcessNode(string const& InsDirectory, aiNode* InrNode, aiScene const* InrScene, vector<Mesh*>& InrMeshes)
+{
+    uint64 iMeshIndex = 0;
+
+    while(iMeshIndex < InrNode->mNumMeshes)
+    {
+        aiMesh* rMesh = InrScene->mMeshes[InrNode->mMeshes[iMeshIndex]];
+        InrMeshes.push_back(ProcessMesh(InsDirectory, rMesh, InrScene));
+
+        ++iMeshIndex;
+    }
+
+    iMeshIndex = 0;
+
+    while(iMeshIndex < InrNode->mNumChildren)
+    {
+        ProcessNode(InsDirectory, InrNode->mChildren[iMeshIndex], InrScene, InrMeshes);
+
+        ++iMeshIndex;
+    }
+}
+
+//Load mesh object
+Mesh* Import::ProcessMesh(string const& InsDirectory, aiMesh* InrMesh, aiScene const* InrScene)
+{
+    vector<SVector> rVertices;
+    vector<uint32> rIndices;
+    vector<Texture*> rTempTextures;
+
+    uint32 iIndex = 0;
+    uint32 iSubIndex = 0;
+
+    SVector rVertex;
+    aiFace rFace;
+
+    //Get Vertices, Normal and UV from mesh
+    while(iIndex < InrMesh->mNumVertices)
+    {
+        rVertex.Position.x = InrMesh->mVertices[iIndex].x;
+        rVertex.Position.y = InrMesh->mVertices[iIndex].y;
+        rVertex.Position.z = InrMesh->mVertices[iIndex].z;
+
+        rVertex.Normal.x = InrMesh->mNormals[iIndex].x;
+        rVertex.Normal.y = InrMesh->mNormals[iIndex].y;
+        rVertex.Normal.z = InrMesh->mNormals[iIndex].z;
+
+        if (InrMesh->mTextureCoords[0] != nullptr)
+        {
+            rVertex.TexCoords.x = InrMesh->mTextureCoords[0][iIndex].x;
+            rVertex.TexCoords.y = InrMesh->mTextureCoords[0][iIndex].y;
         }
         else
             rVertex.TexCoords = vec2(0.0f, 0.0f);
 
         rVertices.push_back(rVertex);
+
+        ++iIndex;
     }
 
-    for (uint32 i = 0; i < InrMesh->mNumFaces; i++)
+    iIndex = 0;
+
+    //Get Faces from mesh
+    while(iIndex < InrMesh->mNumFaces)
     {
-        aiFace rFace = InrMesh->mFaces[i];
+        rFace = InrMesh->mFaces[iIndex];
 
-        for (uint32 j = 0; j < rFace.mNumIndices; j++)
+        while(iSubIndex < rFace.mNumIndices)
         {
-            rIndices.push_back(rFace.mIndices[j]);
+            rIndices.push_back(rFace.mIndices[iSubIndex]);
+
+            ++iSubIndex;
         }
+
+        iSubIndex = 0;
+
+        ++iIndex;
     }
 
+    //Detect materials and load necessary linked textures to materials
     if (InrMesh->mMaterialIndex >= 0)
     {
         aiMaterial* rMaterial = InrScene->mMaterials[InrMesh->mMaterialIndex];
 
-        vector<Texture> rDiffuseMaps = LoadMaterialTextures(rMaterial, aiTextureType_DIFFUSE);
-        //rTextures->insert(rTempTextures.end(), rDiffuseMaps.begin(), rDiffuseMaps.end());
+        vector<Texture*> rDiffuseMaps = LoadMaterialTextures(InsDirectory, rMaterial, aiTextureType_DIFFUSE);
+        rTempTextures.insert(rTempTextures.end(), rDiffuseMaps.begin(), rDiffuseMaps.end());
 
-        vector<Texture> rSpecularMaps = LoadMaterialTextures(rMaterial, aiTextureType_SPECULAR);
-        //rTextures->insert(rTempTextures.end(), rSpecularMaps.begin(), rSpecularMaps.end());
+        vector<Texture*> rSpecularMaps = LoadMaterialTextures(InsDirectory, rMaterial, aiTextureType_SPECULAR);
+        rTempTextures.insert(rTempTextures.end(), rSpecularMaps.begin(), rSpecularMaps.end());
     }
 
-    return Mesh(rVertices, rIndices, rTextures);
+    return new Mesh(rVertices, rIndices, rTempTextures);
 }
 
-vector<Texture> Import::LoadMaterialTextures(aiMaterial* InrMat, aiTextureType InrType)
+//Load texture for material linking
+vector<Texture*> Import::LoadMaterialTextures(string const& InsDirectory, aiMaterial* InrMat, aiTextureType InrType)
 {
-    vector<Texture> TempTextures;
+    vector<Texture*> rTempTextures;
 
-    const uint32 TexCount = InrMat->GetTextureCount(InrType);
+    uint32 const iTexCount = InrMat->GetTextureCount(InrType);
 
     aiString sStr;
 
     string TempPath = "";
 
-    for (uint32 i = 0; i < TexCount; i++)
+    uint32 iIndex = 0;
+    uint32 iSubIndex = 0;
+
+    while(iIndex < iTexCount)
     {
-        InrMat->GetTexture(InrType, i, &sStr);
+        InrMat->GetTexture(InrType, iIndex, &sStr);
 
         TempPath = "";
 
-        TempPath.append(sDirectory);
+        TempPath.append(InsDirectory);
         TempPath.append("/");
         TempPath.append(sStr.C_Str());
 
-        for (uint32 j = 0; j < rTextures->size(); j++)
+        while(iSubIndex < rTempTextures.size())
         {
-            if (rTextures->at(j)->sPath == TempPath)
-                cout << rTextures->at(j)->sPath << std::endl;
+            if (rTempTextures[iSubIndex]->sPath == TempPath)
+                cout << rTempTextures[iSubIndex]->sPath << "\r\n";
+
+            ++iSubIndex;
         }
 
-        Texture NewTexture(TempPath.c_str(), InrType, ETextureDataType::ETDT_Texture2D, ETextureSlot::ETS_Slot0);
+        iSubIndex = 0;
 
-        TempTextures.push_back(NewTexture);
+        Texture* NewTexture= new Texture(TempPath.c_str(), InrType, ETextureDataType::ETDT_Texture2D, ETextureSlot::ETS_Slot0);
+
+        rTempTextures.push_back(NewTexture);
+
+        ++iIndex;
     }
 
-    return TempTextures;
+    return rTempTextures;
 }

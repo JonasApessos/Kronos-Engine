@@ -3,9 +3,9 @@
 #include "Primitives.h"
 #include "Log.h"
 
-using KronosPrim::uint16;
+using KronosPrim::uint32;
 
-enum EGLError : uint16
+enum EGLError : uint32
 {
 	EGLE_NoError = GL_NO_ERROR,
 	EGLE_InvalidEnum = GL_INVALID_ENUM,
@@ -18,6 +18,6 @@ enum EGLError : uint16
 };
 
 
-bool GLError(uint16 IniGLError);
+bool GLError(uint32 IniGLError);
 
 void DisplayAllGLError();

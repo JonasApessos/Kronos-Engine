@@ -6,12 +6,12 @@
 #include "Standard.h"
 #include "Texture.h"
 
-using KronosPrim::int32, KronosPrim::uint32, KronosPrim::uint16;
+using KronosPrim::int32, KronosPrim::uint32;
 using std::cout, std::cerr, std::to_string;
 
 class Log;
 
-enum EFramebufferStatus : uint16
+enum EFramebufferStatus : uint32
 {
 	EFS_Complete = GL_FRAMEBUFFER_COMPLETE,
 	EFS_Undefined = GL_FRAMEBUFFER_UNDEFINED,
@@ -24,14 +24,14 @@ enum EFramebufferStatus : uint16
 	EFS_IncompleteLayerTargets = GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS
 };
 
-enum EFramebufferOp : uint16
+enum EFramebufferOp : uint32
 {
 	EFO_Draw = GL_DRAW_FRAMEBUFFER,
 	EFO_Read = GL_READ_FRAMEBUFFER,
 	EFO_FrameBuffer = GL_FRAMEBUFFER
 };
 
-enum EFramebufferAttach : uint16
+enum EFramebufferAttach : uint32
 {
 	EFA_Color = GL_COLOR_ATTACHMENT0,
 	EFA_Depth = GL_DEPTH_ATTACHMENT,
@@ -39,7 +39,7 @@ enum EFramebufferAttach : uint16
 	EFA_DepthStencil = GL_DEPTH_STENCIL_ATTACHMENT,
 };
 
-enum EFrambufferCubemap : uint16
+enum EFrambufferCubemap : uint32
 {
 	EFC_TexturePosX = GL_TEXTURE_CUBE_MAP_POSITIVE_X,
 	EFC_TextureNegX = GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
@@ -49,7 +49,7 @@ enum EFrambufferCubemap : uint16
 	EFC_TextureNegZ = GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
 };
 
-enum EFramebufferTex : uint16
+enum EFramebufferTex : uint32
 {
 	EFT_Texture1D = GL_TEXTURE_1D,
 	EFT_Texture2D = GL_TEXTURE_2D,
@@ -69,7 +69,7 @@ public:
 	EFramebufferTex eFramebufferTex = EFramebufferTex::EFT_Texture2D;
 
 	Framebuffer(EFramebufferOp IneFrameBufferOp, EFramebufferAttach IneFramebufferAttach, EFramebufferTex IneFramebufferTex, Texture* InrTexture, int32 IniLevel);
-	Framebuffer(const Framebuffer& InrFramebuffer);
+	Framebuffer(Framebuffer const& InrFramebuffer);
 	Framebuffer(Framebuffer&& InrFramebuffer) noexcept;
 
 	Framebuffer& operator=(Framebuffer&& InrFramebuffer) noexcept;
@@ -92,13 +92,13 @@ public:
 	inline void SetFramebufferTex(EFramebufferTex IneFramebufferTex) noexcept;
 
 	//Get
-	inline int32 GetLevel() const noexcept;
+	constexpr inline int32 GetLevel() const noexcept;
 
-	inline Texture& GetTexture() const noexcept;
+	constexpr inline Texture& GetTexture() const noexcept;
 
-	inline EFramebufferOp GetFramebufferOp() const noexcept;
-	inline EFramebufferAttach GetFramebufferAttach() const noexcept;
-	inline EFramebufferTex GetFramebufferTex() const noexcept;
+	constexpr inline EFramebufferOp GetFramebufferOp() const noexcept;
+	constexpr inline EFramebufferAttach GetFramebufferAttach() const noexcept;
+	constexpr inline EFramebufferTex GetFramebufferTex() const noexcept;
 	
 	
 protected:
@@ -119,8 +119,8 @@ inline void Framebuffer::SetFramebufferOp(EFramebufferOp IneFramebufferOp) noexc
 inline void Framebuffer::SetFramebufferAttach(EFramebufferAttach IneFramebufferAttach) noexcept { eFramebufferAttach = IneFramebufferAttach; }
 inline void Framebuffer::SetFramebufferTex(EFramebufferTex IneFramebufferTex) noexcept { eFramebufferTex = IneFramebufferTex; }
 
-inline int32 Framebuffer::GetLevel() const noexcept { return iLevel; }
-inline Texture& Framebuffer::GetTexture() const noexcept { return *rTexture; }
-inline EFramebufferOp Framebuffer::GetFramebufferOp() const noexcept { return eFramebufferOp; }
-inline EFramebufferAttach Framebuffer::GetFramebufferAttach() const noexcept { return eFramebufferAttach; }
-inline EFramebufferTex Framebuffer::GetFramebufferTex() const noexcept { return eFramebufferTex; }
+constexpr int32 Framebuffer::GetLevel() const noexcept { return iLevel; }
+constexpr inline Texture& Framebuffer::GetTexture() const noexcept { return *rTexture; }
+constexpr inline EFramebufferOp Framebuffer::GetFramebufferOp() const noexcept { return eFramebufferOp; }
+constexpr inline EFramebufferAttach Framebuffer::GetFramebufferAttach() const noexcept { return eFramebufferAttach; }
+constexpr inline EFramebufferTex Framebuffer::GetFramebufferTex() const noexcept { return eFramebufferTex; }

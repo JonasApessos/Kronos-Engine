@@ -1,6 +1,6 @@
 #include "Shader.h"
 
-Shader::Shader(const char* IncVertPath, const char* IncFragPath)
+Shader::Shader(char const* IncVertPath, char const* IncFragPath)
 {
     sShaderFile = IncVertPath;
     string sVertCode, sFragCode;
@@ -32,8 +32,8 @@ Shader::Shader(const char* IncVertPath, const char* IncFragPath)
             rLog->WriteAndDisplay("ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ - " + *e.what(), ELogSeverity::ELS_Error);
     }
 
-    const char* cVertShaderCode = sVertCode.c_str();
-    const char* cFragShaderCode = sFragCode.c_str();
+    char const* cVertShaderCode = sVertCode.c_str();
+    char const* cFragShaderCode = sFragCode.c_str();
 
     uint32 iVertShaderRef, iFragShaderRef;
     
@@ -52,7 +52,7 @@ Shader::~Shader()
     }
 }
 
-void Shader::CompileShader(uint32& IniShaderID, const char* IncShaderCode, EShaderCompilationType IneShaderType)
+void Shader::CompileShader(uint32& IniShaderID, char const* IncShaderCode, EShaderCompilationType IneShaderType)
 {
     int32 iSuccess;
     char cInfoLog[512];

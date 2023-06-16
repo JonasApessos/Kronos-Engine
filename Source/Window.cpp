@@ -3,7 +3,7 @@
 Window::Window(
 	int32 IniWidth, 
 	int32 IniHeight, 
-	const string& InsTitle) :
+	string const& InsTitle) :
 	iWidth(IniWidth),
 	iHeight(IniHeight),
 	sTitle(InsTitle)
@@ -26,7 +26,7 @@ Window::Window(Window&& InrWindow) noexcept :
 	InrWindow.rMonitor = nullptr;
 }
 
-Window::Window(const Window& InrWindow) noexcept :
+Window::Window(Window const& InrWindow) noexcept :
 	iWidth(InrWindow.iWidth),
 	iHeight(InrWindow.iHeight),
 	iRatioX(InrWindow.iRatioX),
@@ -43,7 +43,7 @@ Window::~Window()
 	Destroy();
 }
 
-Window& Window::operator=(const Window& InrWindow) noexcept
+Window& Window::operator=(Window const& InrWindow) noexcept
 {
 	if (this != &InrWindow)
 	{

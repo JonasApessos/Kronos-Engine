@@ -1,5 +1,6 @@
 #include "Texture.h"
 
+
 bool Texture::bInvertYOnLoad = true;
 
 Texture::Texture(
@@ -21,7 +22,7 @@ Texture::Texture(
 }
 
 Texture::Texture(
-    const char* IncImagePath,
+    char const* IncImagePath,
     ETextureType IneTextureType,
     ETextureDataType IneTextureDataType,
     ETextureSlot IneTextureSlot,
@@ -46,7 +47,7 @@ Texture::Texture(
 }
 
 Texture::Texture(
-    const char* IncImagePath,
+    char const* IncImagePath,
     ETextureType IneTextureType,
     ETextureDataType IneTextureDataType,
     ETextureSlot IneTextureSlot,
@@ -72,7 +73,7 @@ Texture::Texture(
 }
 
 Texture::Texture(
-    const char* IncImagePath,
+    char const* IncImagePath,
     ETextureType IneTextureType,
     ETextureDataType IneTextureDataType,
     ETextureSlot IneTextureSlot) :
@@ -114,7 +115,7 @@ Texture::Texture(
 }
 
 Texture::Texture(
-    const char* IncImagePath,
+    char const* IncImagePath,
     aiTextureType IneTextureType,
     ETextureDataType IneTextureDataType,
     ETextureSlot IneTextureSlot) :
@@ -155,7 +156,7 @@ Texture::Texture(
     stbi_image_free(PixelData);
 }
 
-Texture::Texture(const Texture& InrTexture) :
+Texture::Texture(Texture const& InrTexture) :
     eTextureDataType(InrTexture.eTextureDataType),
     eTextureMagFilter(InrTexture.eTextureMagFilter),
     eTextureMinFilter(InrTexture.eTextureMinFilter),
@@ -212,7 +213,7 @@ Texture Texture::operator=(Texture&& InrTexture)
     return InrTexture;
 }
 
-Texture Texture::operator=(const Texture& InrTexture)
+Texture Texture::operator=(Texture const& InrTexture)
 {
     eTextureDataType = InrTexture.eTextureDataType;
     eTextureDataType = InrTexture.eTextureDataType;

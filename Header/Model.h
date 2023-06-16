@@ -1,15 +1,20 @@
 #pragma once
 
+#include <vector>
 #include "Mesh.h"
+
+using std::vector;
 
 class Model
 {
 public:
 	Model();
-	Model(const Model& InrModel);
+	Model(vector<Mesh*>& InrMeshes);
+	Model(Model const& InrModel);
 	Model(Model&& InrModel);
+	
 
-	Model operator=(const Model& InrModel);
+	Model operator=(Model const& InrModel);
 	Model& operator=(Model&& InrModel);
 
 	~Model();
@@ -18,22 +23,29 @@ public:
 
 	void Draw(Shader& InrShader);
 
-	void AddMesh(const Mesh& InrMesh);
+	void Merge(Model const& InrModel);
 
-	Mesh& GetMesh(uint32 IniID);
-	Mesh& GetMesh(const string InsName);
+	inline void SetMeshList(vector<Mesh*> const& InrMeshes);
 
-	Texture& GetTexture(uint32 IniID);
-	Texture& GetTexture(const string InsName);
+	inline void AddMesh(Mesh* InrMesh);
 
-	vector<Mesh> GetMeshList();
-	vector<Texture*>& GetTextureList();
+	void RemoveMesh(uint64 IniHash);
+
+	Mesh* GetMesh(uint64 IniHash);
+
+	inline vector<Mesh*> GetMeshList();
 
 protected:
-	Log* rLog = new Log("LogModel");
+	Log* rLog;
 
 private:
-	vector<Mesh> rMeshes;
-
-	vector<Texture*>* rTextures = new vector<Texture*>();
+	vector<Mesh*> rMeshes;
 };
+
+//Add Mesh in the Model
+inline void Model::AddMesh(Mesh* InrMesh) { rMeshes.push_back(InrMesh); }
+
+inline void Model::SetMeshList(vector<Mesh*> const& InrMeshes) { rMeshes = InrMeshes; }
+
+//Get Mesh list from the Model
+inline vector<Mesh*> Model::GetMeshList() { return rMeshes; }

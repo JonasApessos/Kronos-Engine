@@ -4,7 +4,7 @@
 Log rGLLog = Log("LogOpenGL");
 
 
-bool GLError(uint16 IniGLError)
+bool GLError(uint32 IniGLError)
 {
 	switch (IniGLError)
 	{

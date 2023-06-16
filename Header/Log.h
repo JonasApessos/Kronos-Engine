@@ -11,12 +11,12 @@
 #include <errno.h>
 #include "Primitives.h"
 
-using KronosPrim::uint8, KronosPrim::int32, KronosPrim::uint32;
+using KronosPrim::int32, KronosPrim::uint32;
 using std::cout, std::cerr;
 using std::ios_base, std::fstream, std::string, std::getline, std::error_code, std::strerror;
 using std::filesystem::create_directory, std::filesystem::exists, std::filesystem::space, std::filesystem::space_info;
 
-enum ELogSeverity : uint8
+enum ELogSeverity : uint32
 {
 	ELS_Info = 0,
 	ELS_Warning = 1,
@@ -36,29 +36,29 @@ public:
 	string sLogName = "LogDefault";
 
 	Log();
-	Log(const string& InsLogName);
-	Log(const string& InsLogName, const string& InsFilePath, const string& InsFileName);
-	Log(const string& InsLogName, const string& InsFilePath, const string& InsFileName, int32 IniBitFlagMode);
+	Log(string const& InsLogName);
+	Log(string const& InsLogName, string const& InsFilePath, string const& InsFileName);
+	Log(string const& InsLogName, string const& InsFilePath, string const& InsFileName, int32 IniBitFlagMode);
 	Log(Log&& InrLog) noexcept;
-	Log(const Log& InrLog);
+	Log(Log const& InrLog);
 
 	~Log();
 
-	Log& operator=(const Log& InrLog) noexcept;
+	Log& operator=(Log const& InrLog) noexcept;
 	Log& operator=(Log&& InrLog) noexcept;
 
 	//Write to log file at specified file in construction
 	//by default INFO severity level is used
-	bool Write(const string& InsData);
+	bool Write(string const& InsData);
 	//version with custom severity
-	bool Write(const string& InsData, ELogSeverity IneLogSeverity);
+	bool Write(string const& InsData, ELogSeverity IneLogSeverity);
 
 	//Write to log file at specified file in construction
 	//by default INFO severity level is used
 	//dislay to console the log after writing
-	bool WriteAndDisplay(const string& InsData);
+	bool WriteAndDisplay(string const& InsData);
 	//version with custom severity
-	bool WriteAndDisplay(const string& InsData, ELogSeverity);
+	bool WriteAndDisplay(string const& InsData, ELogSeverity);
 
 	//Read and return buffer string with log message
 	string Read();
@@ -71,9 +71,9 @@ public:
 
 	//Set
 	inline void SetBitFlagMode(int32 IniBitFlagMode);
-	inline void SetFileName(const string& InsFileName);
-	inline void SetFilePath(const string& InsFileName);
-	inline void SetLogName(const string& InsLogName);
+	inline void SetFileName(string const& InsFileName);
+	inline void SetFilePath(string const& InsFileName);
+	inline void SetLogName(string const& InsLogName);
 
 	//Get
 	inline int32 GetBitFlagMode() const;
@@ -98,7 +98,7 @@ protected:
 
 	bool CheckFile();
 
-	void ShowErrorCode(const string& InsCustomErrorMessage);
+	void ShowErrorCode(string const& InsCustomErrorMessage);
 
 private:
 	fstream* rLogFile;
@@ -109,9 +109,9 @@ private:
 
 
 inline void Log::SetBitFlagMode(int32 IniBitFlagMode) { iBitFlagMode = IniBitFlagMode; }
-inline void Log::SetFileName(const string& InsFileName) { sFileName = InsFileName; }
-inline void Log::SetFilePath(const string& InsFilePath) { sFilePath = InsFilePath; }
-inline void Log::SetLogName(const string& InsLogName) { sLogName = InsLogName; }
+inline void Log::SetFileName(string const& InsFileName) { sFileName = InsFileName; }
+inline void Log::SetFilePath(string const& InsFilePath) { sFilePath = InsFilePath; }
+inline void Log::SetLogName(string const& InsLogName) { sLogName = InsLogName; }
 
 inline int32 Log::GetBitFlagMode() const { return iBitFlagMode; }
 inline string Log::GetFileName() const { return sFileName; }
