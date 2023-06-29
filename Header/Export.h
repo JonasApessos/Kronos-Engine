@@ -2,6 +2,7 @@
 
 #include <iomanip>
 #include "Model.h"
+#include "FileHandler.h"
 
 using std::setprecision, std::fixed, std::endl;
 using KronosPrim::uint32;
@@ -31,16 +32,18 @@ public:
 
 protected:
 
-    static void ExportAsObj(string const& IncPath, Model* InrModel);
-    static void ExportAsFBX(string const& IncPath, Model* InrModel);
-    static void ExportAsDXF(string const& IncPath, Model* InrModel);
-    static void ExportAsDAE(string const& IncPath, Model* InrModel);
+    static void ExportAsObj(Model* InrModel);
+    static void ExportAsFBX(Model* InrModel);
+    static void ExportAsDXF(Model* InrModel);
+    static void ExportAsDAE(Model* InrModel);
 
 private:
     Export();
 
     static Export* rExport;
+
+    static FileHandler rFile;
 };
 
 
-inline void Export::ExportModel(string const& InrPath, Model* InrModel, EExportType const IneExportType) { ExportModel(InrPath.c_str(), InrModel, IneExportType); }
+inline void Export::ExportModel(string const& InsPath, Model* InrModel, EExportType const IneExportType) { ExportModel(InsPath.c_str(), InrModel, IneExportType); }

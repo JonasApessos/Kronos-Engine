@@ -6,7 +6,7 @@ WINLDFLAGS = -lassimp -lglfw3 -lglew32 -lglu32 -lopengl32
 
 HFLAGS = -I Header
 
-SOURCE = Source/KronosEngine.cpp Source/Standard.cpp Source/Window.cpp Source/App.cpp Source/Shader.cpp Source/Camera.cpp Source/Renderer.cpp Source/Texture.cpp Source/Vector.cpp Source/Mesh.cpp Source/Model.cpp Source/Log.cpp Source/Import.cpp Source/Export.cpp Source/InputManager.cpp Source/InputHandler.cpp Source/Framebuffer.cpp
+SOURCE = Source/KronosEngine.cpp Source/Standard.cpp Source/Window.cpp Source/App.cpp Source/Shader.cpp Source/Camera.cpp Source/Renderer.cpp Source/Texture.cpp Source/Vector.cpp Source/Mesh.cpp Source/Model.cpp Source/Log.cpp Source/FileHandler.cpp Source/Import.cpp Source/Export.cpp Source/InputManager.cpp Source/InputHandler.cpp Source/Framebuffer.cpp
 
 setup:
 	mkdir build-rel

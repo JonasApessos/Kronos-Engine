@@ -2,6 +2,8 @@
 
 Export* Export::rExport = nullptr;
 
+FileHandler Export::rFile = FileHandler();
+
 Export::Export() {}
 
 Export* Export::GetInstance() 
@@ -14,10 +16,16 @@ Export* Export::GetInstance()
 
 void Export::ExportModel(char const* IncPath, Model* InrModel, EExportType const IneExportType)
 {
+    string sPath = IncPath;
+
+    rFile.SetFileName(sPath.substr(sPath.find_last_of("/\\") + 1));
+    rFile.SetFilePath(sPath.erase(sPath.find_last_of("/\\") + 1));
+    rFile.SetBitFlagMode(ios_base::out | ios_base::app);
+
     switch(static_cast<uint32>(IneExportType))
     {
         case EExportType::EET_OBJ:
-            ExportAsObj(IncPath, InrModel);
+            ExportAsObj(InrModel);
             break;
         case EExportType::EET_FBX:
             //ExportAsFBX(IncPath, InrModel);
@@ -29,7 +37,7 @@ void Export::ExportModel(char const* IncPath, Model* InrModel, EExportType const
             //ExportAsDAE(IncPath, InrModel);
             break;
         default:
-            ExportAsObj(IncPath, InrModel);
+            ExportAsObj(InrModel);
     }
 }
 
@@ -37,15 +45,11 @@ void Export::ExportModel(char const* IncPath, Model* InrModel, EExportType const
 //TODO: Improve Exporter, add safety check for:
 //file not open or access denied
 //Data Structure Incomplete etc.
-void Export::ExportAsObj(string const& InsPath, Model* InrModel)
+void Export::ExportAsObj(Model* InrModel)
 {
-    fstream rFile;
+    string sData = "";
 
-    string Path = InsPath;
-
-    Path.append(".obj");
-
-    rFile.open(Path, ios_base::in | ios_base::out | ios_base::app);
+    rFile.SetFileName(rFile.GetFileName().append(".obj"));
 
     uint32 iMeshListIndex = 0;
     uint32 iSubIndex = 0;
@@ -59,52 +63,56 @@ void Export::ExportAsObj(string const& InsPath, Model* InrModel)
             vector<SVector> rVectorList = rMeshList[iMeshListIndex]->GetVertices();
             vector<uint32> rIndicesList = rMeshList[iMeshListIndex]->GetIndices();
             
-            rFile << "#Vector List" << endl;
+            sData.append("#Vector List\r\n");
 
             //Vertex List
             while(iSubIndex < rVectorList.size())
             {
-                rFile << fixed << setprecision(5) << "v " << rVectorList[iSubIndex].Position.x << " " << rVectorList[iSubIndex].Position.y << " " << rVectorList[iSubIndex].Position.z << " " << 1.0f << std::endl; 
+                
+                sData.append("v " + to_string(rVectorList[iSubIndex].Position.x) + " " + to_string(rVectorList[iSubIndex].Position.y) + " " + to_string(rVectorList[iSubIndex].Position.z) + " " + to_string(1.0f) + "\r\n"); 
 
                 ++iSubIndex;
             }
 
+
             iSubIndex = 0;
 
-            rFile << "#Texture Coord List" << endl;
+            sData.append("#Texture Coord List\r\n");
 
             //Texture coord List
             while(iSubIndex < rVectorList.size())
             {
-                rFile << fixed << setprecision(5) << "vt " << rVectorList[iSubIndex].TexCoords.x << " " << rVectorList[iSubIndex].TexCoords.y << std::endl;
+                sData.append("vt " + to_string(rVectorList[iSubIndex].TexCoords.x) + " " + to_string(rVectorList[iSubIndex].TexCoords.y) + "\r\n");
                 ++iSubIndex;
             }
 
             iSubIndex = 0;
 
-            rFile << "#Normal List" << endl;
+            sData.append("#Normal List\r\n");
 
             //Vertex Normal List
             while(iSubIndex < rVectorList.size())
             {                
-                rFile << fixed << setprecision(5) << "vp " << rVectorList[iSubIndex].Normal.x << " " << rVectorList[iSubIndex].Normal.y << " " << rVectorList[iSubIndex].Normal.z << std::endl;
+                sData.append("vp " + to_string(rVectorList[iSubIndex].Normal.x) + " " + to_string(rVectorList[iSubIndex].Normal.y) + " " + to_string(rVectorList[iSubIndex].Normal.z) + "\r\n");
                 ++iSubIndex;
             }
 
             iSubIndex = 0;
 
-            rFile << "#Indices List" << endl;
+            sData.append("#Indices List\r\n");
 
             //Indices List
             while(iSubIndex < rIndicesList.size())
             {     
                 if(!(iSubIndex % 3))
-                    rFile << endl << "f ";
+                    sData.append("\r\nf ");
 
-                rFile << " " << rIndicesList[iSubIndex] + 1;
+                sData.append(" " + to_string(rIndicesList[iSubIndex] + 1));
 
                 ++iSubIndex;
             }
+
+            rFile.Write(sData);
 
             iSubIndex = 0;
         }
@@ -113,26 +121,23 @@ void Export::ExportAsObj(string const& InsPath, Model* InrModel)
     }
 
     iMeshListIndex = 0;
-
-
-    rFile.close();
 }
 
 
 //TODO:Exporter for FBX format
-void Export::ExportAsFBX(string const& IncPath, Model* InrModel)
+void Export::ExportAsFBX(Model* InrModel)
 {
 
 }
 
 //TODO:Exporter for DXF format
-void Export::ExportAsDXF(string const& IncPath, Model* InrModel)
+void Export::ExportAsDXF(Model* InrModel)
 {
 
 }
 
 //TODO:Exporter for DAE format
-void Export::ExportAsDAE(string const& IncPath, Model* InrModel)
+void Export::ExportAsDAE(Model* InrModel)
 {
 
 }

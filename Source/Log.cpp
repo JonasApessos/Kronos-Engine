@@ -1,31 +1,18 @@
 #include "Log.h"
 
-Log::Log() 
-{
-	rLogFile = new fstream();
+Log::Log() : 
+rLogFile("Log/","Log.txt", ios_base::in | ios_base::out | ios_base::app) { Initialization(); }
 
-	Initialization();
-}
-
-Log::Log(string const& InsLogName) : sLogName(InsLogName)
-{
-	rLogFile = new fstream();
-
-	Initialization();
-}
+Log::Log(string const& InsLogName) : 
+rLogFile("Log/","Log.txt", ios_base::in | ios_base::out | ios_base::app),
+sLogName(InsLogName) { Initialization(); }
 
 Log::Log(
 	string const& InsLogName,
 	string const& InsFilePath,
 	string const& InsFileName) :
 	sLogName(InsLogName),
-	sFilePath(InsFilePath),
-	sFileName(InsFileName)
-{
-	rLogFile = new fstream();
-
-	Initialization();
-}
+	rLogFile(InsFilePath, InsFileName, ios_base::in | ios_base::out | ios_base::app) { Initialization(); }
 
 Log::Log(
 	string const& InsLogName,
@@ -33,57 +20,22 @@ Log::Log(
 	string const& InsFileName,
 	int32 IniBitFlagMode) :
 	sLogName(InsLogName),
-	iBitFlagMode(IniBitFlagMode),
-	sFilePath(InsFilePath),
-	sFileName(InsFileName)	
-{
-	rLogFile = new fstream();
-	Initialization();
-}
+	rLogFile(InsFilePath, InsFileName, ios_base::in | ios_base::out | ios_base::app) { Initialization(); }
 
 Log::Log(Log&& InrLog) noexcept : 
-	sLogName(InrLog.sLogName),
-	sFileName(InrLog.sFileName),
-	sFilePath(InrLog.sFilePath),
-	iBitFlagMode(InrLog.iBitFlagMode)
-{
-	rLogFile = InrLog.rLogFile;
-
-	InrLog.rLogFile = nullptr;
-}
+	sLogName(InrLog.sLogName) { rLogFile = InrLog.rLogFile; }
 
 Log::Log(Log const& InrLog) :
-	sLogName(InrLog.sLogName),
-	sFilePath(InrLog.sFilePath),
-	sFileName(InrLog.sFileName),
-	iBitFlagMode(InrLog.iBitFlagMode)
-{
-	rLogFile = InrLog.rLogFile;
-}
+	sLogName(InrLog.sLogName) { rLogFile = InrLog.rLogFile; }
 
-Log::~Log()
-{
-	if (rLogFile != nullptr)
-	{
-		delete rLogFile;
-
-		rLogFile = nullptr;
-	}
-}
+Log::~Log() {}
 
 Log& Log::operator=(Log&& InrLog) noexcept
 {
 	if (this != &InrLog)
 	{
-		delete rLogFile;
-
 		rLogFile = InrLog.rLogFile;
 		sLogName = InrLog.sLogName;
-		sFilePath = InrLog.sFilePath;
-		sFileName = InrLog.sFileName;
-		iBitFlagMode = InrLog.iBitFlagMode;
-
-		InrLog.rLogFile = nullptr;
 	}
 
 	return *this;
@@ -91,15 +43,9 @@ Log& Log::operator=(Log&& InrLog) noexcept
 
 Log& Log::operator=(Log const& InrLog) noexcept
 {
-	if (this != &InrLog)
-	{
-		rLogFile = InrLog.rLogFile;
+	rLogFile = InrLog.rLogFile;
 
-		sLogName = InrLog.sLogName;
-		sFilePath = InrLog.sFilePath;
-		sFileName = InrLog.sFileName;
-		iBitFlagMode = InrLog.iBitFlagMode;
-	}
+	sLogName = InrLog.sLogName;
 
 	return *this;
 }
@@ -107,15 +53,14 @@ Log& Log::operator=(Log const& InrLog) noexcept
 bool Log::Write(string const& InsData)
 {
 	//if pass custom checks and input data is not empty
-	if (CheckFile() && !InsData.empty() && rLogFile != nullptr)
+	if (!InsData.empty())
 	{
 		ERRORCODE iErrorCode = 0;
 		tm* rTimeStruct;
-		string sSeverity;
+		string sSeverity = "";
+		string sMsg = "";
 
 		TranslateSeverity(ELogSeverity::ELS_Info, sSeverity);
-
-		rLogFile->open(sFilePath + sFileName, static_cast<ios_base::openmode>(iBitFlagMode));
 
 		//get time since eppoch using C function
 		rTimeStruct = localtime(&rTime);
@@ -139,15 +84,14 @@ bool Log::Write(string const& InsData)
 		//format the eppoch time to a string format with structure date and time
 		strftime(cTimeBuffer, sizeof(cTimeBuffer), "%d/%m/%y - %T", rTimeStruct);
 
+		sMsg.append("[" + sLogName + "]" + "[" + sSeverity + "]" + "[" + cTimeBuffer + "]: " + InsData + "\r\n");
 
-		*rLogFile << "[" << sLogName << "] " << "[" << sSeverity << "] " << "[" << cTimeBuffer << "]: " << InsData << "\r\n";
-
-		rLogFile->close();
+		rLogFile.Write(sMsg);
 
 		return true;
 	}
 	else
-		cerr << "[LogException] " << "Failed to write to file\r\n";
+		cerr << "[LogException] Failed to write Log\r\n";
 
 	return false;
 
@@ -156,15 +100,16 @@ bool Log::Write(string const& InsData)
 bool Log::Write(string const& InsData, ELogSeverity IneLogSeverity)
 {
 	//if pass custom checks and input data is not empty
-	if (CheckFile() && !InsData.empty() && rLogFile != nullptr)
+	if (!InsData.empty())
 	{
 		ERRORCODE iErrorCode = 0;
 		tm* rTimeStruct;
-		string sSeverity;
+		string sSeverity = "";
+		string sMsg = "";
 
 		TranslateSeverity(IneLogSeverity, sSeverity);
 
-		rLogFile->open(sFilePath + sFileName, static_cast<ios_base::openmode>(iBitFlagMode));
+		//rLogFile->open(sFilePath + sFileName, static_cast<ios_base::openmode>(iBitFlagMode));
 
 		//get time since eppoch using C function
 		rTimeStruct = localtime(&rTime);
@@ -188,14 +133,14 @@ bool Log::Write(string const& InsData, ELogSeverity IneLogSeverity)
 		//format the eppoch time to a string format with structure date and time
 		strftime(cTimeBuffer, sizeof(cTimeBuffer), "%d/%m/%y - %T", rTimeStruct);
 
-		*rLogFile << "[" << sLogName << "] " << "[" << sSeverity << "] " << "[" << cTimeBuffer << "]: " << InsData << "\r\n";
+		sMsg.append("[" + sLogName + "]" + "[" + sSeverity + "]" + "[" + cTimeBuffer + "]: " + InsData + "\r\n");
 
-		rLogFile->close();
+		rLogFile.Write(sMsg);
 
 		return true;
 	}
 	else
-		cerr << "[LogException] " << "Failed to write to file\r\n";
+		cerr << "[LogException] Failed to write Log\r\n";
 
 	return false;
 }
@@ -203,16 +148,15 @@ bool Log::Write(string const& InsData, ELogSeverity IneLogSeverity)
 bool Log::WriteAndDisplay(string const& InsData)
 {
 	//if pass custom checks and input data is not empty
-	if (CheckFile() && !InsData.empty() && rLogFile != nullptr)
+	if (!InsData.empty())
 	{
 		ERRORCODE iErrorCode = 0;
 		tm* rTimeStruct;
-		string sSeverity;
+		string sSeverity = "";
+		string sMsg = "";
 
 		TranslateSeverity(ELogSeverity::ELS_Info, sSeverity);
 
-		rLogFile->open(sFilePath + sFileName, static_cast<ios_base::openmode>(iBitFlagMode));
-		
 		//get time since eppoch using C function
 		rTimeStruct = localtime(&rTime);
 
@@ -235,16 +179,16 @@ bool Log::WriteAndDisplay(string const& InsData)
 		//format the eppoch time to a string format with structure date and time
 		strftime(cTimeBuffer, sizeof(cTimeBuffer), "%d/%m/%y - %T", rTimeStruct);
 
+		sMsg.append("[" + sLogName + "]" + "[" + sSeverity + "]" + "[" + cTimeBuffer + "]: " + InsData + "\r\n");
 
-		*rLogFile << "[" << sLogName << "] " << "[" << sSeverity << "] " << "[" << cTimeBuffer << "]: " << InsData << "\r\n";
-		cerr << "[" << sLogName << "] " << "[" << sSeverity << "] " << "[" << cTimeBuffer << "]: " << InsData << "\r\n";
+		rLogFile.Write(sMsg);
 
-		rLogFile->close();
+		cerr << sMsg;
 
 		return true;
 	}
 	else
-		cerr << "[LogException] " << "Failed to write to file\r\n";
+		cerr << "[LogException] Failed to write Log\r\n";
 
 	return false;
 }
@@ -252,15 +196,14 @@ bool Log::WriteAndDisplay(string const& InsData)
 bool Log::WriteAndDisplay(string const& InsData, ELogSeverity IneLogSeverity)
 {
 	//if pass custom checks and input data is not empty
-	if (CheckFile() && !InsData.empty() && rLogFile != nullptr)
+	if (!InsData.empty())
 	{
 		ERRORCODE iErrorCode = 0;
 		tm* rTimeStruct;
-		string sSeverity;
+		string sSeverity = "";
+		string sMsg = "";
 
 		TranslateSeverity(IneLogSeverity, sSeverity);
-
-		rLogFile->open(sFilePath + sFileName, static_cast<ios_base::openmode>(iBitFlagMode));
 
 		//get time since eppoch using C function
 		rTimeStruct = localtime(&rTime);
@@ -284,54 +227,23 @@ bool Log::WriteAndDisplay(string const& InsData, ELogSeverity IneLogSeverity)
 		//format the eppoch time to a string format with structure date and time
 		strftime(cTimeBuffer, sizeof(cTimeBuffer), "%d/%m/%y - %T", rTimeStruct);
 
-		*rLogFile << "[" << sLogName << "] " << "[" << sSeverity << "] " << "[" << cTimeBuffer << "]: " << InsData << "\r\n";
-		cerr << "[" << sLogName << "] " << "[" << sSeverity << "] " << "[" << cTimeBuffer << "]: " << InsData << "\r\n";
+		sMsg.append("[" + sLogName + "]" + "[" + sSeverity + "]" + "[" + cTimeBuffer + "]: " + InsData + "\r\n");
 
-		rLogFile->close();
+		rLogFile.Write(sMsg);
+
+		cerr << sMsg;
 
 		return true;
 	}
 	else
-		cerr << "[LogException] " << "Failed to write to file\r\n";
+		cerr << "[LogException] Failed to write to file\r\n";
 
 	return false;
 }
 
-string Log::Read()
-{
-	string sReadData;
-	string Line;
-
-	if (CheckFile() && rLogFile != nullptr)
-	{
-		rLogFile->open(sFilePath + sFileName, static_cast<ios_base::openmode>(iBitFlagMode));
-
-		while (getline(*rLogFile, Line))
-			sReadData.append("\r\n" + Line);
-
-		rLogFile->close();
-	}
-	else
-		cerr << "[LogException] " << "Failed to read file\r\n";
-
-	return sReadData;
-}
-
 void Log::Display()
 {
-	string Line;
-
-	if (CheckFile() && rLogFile != nullptr)
-	{
-		rLogFile->open(sFilePath + sFileName, static_cast<ios_base::openmode>(iBitFlagMode));
-
-		while (getline(*rLogFile, Line))
-			cout << Line << "\r\n";
-
-		rLogFile->close();
-	}
-	else
-		cerr << "[LogException] " << "Failed to read file\r\n";
+	cout << rLogFile.Read();
 }
 
 void Log::TranslateSeverity(ELogSeverity IneLogSeverity, string& InsTranslatedSeverity)
@@ -367,75 +279,4 @@ void Log::TranslateSeverity(ELogSeverity IneLogSeverity, string& InsTranslatedSe
 	}
 }
 
-bool Log::CheckFile()
-{
-	space_info DriveSpaceInfo = space(sFilePath, rErrorCode);
-
-	if (rErrorCode.value() != 0)
-		ShowErrorCode("Failed to request drive memory info");
-
-	//check drive if it has enough space (min 4mb)
-	if (DriveSpaceInfo.available > iMinFileSizeBytes)
-	{
-		if (exists(sFilePath + sFileName, rErrorCode) && rLogFile != nullptr)
-		{
-			switch (rLogFile->rdstate())
-			{
-			case ios_base::goodbit:
-			case ios_base::eofbit:
-				return true;
-			case ios_base::failbit:
-				cerr << "failbit detected\r\n";
-				break;
-			case ios_base::badbit:
-				cerr << "badbit detected\r\n";
-				break;
-			default:
-				cout << "No state detected\r\n";
-			}
-		}
-		else
-			ShowErrorCode("File not found - Error Category");
-	}
-	else
-		cerr << "[LogException] " << "Not enough space on current drive \r\n";
-
-	return false;
-}
-
-void Log::ShowErrorCode(string const& InsCustomErrorMessage)
-{
-	cerr << "[LogException] " << InsCustomErrorMessage << ": Error Category" << rErrorCode.category().name() << ", Code : " << rErrorCode.value() << ", Error : " << rErrorCode.message() << "\r\n";
-	rErrorCode.clear();
-}
-
-void Log::Initialization()
-{
-	rLogFile->exceptions(ios_base::failbit | ios_base::badbit);
-
-	if (rLogFile != nullptr)
-	{
-		//If folder does not exists, create it
-		if (!exists(sFilePath))
-		{
-			if (!create_directory(sFilePath, rErrorCode))
-				ShowErrorCode("Failed to create directory");
-		}
-
-		//if the file does not exists, create it
-		if (!exists(sFilePath + sFileName))
-		{
-			rLogFile->open(sFilePath + sFileName, static_cast<ios_base::openmode>(iBitFlagMode));
-			rLogFile->close();
-			rLogFile->clear();
-		}
-
-		//custom check file to see if previous steps are ok
-		if (!CheckFile())
-			cerr << "[LogException] " << "Failed to create file\r\n";
-
-		rTime = time(0);
-	}
-	else
-		cerr << "[LogException] " << "File object handler failed to init \r\n";
-}
+void Log::Initialization(){ rTime = time(0);}

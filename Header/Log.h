@@ -3,18 +3,11 @@
 #define __STDC_WANT_LIB_EXT1__ 1
 
 #include <iostream>
-#include <fstream>
-#include <string>
-#include <ctime>
-#include <filesystem>
-#include <cstring>
-#include <errno.h>
 #include "Primitives.h"
+#include "FileHandler.h"
 
 using KronosPrim::int32, KronosPrim::uint32;
 using std::cout, std::cerr;
-using std::ios_base, std::fstream, std::string, std::getline, std::error_code, std::strerror;
-using std::filesystem::create_directory, std::filesystem::exists, std::filesystem::space, std::filesystem::space_info;
 
 enum ELogSeverity : uint32
 {
@@ -27,11 +20,6 @@ enum ELogSeverity : uint32
 class Log
 {
 public:
-
-	int32 iBitFlagMode = ios_base::in | ios_base::out | ios_base::app;
-
-	string sFileName = "Log.txt";
-	string sFilePath = "Log/";
 
 	string sLogName = "LogDefault";
 
@@ -70,15 +58,9 @@ public:
 	void TranslateSeverity(ELogSeverity IneLogSeverity, string& InsTranslatedString);
 
 	//Set
-	inline void SetBitFlagMode(int32 IniBitFlagMode);
-	inline void SetFileName(string const& InsFileName);
-	inline void SetFilePath(string const& InsFileName);
 	inline void SetLogName(string const& InsLogName);
 
 	//Get
-	inline int32 GetBitFlagMode() const;
-	inline string GetFileName() const;
-	inline string GetFilePath() const;
 	inline string GetLogName() const;
 
 protected:
@@ -91,29 +73,18 @@ protected:
 	#endif
 	
 
-	uint32 iMinFileSizeBytes = 4194304;
-
 	time_t rTime = 0;
 	tm rTimeStruct = tm();
 
-	bool CheckFile();
-
-	void ShowErrorCode(string const& InsCustomErrorMessage);
-
 private:
-	fstream* rLogFile;
-	error_code rErrorCode;
+	FileHandler rLogFile;
 
 	void Initialization();
 };
 
 
-inline void Log::SetBitFlagMode(int32 IniBitFlagMode) { iBitFlagMode = IniBitFlagMode; }
-inline void Log::SetFileName(string const& InsFileName) { sFileName = InsFileName; }
-inline void Log::SetFilePath(string const& InsFilePath) { sFilePath = InsFilePath; }
+
 inline void Log::SetLogName(string const& InsLogName) { sLogName = InsLogName; }
 
-inline int32 Log::GetBitFlagMode() const { return iBitFlagMode; }
-inline string Log::GetFileName() const { return sFileName; }
-inline string Log::GetFilePath() const { return sFilePath; }
+
 inline string Log::GetLogName() const { return sLogName; }
