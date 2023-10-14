@@ -7,6 +7,8 @@ Debian:
   
 this will download the basic suit in order to build the project
 
+Also install:
+  <code>sudo apt install make</code>
 
 if you are using Linux distrubution you can install the following packages with the command below:
 Debian:
