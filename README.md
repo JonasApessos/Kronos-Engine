@@ -34,7 +34,7 @@ Working on some futures in order to reduce needed librarys to link.
 First run the setup using
 <code>make Setup</code>
 
-You will need to run also the setup for DEBUG=0 with the following command
+You will also need to run the setup for DEBUG=0 with the following command
 <code>make Setup DEBUG=0</code>
 
 In order to build the project after installing all the necessary librarys, you run the following command:
