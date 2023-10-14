@@ -1,106 +1,110 @@
 #pragma once
+
 #include <glm/glm.hpp>
+
 #include <vector>
+
+#include "math.h"
 
 using glm::vec2, glm::vec3;
 
-struct FVector
+/** \struct SVector
+*   \brief Vector structure*/
+struct SVector
 {
 	vec3 Position;
 	vec3 Normal;
 	vec2 TexCoords;
 
-	FVector() noexcept;
-	FVector(const vec3& InrPos, const vec3& InrNorm, const vec2& IntTexCoord) noexcept;
-	FVector(const FVector& InrVertex) noexcept;
-	FVector(const FVector&& InrVertex) noexcept;
+	SVector() noexcept;
+	SVector(vec3 const& InrPos, vec3 const& InrNorm, vec2 const& InrTexCoord) noexcept;
+	SVector(SVector const& InrVertex) noexcept;
+	SVector(SVector&& InrVertex) noexcept;
 
-	virtual void Move(FVector&& InrVertex);
+	inline SVector operator +(SVector const& InrVertex) noexcept;
+	inline void operator +(vec3 const& InrVector) noexcept;
+	inline SVector operator -(SVector const& InrVertex) noexcept;
+	inline void operator -(vec3 const& InrVector) noexcept;
+	inline SVector operator *(SVector const& InrVertex) noexcept;
+	inline void operator *(vec3 const& InrVector) noexcept;
+	inline SVector operator /(SVector const& InrVertex);
+	inline void operator /(vec3 const& InrVector);
+	SVector operator =(SVector const& InrVertex) noexcept;
+	SVector operator =(SVector&& InrVertex) noexcept;
 
-	inline virtual void operator +(const FVector& InrVertex);
-	inline virtual void operator +(const vec3& InrVector);
-	inline virtual void operator -(const FVector& InrVertex);
-	inline virtual void operator -(const vec3& InrVector);
-	inline virtual void operator *(const FVector& InrVertex);
-	inline virtual void operator *(const vec3& InrVector);
-	inline virtual void operator /(const FVector& InrVertex);
-	inline virtual void operator /(const vec3& InrVector);
-	virtual void operator =(const FVector& InrVertex);
-	virtual void operator =(FVector&& InrVertex);
+	inline void SetPosition(vec3 const& InrPos) noexcept;
+	inline void SetPosition(float const InrPosX, float const InrPosY, float const InrPosZ) noexcept;
 
-	inline void SetPosition(const vec3& InrPos);
-	inline void SetPosition(const float InrPosX, const float InrPosY, const float InrPosZ);
+	inline void SetNormal(vec3 const& InrNorm) noexcept;
+	inline void SetNormal(float const InrNormX, float const InrNormY, float const InrNormZ) noexcept;
 
-	inline void SetNormal(const vec3& InrNorm);
-	inline void SetNormal(const float InrNormX, const float InrNormY, const float InrNormZ);
+	inline void SetTexCoord(vec2 const& InrTexCoord) noexcept;
+	inline void SetTexCoord(float const InrTexCoordX, float const InrTexCoordY) noexcept;
 
-	inline void SetTexCoord(const vec2& InrTexCoord);
-	inline void SetTexCoord(const float InrTexCoordX, const float InrTexCoordY);
+	constexpr inline vec3 GetPosition() const noexcept;
+	constexpr inline vec3 GetNormal() const noexcept;
+	constexpr inline vec2 SetTexCoord() const noexcept;
 
-	inline vec3 GetPosition() const;
-	inline vec3 GetNormal() const;
-	inline vec2 SetTexCoord() const;
-
-	inline float GetDotProduct(const vec3& InrVertex) const;
-	inline vec3 GetCrossProduct(const vec3& InrVertex) const;
-	inline vec3 GetDirection(const vec3& InrVertex) const;
-	inline float GetLength(const vec3& InrVec) const;
-	inline float GetDistance(const vec3& InrVec) const;
+	constexpr inline float GetDotProduct(vec3 const& InrVertex) const noexcept;
+	constexpr inline vec3 GetCrossProduct(vec3 const& InrVertex) const noexcept;
+	constexpr inline vec3 GetDirection(vec3 const& InrVertex) const noexcept;
+	constexpr inline float GetLength(vec3 const& InrVec) const noexcept;
+	constexpr inline float GetDistance(vec3 const& InrVec) const noexcept;
 };
 
 
 
-inline void FVector::operator+(const FVector& InrVertex) { Position += InrVertex.Position; }
-inline void FVector::operator+(const vec3& InrVector) { Position += InrVector; }
+inline SVector SVector::operator+(SVector const& InrVertex) noexcept { Position += InrVertex.Position; return InrVertex; }
+inline void SVector::operator+(vec3 const& InrVector) noexcept { Position += InrVector; }
 
-inline void FVector::operator-(const FVector& InrVertex) { Position -= InrVertex.Position; }
-inline void FVector::operator-(const vec3& InrVector) { Position -= InrVector; }
+inline SVector SVector::operator-(SVector const& InrVertex) noexcept { Position -= InrVertex.Position; return InrVertex; }
+inline void SVector::operator-(vec3 const& InrVector) noexcept { Position -= InrVector; }
 
-inline void FVector::operator*(const FVector& InrVertex) { Position *= InrVertex.Position; }
-inline void FVector::operator*(const vec3& InrVector) { Position *= InrVector; }
+inline SVector SVector::operator*(SVector const& InrVertex) noexcept { Position *= InrVertex.Position; return InrVertex; }
+inline void SVector::operator*(vec3 const& InrVector) noexcept { Position *= InrVector;}
 
-inline void FVector::operator/(const FVector& InrVertex) { Position /= InrVertex.Position; }
-inline void FVector::operator/(const vec3& InrVector) { Position /= InrVector; }
+inline SVector SVector::operator/(SVector const& InrVertex) { Position /= InrVertex.Position; return InrVertex; }
+inline void SVector::operator/(vec3 const& InrVector) { Position /= InrVector; }
 
-inline void FVector::SetPosition(const vec3& InrPos) { Position = InrPos; }
-inline void FVector::SetPosition(const float InrPosX, const float InrPosY, const float InrPosZ) { Position.x = InrPosX; Position.y = InrPosY; Position.z = InrPosZ; }
+inline void SVector::SetPosition(vec3 const& InrPos) noexcept { Position = InrPos; }
+inline void SVector::SetPosition(float const InrPosX, float const InrPosY, float const InrPosZ) noexcept { Position.x = InrPosX; Position.y = InrPosY; Position.z = InrPosZ; }
 
-inline void FVector::SetNormal(const vec3& InrNorm) { Normal = InrNorm; }
-inline void FVector::SetNormal(const float InrNormX, const float InrNormY, const float InrNormZ) { Normal.x = InrNormX; Normal.y = InrNormY; Normal.z = InrNormZ; }
+inline void SVector::SetNormal(vec3 const& InrNorm) noexcept { Normal = InrNorm; }
+inline void SVector::SetNormal(float const InrNormX, float const InrNormY, float const InrNormZ) noexcept { Normal.x = InrNormX; Normal.y = InrNormY; Normal.z = InrNormZ; }
 
-inline void FVector::SetTexCoord(const vec2& InrTexCoord) { TexCoords = InrTexCoord; }
-inline void FVector::SetTexCoord(const float InrTexCoordX, const float InrTexCoordY) { TexCoords.x = InrTexCoordX; TexCoords.y = InrTexCoordY; }
+inline void SVector::SetTexCoord(vec2 const& InrTexCoord) noexcept { TexCoords = InrTexCoord; }
+inline void SVector::SetTexCoord(float const InrTexCoordX, float const InrTexCoordY) noexcept { TexCoords.x = InrTexCoordX; TexCoords.y = InrTexCoordY; }
 
-inline vec3 FVector::GetPosition() const { return Position; }
-inline vec3 FVector::GetNormal() const { return Normal; }
-inline vec2 FVector::SetTexCoord() const { return TexCoords; }
+constexpr inline vec3 SVector::GetPosition() const noexcept { return Position; }
+constexpr inline vec3 SVector::GetNormal() const noexcept { return Normal; }
+constexpr inline vec2 SVector::SetTexCoord() const noexcept { return TexCoords; }
 
-inline float FVector::GetDotProduct(const vec3& InrVertex) const
+constexpr inline float SVector::GetDotProduct(vec3 const& InrVertex) const  noexcept
 {
 	return Position.x * InrVertex.x +
 		   Position.y * InrVertex.y +
 		   Position.z * InrVertex.z;
 }
 
-inline vec3 FVector::GetCrossProduct(const vec3& InrVec) const
+constexpr inline vec3 SVector::GetCrossProduct(vec3 const& InrVec) const noexcept
 {
 	return vec3(Position.y * InrVec.z - Position.z * InrVec.y,
 				Position.x * InrVec.z - Position.z * InrVec.x,
 				Position.x * InrVec.y - Position.y * InrVec.x);
 }
 
-inline vec3 FVector::GetDirection(const vec3& InrVertex) const
+constexpr inline vec3 SVector::GetDirection(vec3 const& InrVertex) const noexcept
 {
 	return vec3(abs(abs(Position.x) - abs(InrVertex.x)),
 		   abs(abs(Position.y) - abs(InrVertex.y)),
 		   abs(abs(Position.z) - abs(InrVertex.z)));
 }
 
-inline float FVector::GetLength(const vec3& InrVec) const
+constexpr inline float SVector::GetLength(vec3 const& InrVec) const noexcept
 {
 	return abs(abs(Position.x) - abs(InrVec.x)) +
 		   abs(abs(Position.y) - abs(InrVec.y)) +
 		   abs(abs(Position.z) - abs(InrVec.z));
 }
 
-inline float FVector::GetDistance(const vec3& InrVec) const { return powf(GetLength(InrVec),2) + 1; }
+constexpr inline float SVector::GetDistance(vec3 const& InrVec) const noexcept { return powf(GetLength(InrVec),2) + 1; }

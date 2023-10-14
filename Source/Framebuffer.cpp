@@ -2,9 +2,9 @@
 
 
 Framebuffer::Framebuffer(
-	EFramebufferOp IneFrameBufferOp,
-	EFramebufferAttach IneFramebufferAttach,
-	EFramebufferTex IneFramebufferTex,
+	EGLFramebufferOp IneFrameBufferOp,
+	EGLFramebufferAttach IneFramebufferAttach,
+	EGLFramebufferTex IneFramebufferTex,
 	Texture* InrTexture,
 	int32 IniLevel) :
 	eFramebufferOp(IneFrameBufferOp),
@@ -16,7 +16,7 @@ Framebuffer::Framebuffer(
 	CreateBuffer();
 }
 
-Framebuffer::Framebuffer(const Framebuffer& InrFramebuffer) :
+Framebuffer::Framebuffer(Framebuffer const& InrFramebuffer) :
 	iFrameBufferID(InrFramebuffer.iFrameBufferID),
 	eFramebufferOp(InrFramebuffer.eFramebufferOp),
 	eFramebufferAttach(InrFramebuffer.eFramebufferAttach),
@@ -87,8 +87,7 @@ void Framebuffer::RecreateBuffer()
 	}
 	else
 	{
-		if(rLog != nullptr)
-			rLog->WriteAndDisplay("buffer id not detected at recreation, attempting to create buffer anyway.", ELogSeverity::ELS_Warning);
+		rLog.WriteAndDisplay("buffer id not detected at recreation, attempting to create buffer anyway.", ELogSeverity::ELS_Warning);
 
 		CreateBuffer();
 	}
@@ -96,58 +95,48 @@ void Framebuffer::RecreateBuffer()
 
 void Framebuffer::CheckFramebufferState()
 {
-	GLenum eStatusCode = glCheckNamedFramebufferStatus(iFrameBufferID, eFramebufferOp);
+	GLenum eStatusCode = glCheckNamedFramebufferStatus(iFrameBufferID, static_cast<GLenum>(eFramebufferOp));
 
 	switch (eStatusCode)
 	{
-	case EFramebufferStatus::EFS_Complete:
-		if(rLog != nullptr)
-			rLog->WriteAndDisplay("Framebuffer creation complete", ELogSeverity::ELS_Info);
+	case static_cast<GLenum>(EGLFramebufferStatus::EGLFS_Complete):
+			rLog.WriteAndDisplay("Framebuffer creation complete", ELogSeverity::ELS_Info);
 		break;
 
-	case EFramebufferStatus::EFS_IncompleteAttachment:
-		if(rLog != nullptr)
-			rLog->WriteAndDisplay("Framebuffer attachment points incomplete", ELogSeverity::ELS_Error);
+	case static_cast<GLenum>(EGLFramebufferStatus::EGLFS_IncompleteAttachment):
+			rLog.WriteAndDisplay("Framebuffer attachment points incomplete", ELogSeverity::ELS_Error);
 		break;
 
-	case EFramebufferStatus::EFS_IncompleteDrawBuffer:
-		if(rLog != nullptr)
-			rLog->WriteAndDisplay("Framebuffer draw buffer incomplete", ELogSeverity::ELS_Error);
+	case static_cast<GLenum>(EGLFramebufferStatus::EGLFS_IncompleteDrawBuffer):
+			rLog.WriteAndDisplay("Framebuffer draw buffer incomplete", ELogSeverity::ELS_Error);
 		break;
 
-	case EFramebufferStatus::EFS_IncompleteLayerTargets:
-		if(rLog != nullptr)
-			rLog->WriteAndDisplay("Framebuffer layer targets incomplete", ELogSeverity::ELS_Error);
+	case static_cast<GLenum>(EGLFramebufferStatus::EGLFS_IncompleteLayerTargets):
+			rLog.WriteAndDisplay("Framebuffer layer targets incomplete", ELogSeverity::ELS_Error);
 		break;
 
-	case EFramebufferStatus::EFS_IncompleteMissingAttachment:
-		if(rLog != nullptr)
-			rLog->WriteAndDisplay("framebuffer no image detected, you need at least one image assigned to you framebuffer", ELogSeverity::ELS_Error);
+	case static_cast<GLenum>(EGLFramebufferStatus::EGLFS_IncompleteMissingAttachment):
+			rLog.WriteAndDisplay("framebuffer no image detected, you need at least one image assigned to you framebuffer", ELogSeverity::ELS_Error);
 		break;
 
-	case EFramebufferStatus::EFS_IncompleteMultisample:
-		if(rLog != nullptr)
-			rLog->WriteAndDisplay("framebuffer GL_TEXTURE_FIXED_SAMPLE_LOCATION not the same on all textures or populated collor attachments not the same from textures target", ELogSeverity::ELS_Error);
+	case static_cast<GLenum>(EGLFramebufferStatus::EGLFS_IncompleteMultisample):
+			rLog.WriteAndDisplay("framebuffer GL_TEXTURE_FIXED_SAMPLE_LOCATION not the same on all textures or populated collor attachments not the same from textures target", ELogSeverity::ELS_Error);
 		break;
 
-	case EFramebufferStatus::EFS_IncompleteReadBuffer:
-		if(rLog != nullptr)
-			rLog->WriteAndDisplay("framebuffer GL_READ_BUFFER is not GL_NONE and GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE is GL_NONE for color attachment point named by GL_READ_BUFFER", ELogSeverity::ELS_Error);
+	case static_cast<GLenum>(EGLFramebufferStatus::EGLFS_IncompleteReadBuffer):
+			rLog.WriteAndDisplay("framebuffer GL_READ_BUFFER is not GL_NONE and GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE is GL_NONE for color attachment point named by GL_READ_BUFFER", ELogSeverity::ELS_Error);
 		break;
 
-	case EFramebufferStatus::EFS_Undefined:
-		if(rLog != nullptr)
-			rLog->WriteAndDisplay("specified default framebuffer does not exists", ELogSeverity::ELS_Error);
+	case static_cast<GLenum>(EGLFramebufferStatus::EGLFS_Undefined):
+			rLog.WriteAndDisplay("specified default framebuffer does not exists", ELogSeverity::ELS_Error);
 		break;
 
-	case EFramebufferStatus::EFS_Unsupported:
-		if(rLog != nullptr)
-			rLog->WriteAndDisplay("combination of internal format and attached image violates implementation-dependent set of restrictions", ELogSeverity::ELS_Error);
+	case static_cast<GLenum>(EGLFramebufferStatus::EGLFS_Unsupported):
+			rLog.WriteAndDisplay("combination of internal format and attached image violates implementation-dependent set of restrictions", ELogSeverity::ELS_Error);
 		break;
 
 	default:
-		if(rLog != nullptr)
-			rLog->WriteAndDisplay("Unknown error", ELogSeverity::ELS_Error);
+			rLog.WriteAndDisplay("Unknown error", ELogSeverity::ELS_Error);
 		break;
 	}
 }
@@ -158,20 +147,17 @@ void Framebuffer::CreateBuffer()
 	{
 		glGenFramebuffers(1, &iFrameBufferID);
 
-		glBindFramebuffer(eFramebufferOp, iFrameBufferID);
+		glBindFramebuffer(static_cast<GLenum>(eFramebufferOp), iFrameBufferID);
 
-		glFramebufferTexture2D(eFramebufferOp, eFramebufferAttach, eFramebufferTex, iFrameBufferID, iLevel);
+		glFramebufferTexture2D(static_cast<GLenum>(eFramebufferOp), static_cast<GLenum>(eFramebufferAttach), static_cast<GLenum>(eFramebufferTex), iFrameBufferID, iLevel);
 
 		DisplayAllGLError();
 
 		CheckFramebufferState();
 
-		glBindFramebuffer(eFramebufferOp, 0);
+		glBindFramebuffer(static_cast<GLenum>(eFramebufferOp), 0);
 
 	}
 	else
-	{
-		if(rLog != nullptr)
-			rLog->WriteAndDisplay("Texture object returned null, abording Buffer creation");
-	}
+		rLog.WriteAndDisplay("Texture object returned null, abording Buffer creation");
 }

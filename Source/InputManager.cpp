@@ -7,33 +7,16 @@ uint32 InputManager::iMods = 0;
 
 uint64 InputManager::iInputHandlerID = 0;
 
-GLFWwindow* InputManager::rCurrentWindowInputP = nullptr;
+GLFWwindow* InputManager::rCurrentWindowInput = nullptr;
 
-InputManager* InputManager::rSingletonInputManagerP = new InputManager();
+InputManager* InputManager::rInputManager = nullptr;
 
 InputManager* InputManager::GetInstance()
 {
-	return rSingletonInputManagerP;
-}
+	if(rInputManager == nullptr)
+		rInputManager = new InputManager();
 
-void InputManager::Destroy()
-{
-	//FIXME:Fix memory leak in vector class!!!
-	/*if (rInputHandleMap != nullptr)
-	{
-		delete rInputHandleMap;
-
-		rInputHandleMap = nullptr;
-	}*/
-
-	if (rSingletonInputManagerP != nullptr)
-	{
-		delete rSingletonInputManagerP;
-
-		rSingletonInputManagerP = nullptr;
-	}
-
-	rCurrentWindowInputP = nullptr;
+	return rInputManager;
 }
 
 void InputManager::RecordInput(GLFWwindow* InrWindow, int IniKeyCode, int IniScanCode, int IniAction, int IniMods)
@@ -46,6 +29,6 @@ void InputManager::RecordInput(GLFWwindow* InrWindow, int IniKeyCode, int IniSca
 
 InputManager::InputManager()
 {
-	if(rCurrentWindowInputP != nullptr)
-		glfwSetKeyCallback(rCurrentWindowInputP, InputManager::RecordInput);
+	if(rCurrentWindowInput != nullptr)
+		glfwSetKeyCallback(rCurrentWindowInput, InputManager::RecordInput);
 }

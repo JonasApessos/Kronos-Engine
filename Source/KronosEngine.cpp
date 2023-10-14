@@ -14,10 +14,10 @@ using glm::vec3, glm::vec2 , glm::mat4;
 
 using std::cout, std::exception;
 
-int WindowWidth = 1024;
-int WindowHeight = static_cast<int>(WindowWidth * static_cast<float>(9.0f / 16.0f));
+constexpr int32 WindowWidth = 1024;
+constexpr int32 WindowHeight = static_cast<int32>(static_cast<float>(WindowWidth) * static_cast<float>(9.0f / 16.0f));
 
-float_t MouseLastX = WindowWidth / 2, MouseLastY = WindowHeight / 2;
+float MouseLastX = WindowWidth / 2, MouseLastY = WindowHeight / 2;
 
 Camera MainCamera(vec3(0.0f, 0.0f, 10.0f), vec3(0.0f, 0.0f, 1.0f), vec3(0.0f, 1.0f, 0.0f), 45.0f, (16.0f / 9.0f), 10.0f, 0.1f, 100.0f);
 
@@ -25,51 +25,8 @@ float DeltaTime = 0.0f, LastFrame = 0.0f;
 
 Log rGlobalLog("Log");
 
-int GLFWInit()
-{
-	Log rGLFWLog("GLFWLog");
-
-	MainCamera.SetMinRotation(vec3(-360.0f, -89.0f, -360.0f));
-	MainCamera.SetMaxRotation(vec3(360.0f, 89.0f, 360.0f));
-	// Initialise GLFW
-	glewExperimental = true; // Needed for core profile
-
-	if (!glfwInit())
-	{
-		rGLFWLog.WriteAndDisplay("Failed to initialize GLFW", ELogSeverity::ELS_Critical);
-
-		glfwTerminate();
-
-		return -1;
-	}
-
-	glfwWindowHint(GLFW_SAMPLES, 2); // 2x antialiasing
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4); // We want OpenGL 4.6
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // We don't want the old OpenGL 
-
-	return true;
-}
-
-int GLEWInit()
-{
-	Log rGLEWLog("GLEWLog");
-
-	if (glewInit() != GLEW_OK)
-	{
-		rGLEWLog.WriteAndDisplay("Glew context failed to load", ELogSeverity::ELS_Critical);
-
-		return -2;
-	}
-
-	return true;
-}
-
 void ProcessInput(GLFWwindow* InrWindow)
 {
-	const float CameraSpeed = 10.f * DeltaTime;
-
 	if (glfwGetKey(InrWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(InrWindow, true);
 	else if (glfwGetKey(InrWindow, GLFW_KEY_1) == GLFW_PRESS)
@@ -172,7 +129,7 @@ int main(int argc, char **argv)
 			MainCamera.SetMinRotation(vec3(-360.0f, -89.0f, -360.0f));
 			MainCamera.SetMaxRotation(vec3(360.0f, 89.0f, 360.0f));
 
-			Window* MainWindow = new Window(1024, (1024 * (9.0f / 16.0f)), "Kronos Engine");
+			Window* MainWindow = new Window(1024, static_cast<int32>(1024.f * (9.0f / 16.0f)), "Kronos Engine");
 			
 
 			if (glewInit() == GLEW_OK)
@@ -191,87 +148,37 @@ int main(int argc, char **argv)
 			glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
 			
 			rGlobalLog.WriteAndDisplay("Maximum nr if vertex attributes supported: " + to_string(nrAttributes));
-			
+
 			Texture* FrameBufferTexture = new Texture(
-				WindowWidth,
-				WindowHeight,
+				MainWindow->GetWidth(),
+				MainWindow->GetHeight(),
 				ETextureType::ETT_Albedo,
-				ETextureDataType::ETDT_Texture2D,
-				ETextureSlot::ETS_Slot0,
-				ETextureFormat::ETF_RGB);
+				EGLTextureDataType::EGLTDT_Texture2D,
+				EGLTextureSlot::EGLTS_Slot0,
+				EGLTextureFormat::EGLTF_RGB);
 
 			Framebuffer* rFramebuffer = new Framebuffer(
-				EFramebufferOp::EFO_FrameBuffer,
-				EFramebufferAttach::EFA_Color,
-				EFramebufferTex::EFT_Texture2D,
+				EGLFramebufferOp::EGLFO_FrameBuffer,
+				EGLFramebufferAttach::EGLFA_Color,
+				EGLFramebufferTex::EGLFT_Texture2D,
 				FrameBufferTexture,
 				0);
 
 			Renderer* rRenderer = new Renderer();
 
 			FrameBufferTexture = nullptr;
-			
 
 			Shader rShaderLight("Resource/Shader/Light.vs", "Resource/Shader/Light.fs");
 			Shader rShaderCubeLight("Resource/Shader/LightColorCube.vs", "Resource/Shader/LightColorCube.fs");
 			Shader rShaderStencil("Resource/Shader/Stencil.vs", "Resource/Shader/Stencil.fs");
-			
-			FVector Pos1, Pos2, Pos3, Pos4;
-
-			Pos1.Position = vec3(0.0f, 0.0f, 0.0f);
-			Pos1.Normal = vec3(0.0f, 0.0f, 1.0f);
-			Pos1.TexCoords = vec2(0.0f, 0.0f);
-
-			Pos2.Position = vec3(1.0f, 0.0f, 0.0f);
-			Pos2.Normal = vec3(0.0f, 0.0f, 1.0f);
-			Pos2.TexCoords = vec2(1.0f, 0.0f);
-
-			Pos3.Position = vec3(1.0f, 1.0f, 0.0f);
-			Pos3.Normal = vec3(0.0f, 0.0f, 1.0f);
-			Pos3.TexCoords = vec2(1.0f, 1.0f);
-
-			Pos4.Position = vec3(0.0f, 1.0f, 0.0f);
-			Pos4.Normal = vec3(0.0f, 0.0f, 1.0f);
-			Pos4.TexCoords = vec2(0.0f, 1.0f);
-
-			vector<FVector> Vertices = {
-				Pos1,
-				Pos2,
-				Pos3,
-				Pos4
-			};
-
-			vector<uint32_t> Indices = {
-				0, 1, 2,
-				2, 3, 0
-			};
-
-			Texture* rGrassTexture = new Texture(
-				"Resource/Img/grass.png",
-				ETextureType::ETT_Albedo,
-				ETextureDataType::ETDT_Texture2D,
-				ETextureSlot::ETS_Slot0,
-				ETextureFormat::ETF_RGBA);
-
-			rGrassTexture->SetTextureWrap(ETextureWrap::ETW_Clip);
-
-			vector<Texture*> rTextures;
-
-			rTextures.push_back(rGrassTexture);
-
-			Mesh PlanarGrass = Mesh(Vertices, Indices, &rTextures);
-
-			Vertices.at(0).Position = Pos1.Position + 1.f;
-			Vertices.at(1).Position = Pos2.Position + 1.f;
-			Vertices.at(2).Position = Pos3.Position + 1.f;
-			Vertices.at(3).Position = Pos4.Position + 1.f;
-
-			Mesh PlanarGrass2 = Mesh(Vertices, Indices, &rTextures);
 
 
 			rRenderer->EnableMode(EGLEnable::EGLE_DepthTest, true);
 			rRenderer->EnableMode(EGLEnable::EGLE_StencilTest, true);
 			rRenderer->EnableMode(EGLEnable::EGLE_CullFace, true);
+			rRenderer->EnableMode(EGLEnable::EGLE_ProgramPointSize, true);
+
+			glPointSize(10);
 
 			rRenderer->SetCullFace(EGLCullFace::EGLCF_Back);
 
@@ -293,9 +200,15 @@ int main(int argc, char **argv)
 
 			MainCamera.SetYaw(-89.0f);
 
-			Model NewModel("Resource/Object/Cube/Cube.obj");
+			Model NewModel2 = SShapePrimCube().GetModel();
 
-			rShaderLight.Use();
+			mat4 View = MainCamera.GetView();
+			mat4 Projection = MainCamera.GetProjection();
+			mat4 Model = mat4(1.0f);
+
+			vec3 CameraPosition = -MainCamera.GetLocation();
+
+			glReleaseShaderCompiler();
 
 			//Main loop
 			while (!glfwWindowShouldClose(MainWindow->GetWindow()))
@@ -306,36 +219,30 @@ int main(int argc, char **argv)
 
 				WindowRenderLoop();
 
-				mat4 View = MainCamera.GetView();
-				mat4 Projection = MainCamera.GetProjection();
-				mat4 Model = mat4(1.0f);
+				View = MainCamera.GetView();
+				Projection = MainCamera.GetProjection();
 
-				vec3 CameraPosition = -MainCamera.GetLocation();
-				vec3 CameraFront = MainCamera.GetFront();
+				CameraPosition = -MainCamera.GetLocation();				
 				
-				//rShaderLight.Use();
-				rShaderLight.SetVec3("ViewPos", CameraPosition);
-				
-				rShaderLight.SetVec3("DirLight.Direction", CameraPosition);
-				rShaderLight.SetVec3("DirLight.Diffuse", 1.0f);
-				rShaderLight.SetVec3("DirLight.Specular", 1.0f);
-				rShaderLight.SetVec3("DirLight.Ambient", 0.3f);
-				
-				rShaderLight.SetMat4("View", View);
-				rShaderLight.SetMat4("Projection", Projection);
-				rShaderLight.SetMat4("Model", Model);
-				
-				PlanarGrass.Draw(rShaderLight);
-				PlanarGrass2.Draw(rShaderLight);
-				
+				rShaderCubeLight.Use();
+				rShaderCubeLight.SetVec3("ObjectColor", 1.0f, 0.5f, 0.31f);
+				rShaderCubeLight.SetVec3("LightColor", 1.0f, 1.0f, 1.0f);
+				rShaderCubeLight.SetVec3("LightPos", 1.f, -2.0f, 1.f);
+				rShaderCubeLight.SetVec3("ViewPos", CameraPosition);
+				rShaderCubeLight.SetVec3("ObjectPos", 0.0f, 0.0f, 0.0f);
 
-				NewModel.Draw(rShaderLight);
+				rShaderCubeLight.SetMat4("View", View);
+				rShaderCubeLight.SetMat4("Projection", Projection);
+				rShaderCubeLight.SetMat4("Model", Model);
+				
+				
+				//NewModel->Draw(rShaderCubeLight);
+				NewModel2.Draw(rShaderCubeLight);
 				
 				glfwSwapBuffers(MainWindow->GetWindow());
 				glfwPollEvents();
 			}
 
-			delete rGrassTexture;
 			delete rFramebuffer;
 			delete rRenderer;
 			delete MainWindow;

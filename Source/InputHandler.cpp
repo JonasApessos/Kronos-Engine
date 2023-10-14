@@ -1,7 +1,7 @@
 #include "InputHandler.h"
 
 template<typename T, typename ObjectReference>
-InputKeyHandler<T, ObjectReference>::InputKeyHandler(const string& InsName, EGLFWInputKey IneKeyCode, uint32 IniHandlerID) :
+InputKeyHandler<T, ObjectReference>::InputKeyHandler(string const& InsName, EGLFWInputKey IneKeyCode, uint32 IniHandlerID) :
 	sName(InsName),
 	eKeyCode(IneKeyCode),
 	iHandlerID(IniHandlerID),

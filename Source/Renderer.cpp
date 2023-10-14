@@ -23,8 +23,7 @@ bool Renderer::EnableMode(EGLEnable IneEnable, bool InbEnable)
 			glEnable(static_cast<GLenum>(IneEnable));
 		else
 		{
-			if(rLog != nullptr)
-				rLog->Write("Mode is already enabled");
+			rLog.Write("Mode is already enabled");
 				
 			return false;
 		}
@@ -35,8 +34,7 @@ bool Renderer::EnableMode(EGLEnable IneEnable, bool InbEnable)
 			glDisable(static_cast<GLenum>(IneEnable));
 		else
 		{
-			if(rLog != nullptr)
-				rLog->Write("Mode is already disabled");
+			rLog.Write("Mode is already disabled");
 
 			return false;
 		}

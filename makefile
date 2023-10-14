@@ -1,25 +1,75 @@
-CFLAGS = -std=c++17 -O0 -og -Wextra --debug
+DEBUG = 1
 
-LINUXLDFLAGS = -lassimp -lglfw -lGLEW -lGLESv2 -lGLU -lGL -ldl -lpthread -lX11 -lXxf86vm -lXrandr -lXi
+USE_CLANG = 0
+
+LINUXLDFLAGS = -lassimp -lglfw -lGLEW -lGLESv2 -lGLU -lGL -ldl -lpthread -lX11
 WINLDFLAGS = -lassimp -lglfw3 -lglew32 -lglu32 -lopengl32
 
 HFLAGS = -I Header
 
-SOURCE = Source/Standard.cpp Source/Window.cpp Source/App.cpp Source/Shader.cpp Source/Camera.cpp Source/Renderer.cpp Source/Texture.cpp Source/Vector.cpp Source/Mesh.cpp Source/Model.cpp Source/Log.cpp Source/InputManager.cpp Source/InputHandler.cpp Source/Framebuffer.cpp
+SOURCE = Source
 
-KronosEngine: KronosEngine
+PROGRAM = KronosEngine
 
-.PHONY: win-build linux-build clean
+ifeq ($(USE_CLANG), 1)
+	CXX = clang++
+endif
 
-win-build: Source/KronosEngine.cpp
-	g++ $(CFLAGS) $(HFLAGS) -o KronosEngine Source/KronosEngine.cpp $(SOURCE) $(WINLDFLAGS)
+ifeq ($(DEBUG), 1)
+	BUILD_PATH = build-debug
+	CXXFLAGS = -std=c++17 -O0 -og -g3 -ggdb -Wextra --debug
+	LDFLAGS = -fuse-ld=mold -pthread
+else
+	BUILD_PATH = build-rel
+	CXXFLAGS = -std=c++17 -O2 -Wextra -Wall -pedantic -Wshadow -Wconversion -Wunreachable-code
+	LDFLAGS = -fuse-ld=mold -pthread -s
+endif
 
-linux-build:
-	g++ $(CFLAGS) $(HFLAGS) -o KronosEngine Source/KronosEngine.cpp $(SOURCE) $(LINUXLDFLAGS)
+.PHONY: Rebuild-All Clean Setup All Run Link Build
 
-run: KronosEngine
-	clear
-	./KronosEngine
 
-clean:
-	rm -f KronosEngine
+OBJ=$(BUILD_PATH)/Standard.o $\
+$(BUILD_PATH)/Vector.o $\
+$(BUILD_PATH)/Texture.o $\
+$(BUILD_PATH)/FileHandler.o $\
+$(BUILD_PATH)/Shader.o $\
+$(BUILD_PATH)/InputHandler.o $\
+$(BUILD_PATH)/Framebuffer.o $\
+$(BUILD_PATH)/App.o $\
+$(BUILD_PATH)/Window.o $\
+$(BUILD_PATH)/Mesh.o $\
+$(BUILD_PATH)/Model.o $\
+$(BUILD_PATH)/Log.o $\
+$(BUILD_PATH)/Renderer.o $\
+$(BUILD_PATH)/Camera.o $\
+$(BUILD_PATH)/InputManager.o $\
+$(BUILD_PATH)/Export.o $\
+$(BUILD_PATH)/Import.o $\
+$(BUILD_PATH)/GeomGenerator.o
+
+All: Setup Build Run
+
+Clean:
+	-rm -r $(BUILD_PATH)
+
+Setup:
+	-mkdir $(BUILD_PATH)
+	-rm $(BUILD_PATH)/Timings
+	-touch $(BUILD_PATH)/Timings
+
+Build:$(OBJ) Link
+
+Rebuild-All:Clean Setup Build
+
+Run:
+	./$(BUILD_PATH)/KronosEngine
+
+Link:
+	$(CXX) $(SOURCE)/$(PROGRAM).cpp $(OBJ) $(CXXFLAGS) $(HFLAGS) $(LDFLAGS) $(LINUXLDFLAGS) -o $(BUILD_PATH)/$(PROGRAM)
+
+$(OBJ): %.o: %.cpp
+
+%.o: %.cpp
+
+%.cpp:
+	$(CXX) -c $(CXXFLAGS) $(HFLAGS) $(patsubst $(BUILD_PATH)/%,$(SOURCE)/%, $@) -o $(patsubst %.cpp,%.o, $@)

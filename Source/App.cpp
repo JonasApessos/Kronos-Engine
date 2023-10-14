@@ -2,7 +2,7 @@
 
 App::App(int iniCommandIndex, char** IncCommandArguments)
 {
-	rLog = Log("LogGlew");
+	rLog = Log("LogApp");
 
 	InitGLFW();
 
@@ -24,7 +24,7 @@ void App::InitGLFW()
 	// Initialise GLFW
 	if (glfwInit())
 	{
-		glfwWindowHint(GLFW_SAMPLES, 8); // 2x antialiasing
+		glfwWindowHint(GLFW_SAMPLES, 4); // 2x antialiasing
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4); // We want OpenGL 4.6
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 		//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed

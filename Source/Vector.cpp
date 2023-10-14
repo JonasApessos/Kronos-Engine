@@ -1,39 +1,40 @@
 #include "Vector.h"
 
 
-FVector::FVector() noexcept : 
+SVector::SVector() noexcept : 
 Position(vec3(0.0f)),
 Normal(vec3(0.0f)),
 TexCoords(vec2(0.0f)) {}
 
-FVector::FVector(const FVector& InrVertex) noexcept : 
+SVector::SVector(vec3 const& InrPos, vec3 const& InrNorm, vec2 const& InrTexCoord) noexcept : 
+Position(InrPos),
+Normal(InrNorm),
+TexCoords(InrTexCoord) {}
+
+SVector::SVector(SVector const& InrVertex) noexcept : 
 Position(InrVertex.Position),
 Normal(InrVertex.Normal),
 TexCoords(InrVertex.TexCoords) {}
 
-FVector::FVector(const FVector&& InrVertex) noexcept :
+SVector::SVector(SVector&& InrVertex) noexcept :
 Position(InrVertex.Position),
 Normal(InrVertex.Normal),
 TexCoords(InrVertex.TexCoords) {}
 
-
-void FVector::Move(FVector&& InrVertex)
+SVector SVector::operator=(SVector const& InrVertex) noexcept
 {
 	Position = InrVertex.Position;
 	Normal = InrVertex.Normal;
 	TexCoords = InrVertex.TexCoords;
+
+	return InrVertex;
 }
 
-void FVector::operator=(const FVector& InrVertex)
+SVector SVector::operator=(SVector&& InrVertex) noexcept
 {
 	Position = InrVertex.Position;
 	Normal = InrVertex.Normal;
 	TexCoords = InrVertex.TexCoords;
-}
 
-void FVector::operator=(FVector&& InrVertex)
-{
-	Position = InrVertex.Position;
-	Normal = InrVertex.Normal;
-	TexCoords = InrVertex.TexCoords;
+	return InrVertex;
 }

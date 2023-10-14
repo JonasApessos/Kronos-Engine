@@ -1,13 +1,16 @@
 #pragma once
 #include <GL/glew.h>
+
 #include "Primitives.h"
 #include "Log.h"
 #include "Standard.h"
 #include "Vector.h"
 
-using KronosPrim::uint8, KronosPrim::uint16, KronosPrim::uint32;
+using KronosPrim::uint32;
 
-enum EGLEnable : uint16
+/** \enum EGLEnable
+	\brief Enable types for glEnable() for opengl*/
+enum class EGLEnable : uint32
 {
 	EGLE_Blend = GL_BLEND,
 	EGLE_ClipDistance = GL_CLIP_DISTANCE0,
@@ -39,7 +42,9 @@ enum EGLEnable : uint16
 	EGLE_ProgramPointSize = GL_PROGRAM_POINT_SIZE
 };
 
-enum EGLDrawBuffer : uint16
+/** \enum EGLDrawBuffer
+	\brief Draw for frame buffer for opengl*/
+enum class EGLDrawBuffer : uint32
 {
 	EGLDB_None = GL_NONE,
 	EGLDB_FrontLeft = GL_FRONT_LEFT,
@@ -53,7 +58,9 @@ enum EGLDrawBuffer : uint16
 	EGLDB_FrontAndBack = GL_FRONT_AND_BACK,
 };
 
-enum EGLFunc : uint16
+/** \enum EGLFunc
+	\brief Logic func for opengl*/
+enum class EGLFunc : uint32
 {
 	EGLDF_Never = GL_NEVER,
 	EGLDF_Less = GL_LESS,
@@ -65,14 +72,18 @@ enum EGLFunc : uint16
 	EGLDF_Always = GL_ALWAYS
 };
 
-enum EGLCullFace : uint16
+/** \enum EGLCullFace
+	\brief face culling type for opengl*/
+enum class EGLCullFace : uint32
 {
 	EGLCF_Back = GL_BACK,
 	EGLCF_Face = GL_CULL_FACE,
 	EGLCF_FrontAndBack = GL_FRONT_AND_BACK
 };
 
-enum EGLStencilOp : uint16
+/** \enum EGLStencilOp
+	\brief stencil operation for opengl*/
+enum class EGLStencilOp : uint32
 {
 	EGLSO_Keep = GL_KEEP,
 	EGLSO_Zero = GL_ZERO,
@@ -84,21 +95,27 @@ enum EGLStencilOp : uint16
 	EGLSO_Invert = GL_INVERT
 };
 
-enum EGLPolygonMode : uint16
+/** \enum EGLPolygonMode
+	\brief polygon mode type for opengl*/
+enum class EGLPolygonMode : uint32
 {
 	EGLP_Point = GL_POINT,
 	EGLP_Line = GL_LINE,
 	EGLP_Fill = GL_FILL
 };
 
-enum EGLClearBuffer : uint16
+/** \enum EGLClearBuffer
+	\brief clear buffer type for opengl*/
+enum EGLClearBuffer : uint32
 {
 	EGLC_ColorBufferBit = GL_COLOR_BUFFER_BIT,
 	EGLC_DepthBufferBit = GL_DEPTH_BUFFER_BIT,
 	EGLC_StencilBufferBit = GL_STENCIL_BUFFER_BIT
 };
 
-enum EViewMode : uint8
+/** \enum EViewMode
+	\brief view mode type*/
+enum class EViewMode : uint32
 {
 	EVM_Solid = 0,
 	EVM_Unlit = 1,
@@ -108,6 +125,11 @@ enum EViewMode : uint8
 	EVM_Preview = 5
 };
 
+//TODO:Extend documentation
+/** \class Renderer
+*   \brief Handles rendering context
+*	\todo Extend documentation
+*/
 class Renderer
 {
 public:
@@ -137,28 +159,27 @@ public:
 
 	inline void SetPolygonMode(EGLCullFace IneCullFace, EGLPolygonMode InePolygoneMode);
 
-	inline void SetDepthFunc(const EGLFunc InrFlag);
+	inline void SetDepthFunc(EGLFunc const InrFlag);
 
-	inline void SetClearBuffer(uint16 IniClearFlag);
+	inline void SetClearBuffer(uint32 IniClearFlag);
 
 	inline void SetClearColor(float InfRGB, float InfAlpha);
 	inline void SetClearColor(float InfR, float InfG, float InfB, float InfAlpha);
-	inline void SetClearColor(const vec3& InrColor, float InfAlpha);
+	inline void SetClearColor(vec3 const& InrColor, float InfAlpha);
 
 	inline EViewMode GetViewMode() const;
 
 	inline EGLCullFace GetCullFace() const;
 	inline EGLDrawBuffer GetDrawBuffer() const;
-
 	
 
 protected:
 	//TODO: in the future there will be a factory class making those!
-	Log* rLog = new Log("LogRenderer");
+	Log rLog = Log("LogRenderer");
 
 private:
 	
-	uint16 iClearBufferBit = EGLClearBuffer::EGLC_ColorBufferBit;
+	uint32 iClearBufferBit = EGLClearBuffer::EGLC_ColorBufferBit;
 
 	uint32 iStencilMask = 0xFF;
 
@@ -176,7 +197,7 @@ inline void Renderer::EnableDepthMask(bool InbEnable) { glDepthMask(static_cast<
 
 inline void Renderer::Clear() { glClear(iClearBufferBit); }
 
-inline bool Renderer::IsModeEnabled(EGLEnable IneEnable) { return static_cast<bool>(static_cast<GLenum>(glIsEnabled(IneEnable))); }
+inline bool Renderer::IsModeEnabled(EGLEnable IneEnable) { return static_cast<bool>(glIsEnabled(static_cast<GLenum>(IneEnable))); }
 
 inline void Renderer::SetCullFace(EGLCullFace IneCullFace) { eCullFace = IneCullFace;  glCullFace(static_cast<GLenum>(eCullFace)); }
 
@@ -222,13 +243,14 @@ inline void Renderer::SetClearColor(float InfR, float InfG, float InfB, float In
 	glClearColor(static_cast<GLclampf>(InfR), static_cast<GLclampf>(InfG), static_cast<GLclampf>(InfB), static_cast<GLclampf>(InfAlpha));
 }
 
-inline void Renderer::SetClearColor(const vec3& InrColor, float InfAlpha) 
+inline void Renderer::SetClearColor(vec3 const& InrColor, float InfAlpha) 
 { 
 	glClearColor(static_cast<GLclampf>(InrColor.r), static_cast<GLclampf>(InrColor.g), static_cast<GLclampf>(InrColor.b), static_cast<GLclampf>(InfAlpha));
 }
 
-inline void Renderer::SetDepthFunc(const EGLFunc IneFunc) { glDepthFunc(IneFunc); }
-inline void Renderer::SetClearBuffer(uint16 IniClearFlag) { iClearBufferBit = IniClearFlag; }
+inline void Renderer::SetDepthFunc(EGLFunc const IneFunc) { glDepthFunc(static_cast<GLenum>(IneFunc)); }
+
+inline void Renderer::SetClearBuffer(uint32 IniClearFlag) { iClearBufferBit = IniClearFlag; }
 
 inline EViewMode Renderer::GetViewMode() const { return eViewMode;  }
 

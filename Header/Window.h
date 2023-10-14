@@ -1,13 +1,17 @@
 #pragma once
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+
 #include "Primitives.h"
 #include "Log.h"
 #include "InputManager.h"
 
 using KronosPrim::uint32;
 
-enum EGLFWHints : uint32
+/** \enum EGLFWHints
+*   \brief GLFW window hint flags*/
+enum class EGLFWHints : uint32
 {
 	EGLFWH_REDBits = GLFW_RED_BITS,
 	EGLFWH_GreenBits = GLFW_GREEN_BITS,
@@ -45,7 +49,9 @@ enum EGLFWHints : uint32
 
 };
 
-enum EGLFWError : uint32
+/** \enum EGLFWError
+*   \brief GLFW error types*/
+enum class EGLFWError : uint32
 {
 	EGLFWE_NoError = GLFW_NO_ERROR,
 	EGLFWE_NotInit = GLFW_NOT_INITIALIZED,
@@ -60,18 +66,20 @@ enum EGLFWError : uint32
 	EGLFWE_NoWindowContect = GLFW_NO_WINDOW_CONTEXT
 };
 
+/** \class Window
+*   \brief unified window system using glfw library*/
 class Window
 {
 public:
 	bool bIsAspectLocked = true;
 
-	Window(int32 IniWidth, int32 IniHeight, const string& InsTitle);
+	Window(int32 IniWidth, int32 IniHeight, string const& InsTitle);
 	Window(Window&& InrWindow) noexcept;
-	Window(const Window& InrWindow) noexcept;
+	Window(Window const& InrWindow) noexcept;
 
 	~Window();
 
-	Window& operator=(const Window & InrWindow) noexcept;
+	Window& operator=(Window const& InrWindow) noexcept;
 	Window& operator=(Window&& InrWindow) noexcept;
 
 	void Destroy();
@@ -97,11 +105,11 @@ public:
 
 protected:
 	float iRatioX = 16.0f, iRatioY = 9.0f;
-	int32 iWidth = 1024, iHeight = 1024 * (iRatioY / iRatioX);
+	int32 iWidth = 1024, iHeight = 1024 * static_cast<int32>(iRatioY / iRatioX);
 
 	string sTitle = "";
 
-	Log* rLog = new Log("LogWindow");
+	Log rLog = Log("LogWindow");
 
 	GLFWwindow* rWindow = nullptr;
 	GLFWmonitor* rMonitor = nullptr;
@@ -126,7 +134,7 @@ inline void Window::SetIsAspectLocked(bool InbIsApsectLocked) { bIsAspectLocked 
 
 inline void Window::SetScreenSize(int32 IniWidth, int32 IniHeight) { iWidth = IniWidth; iHeight = IniHeight; }
 inline void Window::SetWidth(int32 IniWidth) { ((IniWidth > 0) ? iWidth = IniWidth : iWidth = 1024); }
-inline void Window::SetHeight(int32 IniHeight) { ((IniHeight > 0) ? iHeight = IniHeight : iHeight = GetAspectRatioHeight() * GetWidth()); }
+inline void Window::SetHeight(int32 IniHeight) { ((IniHeight > 0) ? iHeight = IniHeight : iHeight = static_cast<int32>(GetAspectRatioHeight() * static_cast<float>(GetWidth()))); }
 
 
 inline bool Window::GetIsAspectLocked() const { return bIsAspectLocked; }

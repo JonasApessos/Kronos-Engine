@@ -1,27 +1,34 @@
 #pragma once
+
+#include "GLFW/glfw3.h"
+
+#include "Primitives.h"
+#include "InputHandler.h"
+
 #include <iostream>
 #include <map>
 #include <vector>
-#include "GLFW/glfw3.h"
-#include "Primitives.h"
-#include "InputHandler.h"
 
 using KronosPrim::uint64;
 
 using std::map, std::vector;
 
+/** \class InputManager
+*   \brief Singleton class that manages template class InputKeyHandler*/
 class InputManager
 {
 public:
 
-	InputManager(const InputManager&) = delete;
+	InputManager(InputManager const&) = delete;
+	InputManager(InputManager&&) = delete;
+
+	InputManager& operator=(InputManager const&) = delete;
+	InputManager& operator=(InputManager&&) = delete;
 
 	static InputManager* GetInstance();
 
-	static void Destroy();
-
 	template<typename T, typename C>
-	static void BindKey(const string& InsHandleName, EGLFWInputKey IneInputKey, C* InrCallee, T (C::*InrCallbackFunc)());
+	static void BindKey(string const& InsHandleName, EGLFWInputKey IneInputKey, C* InrCallee, T (C::*InrCallbackFunc)());
 
 	static inline void SetCurrentWindow(GLFWwindow* InrWindowP);
 
@@ -44,9 +51,9 @@ private:
 	template<typename T, typename C>
 	static map<EGLFWInputKey, vector<InputKeyHandler<T, C>*>>* rInputHandleMap;
 
-	static GLFWwindow* rCurrentWindowInputP;
+	static GLFWwindow* rCurrentWindowInput;
 
-	static InputManager* rSingletonInputManagerP;
+	static InputManager* rInputManager;
 
 	InputManager();
 };
@@ -58,19 +65,19 @@ map<EGLFWInputKey, vector<InputKeyHandler<T, C>*>>* InputManager::rInputHandleMa
 
 inline void InputManager::SetCurrentWindow(GLFWwindow* InrWindowP) 
 { 
-	rCurrentWindowInputP = InrWindowP;  
+	rCurrentWindowInput = InrWindowP;  
 
-	if(rCurrentWindowInputP != nullptr )
-		glfwSetKeyCallback(rCurrentWindowInputP, InputManager::RecordInput); 
+	if(rCurrentWindowInput != nullptr )
+		glfwSetKeyCallback(rCurrentWindowInput, InputManager::RecordInput); 
 }
 
-inline GLFWwindow* InputManager::GetCurrentWindow() { return rCurrentWindowInputP; }
+inline GLFWwindow* InputManager::GetCurrentWindow() { return rCurrentWindowInput; }
 
 /*TODO:Temp code, make it more robust.
 future update, should re-use previously nullified InputKeyHandler so not have to
 re-costruct which takes times and resources*/
 template<typename T, typename C>
-void InputManager::BindKey(const string& InsHandleName, EGLFWInputKey IneInputKey, C* InrCallee, T(C::* InrCallbackFunc)())
+void InputManager::BindKey(string const& InsHandleName, EGLFWInputKey IneInputKey, C* InrCallee, T(C::* InrCallbackFunc)())
 {
 	/*bool IsBinded = false;
 	if (!rInputHandleMap->contains(IneInputKey))
