@@ -14,7 +14,7 @@ Export* Export::GetInstance()
     return rExport;
 }
 
-void Export::ExportModel(char const* IncPath, Model* InrModel, EExportType const IneExportType)
+void Export::ExportModel(char const* IncPath, Model& InrModel, EExportType const IneExportType)
 {
     string sPath = IncPath;
 
@@ -24,16 +24,16 @@ void Export::ExportModel(char const* IncPath, Model* InrModel, EExportType const
 
     switch(static_cast<uint32>(IneExportType))
     {
-        case EExportType::EET_OBJ:
+        case static_cast<uint32>(EExportType::EET_OBJ):
             ExportAsObj(InrModel);
             break;
-        case EExportType::EET_FBX:
+        case static_cast<uint32>(EExportType::EET_FBX):
             //ExportAsFBX(IncPath, InrModel);
             break;
-        case EExportType::EET_DXF:
+        case static_cast<uint32>(EExportType::EET_DXF):
             //ExportAsDXF(IncPath, InrModel);
             break;
-        case EExportType::EET_DAE:
+        case static_cast<uint32>(EExportType::EET_DAE):
             //ExportAsDAE(IncPath, InrModel);
             break;
         default:
@@ -45,7 +45,7 @@ void Export::ExportModel(char const* IncPath, Model* InrModel, EExportType const
 //TODO: Improve Exporter, add safety check for:
 //file not open or access denied
 //Data Structure Incomplete etc.
-void Export::ExportAsObj(Model* InrModel)
+void Export::ExportAsObj(Model& InrModel)
 {
     string sData = "";
 
@@ -54,68 +54,64 @@ void Export::ExportAsObj(Model* InrModel)
     uint32 iMeshListIndex = 0;
     uint32 iSubIndex = 0;
 
-    vector<Mesh*> rMeshList = InrModel->GetMeshList();
+    vector<Mesh> rMeshList = InrModel.GetMeshList();
 
     while(iMeshListIndex < rMeshList.size())
     {
-        if(rMeshList[iMeshListIndex] != nullptr)
+        vector<SVector> rVectorList = rMeshList[iMeshListIndex].GetVertices();
+        vector<uint32> rIndicesList = rMeshList[iMeshListIndex].GetIndices();
+        
+        sData.append("#Vector List\r\n");
+
+        //Vertex List
+        while(iSubIndex < rVectorList.size())
         {
-            vector<SVector> rVectorList = rMeshList[iMeshListIndex]->GetVertices();
-            vector<uint32> rIndicesList = rMeshList[iMeshListIndex]->GetIndices();
-            
-            sData.append("#Vector List\r\n");
+            sData.append("v " + to_string(rVectorList[iSubIndex].Position.x) + " " + to_string(rVectorList[iSubIndex].Position.y) + " " + to_string(rVectorList[iSubIndex].Position.z) + " " + to_string(1.0f) + "\r\n"); 
 
-            //Vertex List
-            while(iSubIndex < rVectorList.size())
-            {
-                
-                sData.append("v " + to_string(rVectorList[iSubIndex].Position.x) + " " + to_string(rVectorList[iSubIndex].Position.y) + " " + to_string(rVectorList[iSubIndex].Position.z) + " " + to_string(1.0f) + "\r\n"); 
-
-                ++iSubIndex;
-            }
-
-
-            iSubIndex = 0;
-
-            sData.append("#Texture Coord List\r\n");
-
-            //Texture coord List
-            while(iSubIndex < rVectorList.size())
-            {
-                sData.append("vt " + to_string(rVectorList[iSubIndex].TexCoords.x) + " " + to_string(rVectorList[iSubIndex].TexCoords.y) + "\r\n");
-                ++iSubIndex;
-            }
-
-            iSubIndex = 0;
-
-            sData.append("#Normal List\r\n");
-
-            //Vertex Normal List
-            while(iSubIndex < rVectorList.size())
-            {                
-                sData.append("vp " + to_string(rVectorList[iSubIndex].Normal.x) + " " + to_string(rVectorList[iSubIndex].Normal.y) + " " + to_string(rVectorList[iSubIndex].Normal.z) + "\r\n");
-                ++iSubIndex;
-            }
-
-            iSubIndex = 0;
-
-            sData.append("#Indices List\r\n");
-
-            //Indices List
-            while(iSubIndex < rIndicesList.size())
-            {     
-                if(!(iSubIndex % 3))
-                    sData.append("\r\nf ");
-
-                sData.append(" " + to_string(rIndicesList[iSubIndex] + 1));
-
-                ++iSubIndex;
-            }
-
-            rFile.Write(sData);
-
-            iSubIndex = 0;
+            ++iSubIndex;
         }
+
+
+        iSubIndex = 0;
+
+        sData.append("#Texture Coord List\r\n");
+
+        //Texture coord List
+        while(iSubIndex < rVectorList.size())
+        {
+            sData.append("vt " + to_string(rVectorList[iSubIndex].TexCoords.x) + " " + to_string(rVectorList[iSubIndex].TexCoords.y) + "\r\n");
+            ++iSubIndex;
+        }
+
+        iSubIndex = 0;
+
+        sData.append("#Normal List\r\n");
+
+        //Vertex Normal List
+        while(iSubIndex < rVectorList.size())
+        {                
+            sData.append("vp " + to_string(rVectorList[iSubIndex].Normal.x) + " " + to_string(rVectorList[iSubIndex].Normal.y) + " " + to_string(rVectorList[iSubIndex].Normal.z) + "\r\n");
+            ++iSubIndex;
+        }
+
+        iSubIndex = 0;
+
+        sData.append("#Indices List\r\n");
+
+        //Indices List
+        while(iSubIndex < rIndicesList.size())
+        {     
+            if(!(iSubIndex % 3))
+                sData.append("\r\nf ");
+
+            sData.append(" " + to_string(rIndicesList[iSubIndex] + 1));
+
+            ++iSubIndex;
+        }
+
+        rFile.Write(sData);
+
+        iSubIndex = 0;
 
         ++iMeshListIndex;
     }
@@ -125,19 +121,19 @@ void Export::ExportAsObj(Model* InrModel)
 
 
 //TODO:Exporter for FBX format
-void Export::ExportAsFBX(Model* InrModel)
+void Export::ExportAsFBX(Model& InrModel)
 {
 
 }
 
 //TODO:Exporter for DXF format
-void Export::ExportAsDXF(Model* InrModel)
+void Export::ExportAsDXF(Model& InrModel)
 {
 
 }
 
 //TODO:Exporter for DAE format
-void Export::ExportAsDAE(Model* InrModel)
+void Export::ExportAsDAE(Model& InrModel)
 {
 
 }

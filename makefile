@@ -1,49 +1,75 @@
-CFLAGSDEBUG = -std=c++17 -O0 -og -g3 -Wextra --debug
-CFLAGSREL = -std=c++17 -O2 -Wextra -Wall -s -pedantic -Wshadow -Wconversion -Wunreachable-code
+DEBUG = 1
 
-LINUXLDFLAGS = -lassimp -lglfw -lGLEW -lGLESv2 -lGLU -lGL -ldl -lpthread -lX11 -lXrandr
+USE_CLANG = 0
+
+LINUXLDFLAGS = -lassimp -lglfw -lGLEW -lGLESv2 -lGLU -lGL -ldl -lpthread -lX11
 WINLDFLAGS = -lassimp -lglfw3 -lglew32 -lglu32 -lopengl32
 
 HFLAGS = -I Header
 
-SOURCE = Source/KronosEngine.cpp Source/Standard.cpp Source/Window.cpp Source/App.cpp Source/Shader.cpp Source/Camera.cpp Source/Renderer.cpp Source/Texture.cpp Source/Vector.cpp Source/Mesh.cpp Source/Model.cpp Source/Log.cpp Source/FileHandler.cpp Source/Import.cpp Source/Export.cpp Source/InputManager.cpp Source/InputHandler.cpp Source/Framebuffer.cpp
+SOURCE = Source
 
-setup:
-	mkdir build-rel
-	mkdir build-debug
+PROGRAM = KronosEngine
 
-all-win-debug: win-debug run-debug
+ifeq ($(USE_CLANG), 1)
+	CXX = clang++
+endif
 
-all-win-rel: win-rel run-rel
+ifeq ($(DEBUG), 1)
+	BUILD_PATH = build-debug
+	CXXFLAGS = -std=c++17 -O0 -og -g3 -ggdb -Wextra --debug
+	LDFLAGS = -fuse-ld=mold -pthread
+else
+	BUILD_PATH = build-rel
+	CXXFLAGS = -std=c++17 -O2 -Wextra -Wall -pedantic -Wshadow -Wconversion -Wunreachable-code
+	LDFLAGS = -fuse-ld=mold -pthread -s
+endif
 
-all-linux-debug: linux-debug run-debug
+.PHONY: Rebuild-All Clean Setup All Run Link Build
 
-all-linux-rel: linux-rel run-rel
 
-.PHONY: win-debug win-rel linux-debug linux-rel run-debug run-rel clean-debug clean-rel
+OBJ=$(BUILD_PATH)/Standard.o $\
+$(BUILD_PATH)/Vector.o $\
+$(BUILD_PATH)/Texture.o $\
+$(BUILD_PATH)/FileHandler.o $\
+$(BUILD_PATH)/Shader.o $\
+$(BUILD_PATH)/InputHandler.o $\
+$(BUILD_PATH)/Framebuffer.o $\
+$(BUILD_PATH)/App.o $\
+$(BUILD_PATH)/Window.o $\
+$(BUILD_PATH)/Mesh.o $\
+$(BUILD_PATH)/Model.o $\
+$(BUILD_PATH)/Log.o $\
+$(BUILD_PATH)/Renderer.o $\
+$(BUILD_PATH)/Camera.o $\
+$(BUILD_PATH)/InputManager.o $\
+$(BUILD_PATH)/Export.o $\
+$(BUILD_PATH)/Import.o $\
+$(BUILD_PATH)/GeomGenerator.o
 
-win-rel:
-	g++ $(CFLAGSREL) $(HFLAGS) -o build-rel/KronosEngine.exe $(SOURCE) $(WINLDFLAGS)
+All: Setup Build Run
 
-linux-rel:
-	g++ $(CFLAGSREL) $(HFLAGS) -o build-rel/KronosEngine $(SOURCE) $(LINUXLDFLAGS)
+Clean:
+	-rm -r $(BUILD_PATH)
 
-win-debug:
-	g++ $(CFLAGSDEBUG) $(HFLAGS) -o build-debug/KronosEngine.exe $(SOURCE) $(WINLDFLAGS)
+Setup:
+	-mkdir $(BUILD_PATH)
+	-rm $(BUILD_PATH)/Timings
+	-touch $(BUILD_PATH)/Timings
 
-linux-debug:
-	g++ $(CFLAGSDEBUG) $(HFLAGS) -o build-debug/KronosEngine $(SOURCE) $(LINUXLDFLAGS)
+Build:$(OBJ) Link
 
-run-debug:
-	clear
-	time ./build-debug/KronosEngine
+Rebuild-All:Clean Setup Build
 
-run-rel:
-	clear
-	time ./build-rel/KronosEngine
+Run:
+	./$(BUILD_PATH)/KronosEngine
 
-clean-debug:
-	rm -r build-debug
+Link:
+	$(CXX) $(SOURCE)/$(PROGRAM).cpp $(OBJ) $(CXXFLAGS) $(HFLAGS) $(LDFLAGS) $(LINUXLDFLAGS) -o $(BUILD_PATH)/$(PROGRAM)
 
-clean-rel:
-	rm -r build-rel
+$(OBJ): %.o: %.cpp
+
+%.o: %.cpp
+
+%.cpp:
+	$(CXX) -c $(CXXFLAGS) $(HFLAGS) $(patsubst $(BUILD_PATH)/%,$(SOURCE)/%, $@) -o $(patsubst %.cpp,%.o, $@)

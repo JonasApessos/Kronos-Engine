@@ -1,15 +1,20 @@
 #pragma once
+
+#include "GLFW/glfw3.h"
+
+#include "Primitives.h"
+#include "InputHandler.h"
+
 #include <iostream>
 #include <map>
 #include <vector>
-#include "GLFW/glfw3.h"
-#include "Primitives.h"
-#include "InputHandler.h"
 
 using KronosPrim::uint64;
 
 using std::map, std::vector;
 
+/** \class InputManager
+*   \brief Singleton class that manages template class InputKeyHandler*/
 class InputManager
 {
 public:

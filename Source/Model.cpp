@@ -1,10 +1,9 @@
 #include "Model.h"
 
 Model::Model() : 
-rLog(new Log("LogModel")){}
+rLog(){}
 
-Model::Model(vector<Mesh*>& InrMeshes) : 
-rLog(new Log("LogModel")),
+Model::Model(vector<Mesh> const& InrMeshes) : 
 rMeshes(InrMeshes) {}
 
 Model::Model(Model const& InrModel) : 
@@ -18,27 +17,13 @@ Model::Model(Model&& InrModel)
         rLog = InrModel.rLog;
         rMeshes = InrModel.rMeshes;
 
-        InrModel.rLog = nullptr;
         InrModel.rMeshes.clear();
     }
 }
 
 Model::~Model() { Destroy(); }
 
-void Model::Destroy()
-{ 
-    vector<Mesh*>::iterator rIt = rMeshes.begin();
-
-    while(rIt != rMeshes.end())
-    {
-        delete *rIt;
-
-        ++rIt;
-    }
-
-    if(rLog != nullptr)
-        delete rLog;
-}
+void Model::Destroy() {}
 
 Model Model::operator=(Model const& InrModel)
 {
@@ -54,8 +39,6 @@ Model& Model::operator=(Model&& InrModel)
     {
         rLog = InrModel.rLog;
         rMeshes = InrModel.rMeshes;
-
-        InrModel.rLog = nullptr;
     }
 
     return InrModel;
@@ -63,11 +46,11 @@ Model& Model::operator=(Model&& InrModel)
 
 void Model::Draw(Shader& InrShader)
 {
-    vector<Mesh*>::iterator rIt = rMeshes.begin();
+    vector<Mesh>::iterator rIt = rMeshes.begin();
 
     while(rIt != rMeshes.end())
     {
-        static_cast<Mesh*>(*rIt)->Draw(InrShader);
+        static_cast<Mesh>(*rIt).Draw(InrShader);
 
         ++rIt;
     }
@@ -75,14 +58,12 @@ void Model::Draw(Shader& InrShader)
 
 void Model::RemoveMesh(uint64 IniHash)
 {
-	vector<Mesh*>::iterator rIt = rMeshes.begin();
+	vector<Mesh>::iterator rIt = rMeshes.begin();
 
 	while(rIt != rMeshes.end())
 	{
-		if(*rIt != nullptr && static_cast<Mesh*>(*rIt)->GetHash() == IniHash)
-		{	
-			delete *rIt;
-
+		if(static_cast<Mesh>(*rIt).GetHash() == IniHash)
+		{
 			rMeshes.erase(rIt);
 
 			break;
@@ -93,17 +74,21 @@ void Model::RemoveMesh(uint64 IniHash)
 }
 
 //Get Mesh from the Model by id
-Mesh* Model::GetMesh(uint64 IniHash)
+bool Model::GetMesh(uint64 IniHash, Mesh& InrMesh)
 {
-	vector<Mesh*>::iterator rIt = rMeshes.begin();
+	vector<Mesh>::iterator rIt = rMeshes.begin();
 
 	while(rIt != rMeshes.end())
 	{
-		if(*rIt != nullptr && static_cast<Mesh*>(*rIt)->GetHash() == IniHash)		
-			return *rIt;
+		if(static_cast<Mesh>(*rIt).GetHash() == IniHash)		
+        {
+			InrMesh = *rIt;
+
+            return true;
+        }
 
 		++rIt;
 	}
 
-	return nullptr;
+    return false;
 }

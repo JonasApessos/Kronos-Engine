@@ -1,9 +1,15 @@
 #pragma once
+
 #include <glm/glm.hpp>
+
 #include <vector>
+
+#include "math.h"
 
 using glm::vec2, glm::vec3;
 
+/** \struct SVector
+*   \brief Vector structure*/
 struct SVector
 {
 	vec3 Position;

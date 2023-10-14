@@ -1,15 +1,21 @@
 #pragma once
 
+#include "MacroUtils.h"
+
 #define __STDC_WANT_LIB_EXT1__ 1
 
-#include <iostream>
+
 #include "Primitives.h"
 #include "FileHandler.h"
+
+#include <iostream>
 
 using KronosPrim::int32, KronosPrim::uint32;
 using std::cout, std::cerr;
 
-enum ELogSeverity : uint32
+/** \enum ELogSeverity
+* 	\brief enum for log severity*/
+enum class ELogSeverity : uint32
 {
 	ELS_Info = 0,
 	ELS_Warning = 1,
@@ -17,6 +23,8 @@ enum ELogSeverity : uint32
 	ELS_Critical = 3
 };
 
+/** \class Log
+*   \brief class for loggins system*/
 class Log
 {
 public:
@@ -52,7 +60,7 @@ public:
 	string Read();
 
 	//Display log message directly to console
-	void Display();
+	void DisplayAll();
 
 	//Translate enum severity level to string
 	void TranslateSeverity(ELogSeverity IneLogSeverity, string& InsTranslatedString);
@@ -77,9 +85,11 @@ protected:
 	tm rTimeStruct = tm();
 
 private:
+	static uint32 iID;
+
 	FileHandler rLogFile;
 
-	void Initialization();
+	void Init();
 };
 
 

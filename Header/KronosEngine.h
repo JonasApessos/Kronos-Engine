@@ -1,11 +1,10 @@
 #pragma once
 
-#define K_MAJOR_VERSION 0
-#define K_MINOR_VERSION 16
-#define K_PATCH 2
+#include "MacroUtils.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 
+#include <assert.h>
 #include <stdint.h>
 #include <chrono>
 
@@ -38,6 +37,8 @@
 #include "Mesh.h"
 
 #include "Model.h"
+
+#include "ShapePrimitives.h"
 
 #include "Import.h"
 

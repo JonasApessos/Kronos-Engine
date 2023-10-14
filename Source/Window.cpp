@@ -12,31 +12,28 @@ Window::Window(
 }
 
 Window::Window(Window&& InrWindow) noexcept :
-	iWidth(InrWindow.iWidth),
-	iHeight(InrWindow.iHeight),
 	iRatioX(InrWindow.iRatioX),
 	iRatioY(InrWindow.iRatioY),
+	iWidth(InrWindow.iWidth),
+	iHeight(InrWindow.iHeight),
 	sTitle(InrWindow.sTitle),
-	rVidMode(InrWindow.rVidMode)
+	rWindow(InrWindow.rWindow),
+	rMonitor(InrWindow.rMonitor),
+	rVidMode(InrWindow.rVidMode)	
 {
-	rWindow = InrWindow.rWindow;
 	InrWindow.rWindow = nullptr;
-
-	rMonitor = InrWindow.rMonitor;
 	InrWindow.rMonitor = nullptr;
 }
 
 Window::Window(Window const& InrWindow) noexcept :
-	iWidth(InrWindow.iWidth),
-	iHeight(InrWindow.iHeight),
 	iRatioX(InrWindow.iRatioX),
 	iRatioY(InrWindow.iRatioY),
+	iWidth(InrWindow.iWidth),
+	iHeight(InrWindow.iHeight),
 	sTitle(InrWindow.sTitle),
-	rVidMode(InrWindow.rVidMode)
-{
-	rWindow = InrWindow.rWindow;
-	rMonitor = InrWindow.rMonitor;
-}
+	rWindow(InrWindow.rWindow),
+	rMonitor(InrWindow.rMonitor),
+	rVidMode(InrWindow.rVidMode) {}
 
 Window::~Window()
 {
@@ -52,9 +49,9 @@ Window& Window::operator=(Window const& InrWindow) noexcept
 		iRatioX = InrWindow.iRatioX;
 		iRatioY = InrWindow.iRatioY;
 		sTitle = InrWindow.sTitle;
-		rVidMode = InrWindow.rVidMode;
 		rWindow = InrWindow.rWindow;
 		rMonitor = InrWindow.rMonitor;
+		rVidMode = InrWindow.rVidMode;
 	}
 
 	return *this;
@@ -69,9 +66,9 @@ Window& Window::operator=(Window&& InrWindow) noexcept
 		iRatioX = InrWindow.iRatioX;
 		iRatioY = InrWindow.iRatioY;
 		sTitle = InrWindow.sTitle;
-		rVidMode = InrWindow.rVidMode;
 		rWindow = InrWindow.rWindow;
 		rMonitor = InrWindow.rMonitor;
+		rVidMode = InrWindow.rVidMode;
 
 		InrWindow.rWindow = nullptr;
 		InrWindow.rMonitor = nullptr;
@@ -122,8 +119,8 @@ void Window::Initialize()
 {
 	CreateWindow();
 
-	if (rWindow == nullptr && rLog != nullptr)
-		rLog->WriteAndDisplay("Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible.\n");
+	if (rWindow == nullptr)
+		rLog.WriteAndDisplay("Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible.\n");
 
 	glfwMakeContextCurrent(rWindow);
 

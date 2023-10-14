@@ -10,14 +10,15 @@ Camera::Camera(
 	float InfTravelSpeed,
 	float InfNearClip,
 	float InfFarClip) : 
-	rLoc(InrCameraLoc),
-	rCameraFront(InrCameraFront),
-	rCameraUp(InrCameraUp),
 	fFOV(InfFOV),
 	fAspectRation(InfAspectRatio),
 	fTravelSpeed(InfTravelSpeed),
 	fNearClip(InfNearClip),
-	fFarClip(InfFarClip)
+	fFarClip(InfFarClip),
+	rLocation(InrCameraLoc),
+	rCameraFront(InrCameraFront),
+	rCameraUp(InrCameraUp)
+	
 {
 
 }

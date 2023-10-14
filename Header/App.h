@@ -1,26 +1,36 @@
 #pragma once
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <iostream>
+
 #include "Log.h"
 #include "Window.h"
 
+#include <string>
+
 using std::string;
 
+/** \class App
+* 	\brief class to manage the application
+* 
+*/
 class App
 {
 public:
-	App(int iniCommandIndex, char** IncCommandArguments);
+	App(int iniCommandIndex, char** IncCommandArguments); /*!< \brief default constructor*/
 
-	~App();
+	~App(); /*!< \brief default destructor*/
 
+	/*! \fn Destroy
+		\brief Overridable function for destruction
+		\deprecated will be moved
+	*/
 	void Destroy();
 
-	inline bool IsInitSuccess() const;
+	inline bool IsInitSuccess() const; /*!< \return bool \brief true on succesful init*/
 protected:
-	string sAppTitle = "";
+	string sAppTitle = ""; /*!< App Title*/
 
-	Log rLog;
+	Log rLog; /*!< Logging manager*/
 
 private:
 	bool bIsGLFWInit = false;

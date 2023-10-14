@@ -1,11 +1,15 @@
 #pragma once
+
 #include "GL/glew.h"
+
 #include "Primitives.h"
 #include "Log.h"
 
 using KronosPrim::uint32;
 
-enum EGLError : uint32
+/** \enum EGLError
+	\brief opengl error flags*/
+enum class EGLError : uint32
 {
 	EGLE_NoError = GL_NO_ERROR,
 	EGLE_InvalidEnum = GL_INVALID_ENUM,

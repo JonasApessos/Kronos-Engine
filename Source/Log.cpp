@@ -1,18 +1,20 @@
 #include "Log.h"
 
+uint32 Log::iID = 0;
+
 Log::Log() : 
-rLogFile("Log/","Log.txt", ios_base::in | ios_base::out | ios_base::app) { Initialization(); }
+rLogFile("Log/","Log.txt", ios_base::in | ios_base::out | ios_base::app) { Init(); }
 
 Log::Log(string const& InsLogName) : 
 rLogFile("Log/","Log.txt", ios_base::in | ios_base::out | ios_base::app),
-sLogName(InsLogName) { Initialization(); }
+sLogName(InsLogName) { Init(); }
 
 Log::Log(
 	string const& InsLogName,
 	string const& InsFilePath,
 	string const& InsFileName) :
 	sLogName(InsLogName),
-	rLogFile(InsFilePath, InsFileName, ios_base::in | ios_base::out | ios_base::app) { Initialization(); }
+	rLogFile(InsFilePath, InsFileName, ios_base::in | ios_base::out | ios_base::app) { Init(); }
 
 Log::Log(
 	string const& InsLogName,
@@ -20,15 +22,17 @@ Log::Log(
 	string const& InsFileName,
 	int32 IniBitFlagMode) :
 	sLogName(InsLogName),
-	rLogFile(InsFilePath, InsFileName, ios_base::in | ios_base::out | ios_base::app) { Initialization(); }
+	rLogFile(InsFilePath, InsFileName, ios_base::in | ios_base::out | ios_base::app) { Init(); }
 
 Log::Log(Log&& InrLog) noexcept : 
-	sLogName(InrLog.sLogName) { rLogFile = InrLog.rLogFile; }
+	sLogName(InrLog.sLogName), 
+	rLogFile(InrLog.rLogFile) {}
 
 Log::Log(Log const& InrLog) :
-	sLogName(InrLog.sLogName) { rLogFile = InrLog.rLogFile; }
+	sLogName(InrLog.sLogName), 
+	rLogFile(InrLog.rLogFile) {}
 
-Log::~Log() {}
+Log::~Log() { --iID; }
 
 Log& Log::operator=(Log&& InrLog) noexcept
 {
@@ -70,14 +74,14 @@ bool Log::Write(string const& InsData)
 		if (iErrorCode)
 		{
 			strerror_s(cErrorMsg, sizeof(cErrorMsg), iErrorCode);
-			cerr << "[LogException] " << cErrorMsg << "\r\n";
+			cerr << "[" << sLogName << "][LogException]: " << cErrorMsg << "\r\n";
 		}
 		#elif defined __linux__
 		//check if localtime_s returned an error code
 		if (iErrorCode)
 		{
 			cErrorMsg = strerror(iErrorCode);
-			cerr << "[LogException] " << cErrorMsg << "\r\n";
+			cerr << "[" << sLogName << "][LogException]: " << cErrorMsg << "\r\n";
 		}
 		#endif
 
@@ -86,12 +90,17 @@ bool Log::Write(string const& InsData)
 
 		sMsg.append("[" + sLogName + "]" + "[" + sSeverity + "]" + "[" + cTimeBuffer + "]: " + InsData + "\r\n");
 
-		rLogFile.Write(sMsg);
+		if(!rLogFile.Write(sMsg))
+		{
+			cerr << "[" << sLogName << "][LogException]: Failed to write Log\r\n";
+
+			return false;
+		}
 
 		return true;
 	}
 	else
-		cerr << "[LogException] Failed to write Log\r\n";
+		cerr << "[" << sLogName << "][LogException]: Empty data\r\n";
 
 	return false;
 
@@ -119,14 +128,14 @@ bool Log::Write(string const& InsData, ELogSeverity IneLogSeverity)
 		if (iErrorCode)
 		{
 			strerror_s(cErrorMsg, sizeof(cErrorMsg), iErrorCode);
-			cerr << "[LogException] " << cErrorMsg << "\r\n";
+			cerr << "[" << sLogName << "][LogException]: " << cErrorMsg << "\r\n";
 		}
 		#elif defined __linux__
 		//check if localtime_s returned an error code
 		if (iErrorCode)
 		{
 			cErrorMsg = strerror(iErrorCode);
-			cerr << "[LogException] " << cErrorMsg << "\r\n";
+			cerr << "[" << sLogName << "][LogException]: " << cErrorMsg << "\r\n";
 		}
 		#endif
 		
@@ -135,12 +144,17 @@ bool Log::Write(string const& InsData, ELogSeverity IneLogSeverity)
 
 		sMsg.append("[" + sLogName + "]" + "[" + sSeverity + "]" + "[" + cTimeBuffer + "]: " + InsData + "\r\n");
 
-		rLogFile.Write(sMsg);
+		if(!rLogFile.Write(sMsg))
+		{
+			cerr << "[" << sLogName << "][LogException]: Failed to write Log\r\n";
+
+			return false;
+		}
 
 		return true;
 	}
 	else
-		cerr << "[LogException] Failed to write Log\r\n";
+		cerr << "[" << sLogName << "][LogException]: Empty data\r\n";
 
 	return false;
 }
@@ -165,14 +179,14 @@ bool Log::WriteAndDisplay(string const& InsData)
 		if (iErrorCode)
 		{
 			strerror_s(cErrorMsg, sizeof(cErrorMsg), iErrorCode);
-			cerr << "[LogException] " << cErrorMsg << "\r\n";
+			cerr << "[" << sLogName << "][LogException]: " << cErrorMsg << "\r\n";
 		}
 		#elif defined __linux__
 		//check if localtime_s returned an error codes
 		if (iErrorCode)
 		{
 			cErrorMsg = strerror(iErrorCode);
-			cerr << "[LogException] " << cErrorMsg << "\r\n";
+			cerr << "[" << sLogName << "][LogException]: " << cErrorMsg << "\r\n";
 		}
 		#endif
 		
@@ -181,14 +195,19 @@ bool Log::WriteAndDisplay(string const& InsData)
 
 		sMsg.append("[" + sLogName + "]" + "[" + sSeverity + "]" + "[" + cTimeBuffer + "]: " + InsData + "\r\n");
 
-		rLogFile.Write(sMsg);
+		if(!rLogFile.Write(sMsg))
+		{
+			cerr << "[" << sLogName << "][LogException]: Failed to write Log\r\n";
+
+			return false;
+		}
 
 		cerr << sMsg;
 
 		return true;
 	}
 	else
-		cerr << "[LogException] Failed to write Log\r\n";
+		cerr << "[" << sLogName << "][LogException]: Empty data\r\n";
 
 	return false;
 }
@@ -213,14 +232,14 @@ bool Log::WriteAndDisplay(string const& InsData, ELogSeverity IneLogSeverity)
 		if (iErrorCode)
 		{
 			strerror_s(cErrorMsg, sizeof(cErrorMsg), iErrorCode);
-			cerr << "[LogException] " << cErrorMsg << "\r\n";
+			cerr << "[" << sLogName << "][LogException]: " << cErrorMsg << "\r\n";
 		}
 		#elif defined __linux__
 		//check if localtime_s returned an error code
 		if (iErrorCode)
 		{
 			cErrorMsg = strerror(iErrorCode);
-			cerr << "[LogException] " << cErrorMsg << "\r\n";
+			cerr << "[" << sLogName << "][LogException]: " << cErrorMsg << "\r\n";
 		}
 		#endif
 
@@ -229,19 +248,24 @@ bool Log::WriteAndDisplay(string const& InsData, ELogSeverity IneLogSeverity)
 
 		sMsg.append("[" + sLogName + "]" + "[" + sSeverity + "]" + "[" + cTimeBuffer + "]: " + InsData + "\r\n");
 
-		rLogFile.Write(sMsg);
+		if(!rLogFile.Write(sMsg))
+		{
+			cerr << "[" << sLogName << "][LogException]: Failed to write Log\r\n";
 
-		cerr << sMsg;
+			return false;
+		}
+
+		cout << sMsg;
 
 		return true;
 	}
 	else
-		cerr << "[LogException] Failed to write to file\r\n";
+		cerr << "[" << sLogName << "][LogException]: Empty data\r\n";
 
 	return false;
 }
 
-void Log::Display()
+void Log::DisplayAll()
 {
 	cout << rLogFile.Read();
 }
@@ -279,4 +303,9 @@ void Log::TranslateSeverity(ELogSeverity IneLogSeverity, string& InsTranslatedSe
 	}
 }
 
-void Log::Initialization(){ rTime = time(0);}
+void Log::Init()
+{ 
+	++iID;
+
+	rTime = time(0);
+}

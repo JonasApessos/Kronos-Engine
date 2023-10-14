@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Primitives.h"
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -7,17 +9,14 @@
 #include <filesystem>
 #include <cstring>
 #include <errno.h>
-#include "Primitives.h"
-
-using std::fstream, std::ios_base;
-using KronosPrim::uint32;
 
 using KronosPrim::int32, KronosPrim::uint32;
 using std::cout, std::cerr;
 using std::ios_base, std::ostream, std::fstream, std::string, std::getline, std::error_code, std::strerror;
-using std::filesystem::create_directory, std::filesystem::exists, std::filesystem::space, std::filesystem::space_info;
+using std::filesystem::create_directory, std::filesystem::exists, std::filesystem::space, std::filesystem::space_info, std::stringstream;
 
-
+/** \class FileHandler
+* 	\brief a file handler class to simplify the file management*/
 class FileHandler
 {
 public:
@@ -34,11 +33,16 @@ public:
 
     void Init();
 
+    bool CreateFile();
+    bool CreateDirectory();
+
     //Set
     inline void SetBitFlagMode(int32 IniBitFlagMode);
 	inline void SetFileName(string const& InsFileName);
 	inline void SetFilePath(string const& InsFileName);
     inline void SetPrecision(uint32 IniPrecision);
+
+    void SetFullPath(string const& InsPath);
 
     //Get
 	inline int32 GetBitFlagMode() const;
@@ -47,8 +51,10 @@ public:
 
     //Read and return buffer string with log message
     string Read();
+    string ReadCustom();
 
-    void Write(string const& InsData);
+    bool Write(string const& InsData);
+    bool WriteCustom(string const& InsData);
 
 protected:
     string sFileName;

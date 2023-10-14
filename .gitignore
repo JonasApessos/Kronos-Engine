@@ -361,9 +361,8 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-KronosEngine.exe
-.vscode/settings.json
-.vscode/c_cpp_properties.json
-build-debug/KronosEngine
-build-rel/KronosEngine
+build-debug
+build-rel
 Resource/Object/Cube2.obj
+.vscode
+DOCS

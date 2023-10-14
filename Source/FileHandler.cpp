@@ -1,6 +1,6 @@
 #include "FileHandler.h"
 
-FileHandler::FileHandler() { Init(); }
+FileHandler::FileHandler() {}
 
 FileHandler::FileHandler(char const* IncPath, char const* IncFileName, ios_base::openmode IniFlagType) :
 sFilePath(IncPath),
@@ -55,30 +55,57 @@ void FileHandler::Init()
 	rFile.fixed;
 	rFile.precision(2);
 
-	if (!exists(sFilePath))
-	{
-		if (!create_directory(sFilePath, rErrorCode))
-			ShowErrorCode("Failed to create directory");
-	}
+	if(!CreateDirectory())
+		cerr << "Failed to create directory";
 
+	if(!CreateFile())
+		cerr << "Failed to create file";
+}
+
+bool FileHandler::CreateFile()
+{
 	//if the file does not exists, create it
 	if (!exists(sFilePath + sFileName))
 	{
-		rFile.open(sFilePath + sFileName, static_cast<ios_base::openmode>(iBitFlagMode));
+		rFile.open(sFilePath + sFileName, ios_base::out);
 
 		//custom check file to see if previous steps are ok
 		if (!Check())
-			cerr << "[FileHandlerException] Failed to create file\r\n";
+		{
+			cerr << "[FileHandlerException]: Failed to open file\r\n";
+
+			return false;
+		}
 
 		rFile.close();
 
 		if (!CheckState())
-			cerr << "[FileHandlerException] Failed to close file\r\n";
+			cerr << "[FileHandlerException]: Failed to close file\r\n";
 		
 		rFile.clear();
 	}
 
-	
+	return true;
+}
+
+bool FileHandler::CreateDirectory()
+{
+	if (!exists(sFilePath) && !create_directory(sFilePath, rErrorCode))
+	{
+		ShowErrorCode("Failed to create directory");
+		return false;
+	}
+
+	return true;
+}
+
+void FileHandler::SetFullPath(string const& InsPath)
+{
+	if(!InsPath.empty())
+	{
+		SetFileName(InsPath.substr(InsPath.find_last_of('/') + 1));
+		SetFilePath(InsPath.substr(0, (InsPath.find_last_of('/') + 1)));
+	}
 }
 
 bool FileHandler::Check()
@@ -97,7 +124,7 @@ bool FileHandler::Check()
 			ShowErrorCode("File not found - Error Category");
 	}
 	else
-		cerr << "[FileHandlerException] Not enough space on current drive \r\n";
+		cerr << "[FileHandlerException]: Not enough space on current drive \r\n";
 
 	return false;
 }
@@ -110,13 +137,13 @@ bool FileHandler::CheckState()
 	case ios_base::eofbit:
 		return true;
 	case ios_base::failbit:
-		cerr << "failbit detected\r\n";
+		cerr << "[FileHandlerException]: failbit detected\r\n";
 		break;
 	case ios_base::badbit:
-		cerr << "badbit detected\r\n";
+		cerr << "[FileHandlerException]: badbit detected\r\n";
 		break;
 	default:
-		cout << "No state detected\r\n";
+		cout << "[FileHandlerException]: No state detected\r\n";
 	}
 
 	return false;
@@ -124,44 +151,86 @@ bool FileHandler::CheckState()
 
 string FileHandler::Read()
 {
-	string sReadData = "";
-	string Line = "";
+	stringstream rStreamData;
 
-	rFile.open(sFilePath + sFileName, static_cast<ios_base::openmode>(iBitFlagMode));
+	rFile.open(sFilePath + sFileName, ios_base::in);
 
 	if (Check())
-	{
-		while (getline(rFile, Line))
-			sReadData.append("\r\n" + Line);
-	}
+		rStreamData << rFile.rdbuf();
 	else
-		cerr << "[FileHandlerException] Failed to open file\r\n";
+		cerr << "[FileHandlerException]: Failed to open file\r\n";
 
 	rFile.close();
 
 	if(!CheckState())
-		cerr << "[FileHnadlerException] failed to close file\r\n";
+		cerr << "[FileHnadlerException]: failed to close file\r\n";
 
-	return sReadData;
+	return rStreamData.str();
 }
 
-void FileHandler::Write(string const& InsData)
+string FileHandler::ReadCustom()
+{
+	stringstream rStreamData;
+
+	rFile.open(sFilePath + sFileName, static_cast<ios_base::openmode>(iBitFlagMode));
+
+	if (Check())
+		rStreamData << rFile.rdbuf();
+	else
+		cerr << "[FileHandlerException]: Failed to open file\r\n";
+
+	rFile.close();
+
+	if(!CheckState())
+		cerr << "[FileHnadlerException]: failed to close file\r\n";
+
+	return rStreamData.str();
+}
+
+bool FileHandler::Write(string const& InsData)
+{
+	rFile.open(sFilePath + sFileName, ios_base::out | ios_base::app);
+
+	if(Check())
+		rFile << InsData;
+	else
+	{
+		cerr << "[FileHnadlerException]: Failed to open file\r\n";
+
+		return false;
+	}
+
+	rFile.close();
+
+	if(!CheckState())
+		cerr << "[FileHnadlerException]: failed to close file\r\n";
+
+	return true;
+}
+
+bool FileHandler::WriteCustom(string const& InsData)
 {
 	rFile.open(sFilePath + sFileName, static_cast<ios_base::openmode>(iBitFlagMode));
 
 	if(Check())
 		rFile << InsData;
 	else
-		cerr << "[FileHnadlerException] Failed to open file\r\n";
+	{
+		cerr << "[FileHnadlerException]: Failed to open file\r\n";
+
+		return false;
+	}
 
 	rFile.close();
 
 	if(!CheckState())
-		cerr << "[FileHnadlerException] failed to close file\r\n";
+		cerr << "[FileHnadlerException]: failed to close file\r\n";
+
+	return true;
 }
 
 void FileHandler::ShowErrorCode(string const& InsCustomErrorMessage)
 {
-	cerr << "[FileHandlerException] " << InsCustomErrorMessage << ": Error Category - " << rErrorCode.category().name() << ", Code: " << rErrorCode.value() << ", Error: " << rErrorCode.message() << "\r\n";
+	cerr << "[FileHandlerException]:" << " Error Category - " << rErrorCode.category().name() << ", Code: " << rErrorCode.value() << ", Error: " << rErrorCode.message() << " - " << InsCustomErrorMessage << "\r\n";
 	rErrorCode.clear();
 }

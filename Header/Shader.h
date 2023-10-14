@@ -4,23 +4,35 @@
 #define SHADER_H
 
 #include <GL/glew.h>
+#include <glm/glm.hpp>
+
+#include "Primitives.h"
+#include "Log.h"
+#include "FileHandler.h"
 
 #include <string>
 #include <fstream>
 #include <sstream>
 #include <iostream>
 
-#include <glm/glm.hpp>
-
-#include "Primitives.h"
-
-#include "Log.h"
-
 using KronosPrim::int32, KronosPrim::uint32;
 using glm::vec3, glm::mat2, glm::mat3, glm::mat4;
 using std::cout, std::string, std::ifstream, std::stringstream;
 
-enum EShaderCompilationType : uint32
+/** \enum EGLShaderInfo
+	\brief shader Info*/
+enum class EGLShaderInfo : uint32
+{
+    EGLSI_ShaderType = GL_SHADER_TYPE,
+    EGLSI_DeleteStatus = GL_DELETE_STATUS,
+    EGLSI_CompileStatus = GL_COMPILE_STATUS,
+    EGLSI_InfoLogLength = GL_INFO_LOG_LENGTH,
+    EGLSI_ShaderSourceLength = GL_SHADER_SOURCE_LENGTH
+};
+
+/** \enum EShaderCompilationType
+	\brief shader compilation type*/
+enum class EShaderCompilationType : uint32
 {
     ESCT_Vertex = 0,
     ESCT_Fragment = 1,
@@ -31,6 +43,8 @@ enum EShaderCompilationType : uint32
     ESCT_Compute = 6
 };
 
+/** \class Shader
+*   \brief creates, compiles and handles shader object for graphics pipeline*/
 class Shader
 {
 
@@ -60,9 +74,10 @@ public:
     inline void SetMat4(string const& InsName, mat4& InfVaule) const;
 
 protected:
-    Log* rLog = new Log("LogShader");
+    Log rLog = Log("LogShader");
 
 private:
+    FileHandler rShaderFile;
 
 };
 

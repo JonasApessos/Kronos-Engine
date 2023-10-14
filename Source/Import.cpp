@@ -1,41 +1,34 @@
 #include "Import.h"
 
-Log* Import::rLog = new Log("LogImport");
+Log Import::rLog("LogImport");
 
 Import* Import::rImport = nullptr;
 
 Import::Import() {}
 
-//Load Object
-void Import::LoadModel(char const* InsPath, Model* InrModel)
+void Import::LoadModel(char const* InsPath, Model& InrModel)
 {
-    if(InrModel != nullptr)
+    Importer rImporter;
+
+    vector<Mesh> rMeshes;
+
+    string const sDirectory = string(InsPath).substr(0, string(InsPath).find_last_of("/"));
+
+    aiScene const* rScene = rImporter.ReadFile(InsPath, aiProcess_Triangulate | aiProcess_FlipUVs);
+
+    if (!rScene || rScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !rScene->mRootNode)
     {
-        Importer rImporter;
+        string ErrorMsg = "ERROR::ASSIMP::";
 
-        vector<Mesh*> rMeshes;
-
-        string const sDirectory = string(InsPath).substr(0, string(InsPath).find_last_of("/"));
-
-        aiScene const* rScene = rImporter.ReadFile(InsPath, aiProcess_Triangulate | aiProcess_FlipUVs);
-
-        if (!rScene || rScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !rScene->mRootNode)
-        {
-            string ErrorMsg = "ERROR::ASSIMP::";
-
-            if(rLog != nullptr)
-                rLog->WriteAndDisplay(ErrorMsg.append(rImporter.GetErrorString()), ELogSeverity::ELS_Error);
-        }
-
-        ProcessNode(sDirectory, rScene->mRootNode, rScene, rMeshes);
-
-        InrModel->SetMeshList(rMeshes);
+        rLog.WriteAndDisplay(ErrorMsg.append(rImporter.GetErrorString()), ELogSeverity::ELS_Error);
     }
-    else
-        rLog->WriteAndDisplay("Model object return null", ELogSeverity::ELS_Error);
+
+    ProcessNode(sDirectory, rScene->mRootNode, rScene, rMeshes);
+
+    InrModel.SetMeshList(rMeshes);
 }
 
-Import* Import::GetInstance() 
+Import* Import::GetInstance()
 { 
     if(rImport == nullptr)
         rImport = new Import();
@@ -44,7 +37,7 @@ Import* Import::GetInstance()
 }
 
 //Process scene nodes
-void Import::ProcessNode(string const& InsDirectory, aiNode* InrNode, aiScene const* InrScene, vector<Mesh*>& InrMeshes)
+void Import::ProcessNode(string const& InsDirectory, aiNode* InrNode, aiScene const* InrScene, vector<Mesh>& InrMeshes)
 {
     uint64 iMeshIndex = 0;
 
@@ -67,11 +60,11 @@ void Import::ProcessNode(string const& InsDirectory, aiNode* InrNode, aiScene co
 }
 
 //Load mesh object
-Mesh* Import::ProcessMesh(string const& InsDirectory, aiMesh* InrMesh, aiScene const* InrScene)
+Mesh Import::ProcessMesh(string const& InsDirectory, aiMesh* InrMesh, aiScene const* InrScene)
 {
     vector<SVector> rVertices;
     vector<uint32> rIndices;
-    vector<Texture*> rTempTextures;
+    vector<Texture> rTempTextures;
 
     uint32 iIndex = 0;
     uint32 iSubIndex = 0;
@@ -123,24 +116,24 @@ Mesh* Import::ProcessMesh(string const& InsDirectory, aiMesh* InrMesh, aiScene c
     }
 
     //Detect materials and load necessary linked textures to materials
-    if (InrMesh->mMaterialIndex >= 0)
+    if (InrMesh->mMaterialIndex > 0)
     {
         aiMaterial* rMaterial = InrScene->mMaterials[InrMesh->mMaterialIndex];
 
-        vector<Texture*> rDiffuseMaps = LoadMaterialTextures(InsDirectory, rMaterial, aiTextureType_DIFFUSE);
+        vector<Texture> rDiffuseMaps = LoadMaterialTextures(InsDirectory, rMaterial, aiTextureType_DIFFUSE);
         rTempTextures.insert(rTempTextures.end(), rDiffuseMaps.begin(), rDiffuseMaps.end());
 
-        vector<Texture*> rSpecularMaps = LoadMaterialTextures(InsDirectory, rMaterial, aiTextureType_SPECULAR);
+        vector<Texture> rSpecularMaps = LoadMaterialTextures(InsDirectory, rMaterial, aiTextureType_SPECULAR);
         rTempTextures.insert(rTempTextures.end(), rSpecularMaps.begin(), rSpecularMaps.end());
     }
 
-    return new Mesh(rVertices, rIndices, rTempTextures);
+    return Mesh(rVertices, rIndices, rTempTextures);
 }
 
 //Load texture for material linking
-vector<Texture*> Import::LoadMaterialTextures(string const& InsDirectory, aiMaterial* InrMat, aiTextureType InrType)
+vector<Texture> Import::LoadMaterialTextures(string const& InsDirectory, aiMaterial* InrMat, aiTextureType InrType)
 {
-    vector<Texture*> rTempTextures;
+    vector<Texture> rTempTextures;
 
     uint32 const iTexCount = InrMat->GetTextureCount(InrType);
 
@@ -163,17 +156,15 @@ vector<Texture*> Import::LoadMaterialTextures(string const& InsDirectory, aiMate
 
         while(iSubIndex < rTempTextures.size())
         {
-            if (rTempTextures[iSubIndex]->sPath == TempPath)
-                cout << rTempTextures[iSubIndex]->sPath << "\r\n";
+            if (rTempTextures[iSubIndex].sPath == TempPath)
+                cout << rTempTextures[iSubIndex].sPath << "\r\n";
 
             ++iSubIndex;
         }
 
         iSubIndex = 0;
 
-        Texture* NewTexture= new Texture(TempPath.c_str(), InrType, ETextureDataType::ETDT_Texture2D, ETextureSlot::ETS_Slot0);
-
-        rTempTextures.push_back(NewTexture);
+        rTempTextures.push_back(Texture(TempPath.c_str(), InrType, EGLTextureDataType::EGLTDT_Texture2D, EGLTextureSlot::EGLTS_Slot0));
 
         ++iIndex;
     }

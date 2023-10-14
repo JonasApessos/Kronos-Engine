@@ -7,9 +7,9 @@ Texture::Texture(
     int32 IniWidth,
     int32 IniHeight,
     ETextureType IneTextureType,
-    ETextureDataType IneTextureDataType,
-    ETextureSlot IneTextureSlot,
-    ETextureFormat IneTextureFormat) : 
+    EGLTextureDataType IneTextureDataType,
+    EGLTextureSlot IneTextureSlot,
+    EGLTextureFormat IneTextureFormat) : 
     iWidth(IniWidth),
     iHeight(IniHeight),
     eTextureType(IneTextureType), 
@@ -24,9 +24,9 @@ Texture::Texture(
 Texture::Texture(
     char const* IncImagePath,
     ETextureType IneTextureType,
-    ETextureDataType IneTextureDataType,
-    ETextureSlot IneTextureSlot,
-    ETextureFormat IneTextureFormat) :
+    EGLTextureDataType IneTextureDataType,
+    EGLTextureSlot IneTextureSlot,
+    EGLTextureFormat IneTextureFormat) :
     sPath(IncImagePath),
     eTextureType(IneTextureType),
     eTextureDataType(IneTextureDataType),
@@ -49,10 +49,10 @@ Texture::Texture(
 Texture::Texture(
     char const* IncImagePath,
     ETextureType IneTextureType,
-    ETextureDataType IneTextureDataType,
-    ETextureSlot IneTextureSlot,
-    ETextureFormat IneTextureFormat,
-    ETextureFormat IneInternalFormat) : 
+    EGLTextureDataType IneTextureDataType,
+    EGLTextureSlot IneTextureSlot,
+    EGLTextureFormat IneTextureFormat,
+    EGLTextureFormat IneInternalFormat) : 
     sPath(IncImagePath),
     eTextureType(IneTextureType),
     eTextureDataType(IneTextureDataType),
@@ -75,8 +75,8 @@ Texture::Texture(
 Texture::Texture(
     char const* IncImagePath,
     ETextureType IneTextureType,
-    ETextureDataType IneTextureDataType,
-    ETextureSlot IneTextureSlot) :
+    EGLTextureDataType IneTextureDataType,
+    EGLTextureSlot IneTextureSlot) :
     sPath(IncImagePath),
     eTextureDataType(IneTextureDataType),
     eTextureSlot(IneTextureSlot),
@@ -91,15 +91,15 @@ Texture::Texture(
         switch (iChannels)
         {
         case 1:
-            eTextureFormat = ETextureFormat::ETF_RED;
+            eTextureFormat = EGLTextureFormat::EGLTF_RED;
             break;
 
         case 3:
-            eTextureFormat = ETextureFormat::ETF_RGB;
+            eTextureFormat = EGLTextureFormat::EGLTF_RGB;
             break;
 
         case 4:
-            eTextureFormat = ETextureFormat::ETF_RGBA;
+            eTextureFormat = EGLTextureFormat::EGLTF_RGBA;
             break;
         }
 
@@ -117,8 +117,8 @@ Texture::Texture(
 Texture::Texture(
     char const* IncImagePath,
     aiTextureType IneTextureType,
-    ETextureDataType IneTextureDataType,
-    ETextureSlot IneTextureSlot) :
+    EGLTextureDataType IneTextureDataType,
+    EGLTextureSlot IneTextureSlot) :
     sPath(IncImagePath),
     eTextureDataType(IneTextureDataType),
     eTextureSlot(IneTextureSlot),
@@ -133,15 +133,15 @@ Texture::Texture(
         switch (iChannels)
         {
         case 1:
-            eTextureFormat = ETextureFormat::ETF_RED;
+            eTextureFormat = EGLTextureFormat::EGLTF_RED;
             break;
 
         case 3:
-            eTextureFormat = ETextureFormat::ETF_RGB;
+            eTextureFormat = EGLTextureFormat::EGLTF_RGB;
             break;
 
         case 4:
-            eTextureFormat = ETextureFormat::ETF_RGBA;
+            eTextureFormat = EGLTextureFormat::EGLTF_RGBA;
             break;
         }
 
@@ -157,33 +157,33 @@ Texture::Texture(
 }
 
 Texture::Texture(Texture const& InrTexture) :
-    eTextureDataType(InrTexture.eTextureDataType),
-    eTextureMagFilter(InrTexture.eTextureMagFilter),
-    eTextureMinFilter(InrTexture.eTextureMinFilter),
-    eTextureSlot(InrTexture.eTextureSlot),
+    iTextureId(InrTexture.iTextureId),
+    iWidth(InrTexture.iWidth),
+    iHeight(InrTexture.iHeight),
+    iChannels(InrTexture.iChannels),
     eTextureType(InrTexture.eTextureType),
+    eTextureDataType(InrTexture.eTextureDataType),
+    eTextureSlot(InrTexture.eTextureSlot),
     eTextureWrapS(InrTexture.eTextureWrapS),
     eTextureWrapT(InrTexture.eTextureWrapT),
-    iChannels(InrTexture.iChannels),
-    iHeight(InrTexture.iHeight),
-    iWidth(InrTexture.iWidth),
-    iTextureId(InrTexture.iTextureId)
+    eTextureMinFilter(InrTexture.eTextureMinFilter),
+    eTextureMagFilter(InrTexture.eTextureMagFilter)
 {
     rLog = InrTexture.rLog;
 }
 
 Texture::Texture(Texture&& InrTexture) :
-    eTextureDataType(InrTexture.eTextureDataType),
-    eTextureMagFilter(InrTexture.eTextureMagFilter),
-    eTextureMinFilter(InrTexture.eTextureMinFilter),
-    eTextureSlot(InrTexture.eTextureSlot),
+    iTextureId(InrTexture.iTextureId),
+    iWidth(InrTexture.iWidth),
+    iHeight(InrTexture.iHeight),
+    iChannels(InrTexture.iChannels),
     eTextureType(InrTexture.eTextureType),
+    eTextureDataType(InrTexture.eTextureDataType),
+    eTextureSlot(InrTexture.eTextureSlot),
     eTextureWrapS(InrTexture.eTextureWrapS),
     eTextureWrapT(InrTexture.eTextureWrapT),
-    iChannels(InrTexture.iChannels),
-    iHeight(InrTexture.iHeight),
-    iWidth(InrTexture.iWidth),
-    iTextureId(InrTexture.iTextureId)
+    eTextureMinFilter(InrTexture.eTextureMinFilter),
+    eTextureMagFilter(InrTexture.eTextureMagFilter)
 {
     rLog = InrTexture.rLog;
 
@@ -194,17 +194,17 @@ Texture Texture::operator=(Texture&& InrTexture)
 {
     if(this != &InrTexture)
     {
-        eTextureDataType = InrTexture.eTextureDataType;
-        eTextureMagFilter = InrTexture.eTextureMagFilter;
-        eTextureMinFilter = InrTexture.eTextureMinFilter;
-        eTextureSlot = InrTexture.eTextureSlot;
+        iTextureId = InrTexture.iTextureId;
+        iWidth = InrTexture.iWidth;
+        iHeight = InrTexture.iHeight;
+        iChannels = InrTexture.iChannels;
         eTextureType = InrTexture.eTextureType;
+        eTextureDataType = InrTexture.eTextureDataType;
+        eTextureSlot = InrTexture.eTextureSlot;
         eTextureWrapS = InrTexture.eTextureWrapS;
         eTextureWrapT = InrTexture.eTextureWrapT;
-        iChannels = InrTexture.iChannels;
-        iHeight = InrTexture.iHeight;
-        iWidth = InrTexture.iWidth;
-        iTextureId = InrTexture.iTextureId;
+        eTextureMinFilter = InrTexture.eTextureMinFilter;
+        eTextureMagFilter = InrTexture.eTextureMagFilter; 
         rLog = InrTexture.rLog;
 
         InrTexture.rLog = nullptr;
@@ -215,18 +215,17 @@ Texture Texture::operator=(Texture&& InrTexture)
 
 Texture Texture::operator=(Texture const& InrTexture)
 {
-    eTextureDataType = InrTexture.eTextureDataType;
-    eTextureDataType = InrTexture.eTextureDataType;
-    eTextureMagFilter = InrTexture.eTextureMagFilter;
-    eTextureMinFilter = InrTexture.eTextureMinFilter;
-    eTextureSlot = InrTexture.eTextureSlot;
+    iTextureId = InrTexture.iTextureId;
+    iWidth = InrTexture.iWidth;
+    iHeight = InrTexture.iHeight;
+    iChannels = InrTexture.iChannels;
     eTextureType = InrTexture.eTextureType;
+    eTextureDataType = InrTexture.eTextureDataType;
+    eTextureSlot = InrTexture.eTextureSlot;
     eTextureWrapS = InrTexture.eTextureWrapS;
     eTextureWrapT = InrTexture.eTextureWrapT;
-    iChannels = InrTexture.iChannels;
-    iHeight = InrTexture.iHeight;
-    iWidth = InrTexture.iWidth;
-    iTextureId = InrTexture.iTextureId;
+    eTextureMinFilter = InrTexture.eTextureMinFilter;
+    eTextureMagFilter = InrTexture.eTextureMagFilter; 
     rLog = InrTexture.rLog;
 
     return InrTexture;
@@ -249,7 +248,7 @@ void Texture::Initialization()
 
     switch (eTextureDataType)
     {
-    case ETextureDataType::ETDT_Texture1D:
+    case EGLTextureDataType::EGLTDT_Texture1D:
         glTexImage1D(
             static_cast<GLenum>(eTextureDataType),
             0,
@@ -261,7 +260,7 @@ void Texture::Initialization()
             PixelData);
         break;
 
-    case ETextureDataType::ETDT_Texture2D:
+    case EGLTextureDataType::EGLTDT_Texture2D:
         glTexImage2D(
             static_cast<GLenum>(eTextureDataType),
             0,
@@ -274,7 +273,7 @@ void Texture::Initialization()
             PixelData);
         break;
 
-    case ETextureDataType::ETDT_Texture3D:
+    case EGLTextureDataType::EGLTDT_Texture3D:
         glTexImage3D(
             static_cast<GLenum>(eTextureDataType),
             0,
@@ -305,7 +304,7 @@ void Texture::Initialization()
     {
         glGenerateMipmap(static_cast<GLenum>(eTextureDataType));
 
-        SetTextureWrap(ETextureWrap::ETW_Repeat);
-        SetTextureMinMagFilter(ETextureMinFilter::ETMF_Linear, ETextureMagFilter::ETMF_Linear);
+        SetTextureWrap(EGLTextureWrap::EGLTW_Repeat);
+        SetTextureMinMagFilter(EGLTextureMinFilter::EGLTMF_Linear, EGLTextureMagFilter::EGLTMF_Linear);
     }
 }
