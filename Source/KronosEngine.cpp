@@ -1,13 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <vector>
-#include <exception>
-
-#include <iomanip>
-
 #include "KronosEngine.h"
 
 using glm::vec3, glm::vec2 , glm::mat4;
@@ -166,12 +156,9 @@ int main(int argc, char **argv)
 
 			Renderer* rRenderer = new Renderer();
 
-			FrameBufferTexture = nullptr;
-
 			Shader rShaderLight("Resource/Shader/Light.vs", "Resource/Shader/Light.fs");
 			Shader rShaderCubeLight("Resource/Shader/LightColorCube.vs", "Resource/Shader/LightColorCube.fs");
 			Shader rShaderStencil("Resource/Shader/Stencil.vs", "Resource/Shader/Stencil.fs");
-
 
 			rRenderer->EnableMode(EGLEnable::EGLE_DepthTest, true);
 			rRenderer->EnableMode(EGLEnable::EGLE_StencilTest, true);
@@ -200,15 +187,17 @@ int main(int argc, char **argv)
 
 			MainCamera.SetYaw(-89.0f);
 
-			Model NewModel2 = SShapePrimCube().GetModel();
+			Model NewModel2(SShapePrimCube(0.2f,0.2f).GetModel());
 
+			NewModel2.Translate(vec3(1.f, 0.f, 0.f));
+			
 			mat4 View = MainCamera.GetView();
 			mat4 Projection = MainCamera.GetProjection();
-			mat4 Model = mat4(1.0f);
-
 			vec3 CameraPosition = -MainCamera.GetLocation();
 
 			glReleaseShaderCompiler();
+
+			GizmoTransform test = GizmoTransform();
 
 			//Main loop
 			while (!glfwWindowShouldClose(MainWindow->GetWindow()))
@@ -222,22 +211,26 @@ int main(int argc, char **argv)
 				View = MainCamera.GetView();
 				Projection = MainCamera.GetProjection();
 
-				CameraPosition = -MainCamera.GetLocation();				
+				CameraPosition = -MainCamera.GetLocation();
 				
 				rShaderCubeLight.Use();
 				rShaderCubeLight.SetVec3("ObjectColor", 1.0f, 0.5f, 0.31f);
 				rShaderCubeLight.SetVec3("LightColor", 1.0f, 1.0f, 1.0f);
 				rShaderCubeLight.SetVec3("LightPos", 1.f, -2.0f, 1.f);
 				rShaderCubeLight.SetVec3("ViewPos", CameraPosition);
-				rShaderCubeLight.SetVec3("ObjectPos", 0.0f, 0.0f, 0.0f);
+				rShaderCubeLight.SetVec3("ObjectPos", 0.f, 0.f, 0.f);
 
 				rShaderCubeLight.SetMat4("View", View);
 				rShaderCubeLight.SetMat4("Projection", Projection);
-				rShaderCubeLight.SetMat4("Model", Model);
+				rShaderCubeLight.SetMat4("Model", NewModel2.GetTransformMatrix());
 				
 				
 				//NewModel->Draw(rShaderCubeLight);
-				NewModel2.Draw(rShaderCubeLight);
+				//NewModel2.Draw(rShaderCubeLight);
+
+				rShaderCubeLight.SetMat4("Model", test.GetTransformMatrix());
+
+				test.Draw(rShaderCubeLight);
 				
 				glfwSwapBuffers(MainWindow->GetWindow());
 				glfwPollEvents();

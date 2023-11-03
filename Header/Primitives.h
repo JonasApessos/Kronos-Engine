@@ -3,8 +3,8 @@
 #include <stdint.h>
 #include <error.h>
 
-/** \namespace KronosPrim
-* 	\brief namespace containing primitives*/
+/** @namespace KronosPrim
+* 	@brief namespace containing primitives*/
 namespace KronosPrim
 {
 
@@ -20,9 +20,9 @@ namespace KronosPrim
 	typedef int64_t int64; //!< integer of size 8 byte
 	typedef __int128_t int128; //!< integer of size 16 byte
 
-	/** \struct SFloatQuarter 
-	* \brief struct to support full floating point precision of 1 by 1 byte
-	* \warning EXPERIMENTAL*/
+	/** @struct SFloatQuarter 
+	* @brief struct to support full floating point precision of 1 by 1 byte
+	* @warning EXPERIMENTAL*/
 	//----<THIS IS FOR FUTURE TESTING, DO NOT USE>----//
 	struct SFloatQuarter
 	{
@@ -31,9 +31,9 @@ namespace KronosPrim
 		uint8 decimal; //!< floating point decimal
 	};
 
-	/** \struct SFloatHalf
-	* \brief struct to support full floating point precision of 2 by 2 byte
-	* \warning EXPERIMENTAL*/
+	/** @struct SFloatHalf
+	* @brief struct to support full floating point precision of 2 by 2 byte
+	* @warning EXPERIMENTAL*/
 	//----<THIS IS FOR FUTURE TESTING, DO NOT USE>----//
 	struct SFloatHalf
 	{
@@ -42,9 +42,9 @@ namespace KronosPrim
 		uint16 decimal; //!< floating point decimal
 	};
 
-	/** \struct SFloat
-	* \brief struct to support full floating point precision of 4 by 4 byte
-	* \warning EXPERIMENTAL*/
+	/** @struct SFloat
+	* @brief struct to support full floating point precision of 4 by 4 byte
+	* @warning EXPERIMENTAL*/
 	//----<THIS IS FOR FUTURE TESTING, DO NOT USE>----//
 	struct SFloat
 	{
@@ -53,9 +53,9 @@ namespace KronosPrim
 		uint32 decimal; //!< floating point decimal
 	};
 
-	/** \struct SDouble
-	* \brief struct to support full floating point precision of 8 by 8 byte
-	* \warning EXPERIMENTAL*/
+	/** @struct SDouble
+	* @brief struct to support full floating point precision of 8 by 8 byte
+	* @warning EXPERIMENTAL*/
 	//----<THIS IS FOR FUTURE TESTING, DO NOT USE>----//
 	struct SDouble
 	{
@@ -64,9 +64,9 @@ namespace KronosPrim
 		uint64 decimal; //!< floating point decimal
 	};
 
-	/** \struct SQuad
-	* \brief !EXPERIMENTAL struct to support full floating point precision of 16 by 16 byte
-	* \warning EXPERIMENTAL*/
+	/** @struct SQuad
+	* @brief !EXPERIMENTAL struct to support full floating point precision of 16 by 16 byte
+	* @warning EXPERIMENTAL*/
 	//----<THIS IS FOR FUTURE TESTING, DO NOT USE>----//
 	struct SQuad
 	{

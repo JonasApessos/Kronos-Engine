@@ -1,15 +1,22 @@
 #pragma once
-#include <glm/glm.hpp>
-
-#include "Vector.h"
-#include "Texture.h"
-#include "Shader.h"
 
 #include <string>
 #include <vector>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+#include "Math.h"
+#include "Object.h"
+#include "Vector.h"
+#include "Texture.h"
+#include "Shader.h"
+
+using std::string, std::vector, std::to_string, std::hash, std::end, std::begin, std::max_element;
+
+using glm::vec4, glm::rotate;
+
 using KronosPrim::uint32, KronosPrim::uint64;
-using std::string, std::vector, std::to_string, std::hash;
 
 enum class EGLBufferTarget : uint32
 {
@@ -59,21 +66,40 @@ enum class EGLDrawMode : uint32
 };
 
 
-/** \class MeshBase
-*   \brief Abstract class for geometry mesh.
+/** @class MeshBase
+*   @brief Abstract class for geometry mesh.
 *    
 *   Abstract class to manage geometry mesh.
 */
-class MeshBase
+class MeshBase : public Object3D
 {
 public:
+	/**
+	 * @param InrVertices 
+	 * @param InrIndices 
+	 * @brief Constructor
+	 */
+	MeshBase(vector<SVector>& InrVertices, vector<uint32>& InrIndices);
+	/**
+	 * @param InrVertices 
+	 * @param InrIndices
+	 * @param InrTextures
+	 * @brief Constructor
+	 * @deprecated This Will be removed in the future
+	*/
 	MeshBase(vector<SVector>& InrVertices, vector<uint32>& InrIndices, vector<Texture>& InrTextures);
+	/**
+	 * @param InrBaseMesh
+	 * @brief Copy constructor
+	*/
 	MeshBase(MeshBase const& InrBaseMesh);
-	MeshBase(MeshBase&& InrMaseMesh);
+	/**
+	 * @param InrBaseMesh
+	 * @brief Move Constructor
+	*/
+	MeshBase(MeshBase&& InrBaseMesh);
 	
-	virtual ~MeshBase() = 0;
-
-	virtual void Draw(Shader& InrShader) = 0; //!< Abstract method, Draw the mesh list
+	virtual ~MeshBase() = 0; //!< @brief Destructor
 
 	constexpr inline void SetDrawMode(EGLDrawMode IneDrawMode);
 
@@ -81,23 +107,26 @@ public:
 	constexpr inline uint32 GetVBO() const; //!< Get the Vertex Buffer ID
 	constexpr inline uint32 GetEBO() const; //!< Get the Element Buffer ID
 
-	constexpr inline uint64 GetHash() const; //!< Get Hash ID of object, this will be changed in the future
-
 	inline vector<SVector> GetVertices() const; //!< Get Vertices array
 	inline vector<uint32> GetIndices() const; //!< Get Indices array
-	inline vector<Texture> GetTextures() const; //!< Get Textures array
+	inline vector<Texture> GetTextures() const; //!< Get Textures array @deprecated This will be removed in the future
 
 	inline EGLDrawMode GetDrawMode() const;
 
-protected:
-	uint64 iID; //!< Object ID
-	uint64 iHash; //!< Object hashed ID
+	inline void TranslateOffset(vec3 const& InrVector);
+	inline void RotateOffset(float InfRad, vec3 const& InrVector);
+	inline void ScaleOffset(vec3 const& InrVector);
 
+	virtual void Draw(Shader& InrShader) = 0; //!< Abstract method, Draw the mesh list
+
+	inline void Merge(MeshBase const& InrMesh);
+
+protected:
 	uint32 VAO, VBO, EBO;
 
 	vector<SVector> rVertices; //!< Vertices Array
 	vector<uint32> rIndices; //!< Indices Array
-	vector<Texture> rTextures; //!< Textures Array
+	vector<Texture> rTextures; //!< Textures Array @deprecated This Will be removed in the future
 
 	EGLDrawMode eDrawMode = EGLDrawMode::EGLDM_Triangles;
 
@@ -113,24 +142,106 @@ constexpr inline uint32 MeshBase::GetVAO() const { return VAO; }
 constexpr inline uint32 MeshBase::GetVBO() const { return VBO; }
 constexpr inline uint32 MeshBase::GetEBO() const { return EBO; }
 
-constexpr inline uint64 MeshBase::GetHash() const { return iHash; }
-
 inline vector<SVector> MeshBase::GetVertices() const { return rVertices; }
 inline vector<uint32> MeshBase::GetIndices() const { return rIndices; }
 inline vector<Texture> MeshBase::GetTextures() const { return rTextures; }
 
 inline EGLDrawMode MeshBase::GetDrawMode() const { return eDrawMode; }
 
-/** \class Mesh
-*   \brief class to manages geometry
+inline void MeshBase::TranslateOffset(vec3 const& InrVector) 
+{
+	uint32 i = 0;
+
+	while(i < rVertices.size())
+	{
+		rVertices[i].Position += InrVector;
+		
+		++i;
+	}
+}
+
+inline void MeshBase::RotateOffset(float InfRad, vec3 const& InrVector)
+{
+	uint32 i = 0;
+
+	mat4 MatTest = mat4(1.0f);
+
+	MatTest = glm::rotate(MatTest, InfRad, InrVector);
+
+	while(i < rVertices.size())
+	{
+		rVertices[i].Position = MatTest * vec4(rVertices[i].Position, 0.f);
+
+		++i;
+	}
+}
+
+inline void MeshBase::ScaleOffset(vec3 const& InrVector)
+{
+	uint32 i = 0;
+
+	while(i < rVertices.size())
+	{
+		rVertices[i].Position *= InrVector;
+
+		++i;
+	}
+}
+
+inline void MeshBase::Merge(MeshBase const& InrMesh)
+{
+	uint32 iLoop = 0;
+	//Max index element
+	uint32 iMaxElem = 0;
+
+	//Merge vertices
+	rVertices.insert(end(rVertices), begin(InrMesh.rVertices), end(InrMesh.rVertices));
+
+	rIndices.reserve(InrMesh.rIndices.size());
+
+	iMaxElem = *max_element(begin(rIndices), end(rIndices))+1;
+
+	//Merge indices with offset
+	while(iLoop < InrMesh.rIndices.size())
+	{
+		rIndices.emplace_back((InrMesh.rIndices[iLoop] + iMaxElem));
+	
+		++iLoop;
+	}
+}
+
+/** @class Mesh
+*   @brief class to manages geometry
+*	@todo move the texture array to a material class for better managment
 *    
 *   class to manages geometry
 */
 class Mesh : public MeshBase 
 {
 public:
+	/**
+	 * @param InrVertices 
+	 * @param InrIndices
+	 * @brief Constructor
+	 */
+	Mesh(vector<SVector>& InrVertices, vector<uint32>& InrIndices);
+	/**
+	 * @param InrVertices 
+	 * @param InrIndices 
+	 * @param InrTextures
+	 * @brief Constructor
+	 * @deprecated this constructor will be removed.
+	 */
 	Mesh(vector<SVector>& InrVertices, vector<uint32>& InrIndices, vector<Texture>& InrTextures);
+	/**
+	 * @param InrMesh
+	 * @brief Copy constructor
+	 */
 	Mesh(Mesh const& InrMesh);
+	/**
+	 * @param InrMesh
+	 * @brief Move constructor
+	 */
 	Mesh(Mesh&& InrMesh);
 
 	Mesh operator=(Mesh const& InrMesh);

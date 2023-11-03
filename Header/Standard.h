@@ -7,8 +7,8 @@
 
 using KronosPrim::uint32;
 
-/** \enum EGLError
-	\brief opengl error flags*/
+/** @enum EGLError
+	@brief opengl error flags*/
 enum class EGLError : uint32
 {
 	EGLE_NoError = GL_NO_ERROR,

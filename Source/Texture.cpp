@@ -78,9 +78,9 @@ Texture::Texture(
     EGLTextureDataType IneTextureDataType,
     EGLTextureSlot IneTextureSlot) :
     sPath(IncImagePath),
+    eTextureType(IneTextureType),
     eTextureDataType(IneTextureDataType),
-    eTextureSlot(IneTextureSlot),
-    eTextureType(IneTextureType)
+    eTextureSlot(IneTextureSlot)
 {
     stbi_set_flip_vertically_on_load(bInvertYOnLoad);
 

@@ -1,5 +1,9 @@
 #pragma once
 
+
+#include <vector>
+#include <string>
+
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
@@ -9,18 +13,15 @@
 #include "Texture.h"
 #include "Model.h"
 
-#include <vector>
-#include <string>
+using std::string, std::vector;
 
 using Assimp::Importer;
 
 using KronosPrim::uint32;
 
-using std::string, std::vector;
 
-
-/** \class Import
-*   \brief Singleton importer class.
+/** @class Import
+*   @brief Singleton importer class.
 *    
 *   The singleton class imports object from files.
 */

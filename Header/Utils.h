@@ -1,4 +1,4 @@
-
+#pragma once
 
 template<typename T>
 void Swap(T& InrValueA, T& InrValueB)

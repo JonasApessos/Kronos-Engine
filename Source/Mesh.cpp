@@ -2,14 +2,16 @@
 
 uint64 MeshBase::iNumMeshes = 0;
 
+MeshBase::MeshBase(vector<SVector>& InrVertices, vector<uint32>& InrIndices) :
+rVertices(InrVertices),
+rIndices(InrIndices) {}
+
 MeshBase::MeshBase(vector<SVector>& InrVertices, vector<uint32>& InrIndices, vector<Texture>& InrTextures) :
 rVertices(InrVertices),
 rIndices(InrIndices),
-rTextures(InrTextures) { iHash = static_cast<uint64>(hash<std::string>{}(to_string(iID = ++iNumMeshes))); }
+rTextures(InrTextures) {}
 
 MeshBase::MeshBase(MeshBase const& InrMeshBase) : 
-iID(InrMeshBase.iID),
-iHash(InrMeshBase.iHash),
 VAO(InrMeshBase.VAO),
 VBO(InrMeshBase.VBO),
 EBO(InrMeshBase.EBO),
@@ -29,12 +31,12 @@ MeshBase::MeshBase(MeshBase&& InrMeshBase)
 		rIndices = InrMeshBase.rIndices;
 		rTextures = InrMeshBase.rTextures;
 		eDrawMode = InrMeshBase.eDrawMode;
-		iID = InrMeshBase.iID;
-		iHash = InrMeshBase.iHash; 
 	}
 }
 
 MeshBase::~MeshBase() {}
+
+Mesh::Mesh(vector<SVector>& InrVertices, vector<uint32>& InrIndices) : MeshBase(InrVertices, InrIndices) { SetupMesh(); }
 
 Mesh::Mesh(vector<SVector>& InrVertices, vector<uint32>& InrIndices, vector<Texture>& InrTextures) : 
 MeshBase(InrVertices, InrIndices, InrTextures) { SetupMesh(); }
@@ -54,8 +56,6 @@ Mesh Mesh::operator=(Mesh const& InrMesh)
 	rIndices = InrMesh.rIndices;
 	rTextures = InrMesh.rTextures;
 	eDrawMode = InrMesh.eDrawMode;
-	iID = InrMesh.iID;
-	iHash = InrMesh.iHash; 
 
 	return InrMesh;
 }
@@ -71,8 +71,6 @@ Mesh Mesh::operator=(Mesh&& InrMesh)
 		rIndices = InrMesh.rIndices;
 		rTextures = InrMesh.rTextures;
 		eDrawMode = InrMesh.eDrawMode;
-		iID = InrMesh.iID;
-		iHash = InrMesh.iHash;
 	}
 
 	return *this;

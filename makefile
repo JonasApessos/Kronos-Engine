@@ -29,6 +29,7 @@ endif
 
 
 OBJ=$(BUILD_PATH)/Standard.o $\
+$(BUILD_PATH)/Object.o $\
 $(BUILD_PATH)/Vector.o $\
 $(BUILD_PATH)/Texture.o $\
 $(BUILD_PATH)/FileHandler.o $\
@@ -39,6 +40,7 @@ $(BUILD_PATH)/App.o $\
 $(BUILD_PATH)/Window.o $\
 $(BUILD_PATH)/Mesh.o $\
 $(BUILD_PATH)/Model.o $\
+$(BUILD_PATH)/Gizmo.o $\
 $(BUILD_PATH)/Log.o $\
 $(BUILD_PATH)/Renderer.o $\
 $(BUILD_PATH)/Camera.o $\

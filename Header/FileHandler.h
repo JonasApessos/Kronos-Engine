@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Primitives.h"
-
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -10,13 +8,15 @@
 #include <cstring>
 #include <errno.h>
 
-using KronosPrim::int32, KronosPrim::uint32;
+#include "Primitives.h"
+
 using std::cout, std::cerr;
 using std::ios_base, std::ostream, std::fstream, std::string, std::getline, std::error_code, std::strerror;
 using std::filesystem::create_directory, std::filesystem::exists, std::filesystem::space, std::filesystem::space_info, std::stringstream;
+using KronosPrim::int32, KronosPrim::uint32;
 
-/** \class FileHandler
-* 	\brief a file handler class to simplify the file management*/
+/** @class FileHandler
+* 	@brief a file handler class to simplify the file management*/
 class FileHandler
 {
 public:

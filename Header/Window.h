@@ -9,8 +9,8 @@
 
 using KronosPrim::uint32;
 
-/** \enum EGLFWHints
-*   \brief GLFW window hint flags*/
+/** @enum EGLFWHints
+*   @brief GLFW window hint flags*/
 enum class EGLFWHints : uint32
 {
 	EGLFWH_REDBits = GLFW_RED_BITS,
@@ -49,8 +49,8 @@ enum class EGLFWHints : uint32
 
 };
 
-/** \enum EGLFWError
-*   \brief GLFW error types*/
+/** @enum EGLFWError
+*   @brief GLFW error types*/
 enum class EGLFWError : uint32
 {
 	EGLFWE_NoError = GLFW_NO_ERROR,
@@ -66,8 +66,8 @@ enum class EGLFWError : uint32
 	EGLFWE_NoWindowContect = GLFW_NO_WINDOW_CONTEXT
 };
 
-/** \class Window
-*   \brief unified window system using glfw library*/
+/** @class Window
+*   @brief unified window system using glfw library*/
 class Window
 {
 public:

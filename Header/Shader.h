@@ -3,6 +3,11 @@
 #ifndef SHADER_H
 #define SHADER_H
 
+#include <string>
+#include <fstream>
+#include <sstream>
+#include <iostream>
+
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 
@@ -10,17 +15,12 @@
 #include "Log.h"
 #include "FileHandler.h"
 
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <iostream>
-
+using std::cout, std::string, std::ifstream, std::stringstream, std::to_string;
 using KronosPrim::int32, KronosPrim::uint32;
 using glm::vec3, glm::mat2, glm::mat3, glm::mat4;
-using std::cout, std::string, std::ifstream, std::stringstream;
 
-/** \enum EGLShaderInfo
-	\brief shader Info*/
+/** @enum EGLShaderInfo
+	@brief shader Info*/
 enum class EGLShaderInfo : uint32
 {
     EGLSI_ShaderType = GL_SHADER_TYPE,
@@ -30,8 +30,8 @@ enum class EGLShaderInfo : uint32
     EGLSI_ShaderSourceLength = GL_SHADER_SOURCE_LENGTH
 };
 
-/** \enum EShaderCompilationType
-	\brief shader compilation type*/
+/** @enum EShaderCompilationType
+	@brief shader compilation type*/
 enum class EShaderCompilationType : uint32
 {
     ESCT_Vertex = 0,
@@ -43,8 +43,8 @@ enum class EShaderCompilationType : uint32
     ESCT_Compute = 6
 };
 
-/** \class Shader
-*   \brief creates, compiles and handles shader object for graphics pipeline*/
+/** @class Shader
+*   @brief creates, compiles and handles shader object for graphics pipeline*/
 class Shader
 {
 
@@ -66,12 +66,12 @@ public:
     inline void SetFloat(string const& InsName, float InfVaule) const;
     inline void SetVec2(string const& InsName, float InfUniform) const;
     inline void SetVec2(string const& InsName, float InfX, float InfY) const;
-    inline void SetVec3(string const& InsName, vec3& InfValue) const;
+    inline void SetVec3(string const& InsName, vec3 const& InfValue) const;
     inline void SetVec3(string const& InsName, float InfX, float InfY, float InfZ) const;
     inline void SetVec3(string const& InsName, float InfUniform) const;
-    inline void SetMat2(string const& InsName, mat2& InfValue) const;
-    inline void SetMat3(string const& InsName, mat3& InfValue) const;
-    inline void SetMat4(string const& InsName, mat4& InfVaule) const;
+    inline void SetMat2(string const& InsName, mat2 const& InfValue) const;
+    inline void SetMat3(string const& InsName, mat3 const& InfValue) const;
+    inline void SetMat4(string const& InsName, mat4 const& InfVaule) const;
 
 protected:
     Log rLog = Log("LogShader");
@@ -106,7 +106,7 @@ inline void Shader::SetVec2(string const& InsName, float InfX, float InfY) const
     glUniform2f(glGetUniformLocation(iShaderProgID, InsName.c_str()), InfX, InfY);
 }
 
-inline void Shader::SetVec3(string const& InsName, vec3& InfValue) const
+inline void Shader::SetVec3(string const& InsName, vec3 const& InfValue) const
 {
     glUniform3fv(glGetUniformLocation(iShaderProgID, InsName.c_str()), 1, &InfValue[0]);
 }
@@ -121,17 +121,17 @@ inline void Shader::SetVec3(string const& InsName, float InfX, float InfY, float
     glUniform3f(glGetUniformLocation(iShaderProgID, InsName.c_str()), InfX, InfY, InfZ);
 }
 
-inline void Shader::SetMat2(string const& InsName, mat2& InrValue) const
+inline void Shader::SetMat2(string const& InsName, mat2 const& InrValue) const
 {
     glUniformMatrix2fv(glGetUniformLocation(iShaderProgID, InsName.c_str()), 1, GL_FALSE, &InrValue[0][0]);
 }
 
-inline void Shader::SetMat3(string const& InsName, mat3& InrValue) const
+inline void Shader::SetMat3(string const& InsName, mat3 const& InrValue) const
 {
     glUniformMatrix3fv(glGetUniformLocation(iShaderProgID, InsName.c_str()), 1, GL_FALSE, &InrValue[0][0]);
 }
 
-inline void Shader::SetMat4(string const& InsName, mat4& InrValue) const
+inline void Shader::SetMat4(string const& InsName, mat4 const& InrValue) const
 {
     glUniformMatrix4fv(glGetUniformLocation(iShaderProgID, InsName.c_str()), 1, GL_FALSE, &InrValue[0][0]);
 }

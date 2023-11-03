@@ -1,16 +1,16 @@
 #pragma once
 
+#include <string>
+
 #include "GLFW/glfw3.h"
 
 #include "Primitives.h"
 
-#include <string>
-
-using KronosPrim::uint32, KronosPrim::int32;
 using std::string;
+using KronosPrim::uint32, KronosPrim::int32;
 
-/** \enum EGLFWInputKey
-* 	\brief enum for glfw input key map*/
+/** @enum EGLFWInputKey
+* 	@brief enum for glfw input key map*/
 enum class EGLFWInputKey : int32
 {
 	EGLFWIK_Unknown = GLFW_KEY_UNKNOWN,
@@ -137,8 +137,8 @@ enum class EGLFWInputKey : int32
 	EGLFWIK_Last = GLFW_KEY_LAST,
 };
 
-/** \enum EGLFWInputState
-* 	\brief enum for glfw key state*/
+/** @enum EGLFWInputState
+* 	@brief enum for glfw key state*/
 enum class EGLFWInputState : int32
 {
 	EGLFWIS_Release = GLFW_RELEASE,
@@ -146,8 +146,8 @@ enum class EGLFWInputState : int32
 	EGLFWIS_Press = GLFW_PRESS
 };
 
-/** \class Import
-*   \brief Singleton importer class.
+/** @class Import
+*   @brief Singleton importer class.
 *    
 *   The singleton class imports object from files.
 */

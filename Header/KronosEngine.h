@@ -7,6 +7,14 @@
 #include <assert.h>
 #include <stdint.h>
 #include <chrono>
+#include <stdio.h>
+#include <stdlib.h>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <vector>
+#include <exception>
+#include <iomanip>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -37,6 +45,8 @@
 #include "Mesh.h"
 
 #include "Model.h"
+
+#include "Gizmo.h"
 
 #include "ShapePrimitives.h"
 
