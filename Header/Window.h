@@ -1,5 +1,9 @@
 #pragma once
 
+#include "imgui.h"
+#include "backends/imgui_impl_glfw.h"
+#include "backends/imgui_impl_opengl3.h"
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
@@ -98,14 +102,14 @@ public:
 	inline float GetAspectRatioWidth() const;
 	inline float GetAspectRatioHeight() const;
 
-	inline int32 GetWidth() const;
-	inline int32 GetHeight() const;
+	inline int32 GetWidth();
+	inline int32 GetHeight();
 
 	inline GLFWwindow* GetWindow() const;
 
 protected:
 	float iRatioX = 16.0f, iRatioY = 9.0f;
-	int32 iWidth = 1024, iHeight = 1024 * static_cast<int32>(iRatioY / iRatioX);
+	int32 iWidth = 1280, iHeight = iWidth * static_cast<int32>(iRatioY / iRatioX);
 
 	string sTitle = "";
 
@@ -142,7 +146,7 @@ inline bool Window::GetIsAspectLocked() const { return bIsAspectLocked; }
 inline float Window::GetAspectRatioWidth() const { return iRatioX / iRatioY; }
 inline float Window::GetAspectRatioHeight() const { return iRatioY / iRatioX; }
 
-inline int32 Window::GetWidth() const { return iWidth; }
-inline int32 Window::GetHeight() const { return iHeight; }
+inline int32 Window::GetWidth() { int X,Y; glfwGetWindowSize(rWindow, &X, &Y); iWidth = X; iHeight = Y; return iWidth; }
+inline int32 Window::GetHeight() { int X,Y; glfwGetWindowSize(rWindow, &X, &Y); iWidth = X; iHeight = Y; return iHeight; }
 
 inline GLFWwindow* Window::GetWindow() const { return rWindow; }

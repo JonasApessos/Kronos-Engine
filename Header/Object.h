@@ -1,12 +1,13 @@
 #pragma once
 
 #include <iostream>
+#include <vector>
 
 #include "glm/glm.hpp"
 
 #include "Primitives.h"
 
-using std::string, std::hash, std::to_string;
+using std::string, std::hash, std::to_string, std::vector;
 
 using glm::vec3, glm::mat4;
 
@@ -24,12 +25,21 @@ public:
     constexpr inline uint64 GetHash() const; //!< Get Hash ID of object, this will be changed in the future
     inline string GetName() const;
 
+    bool SetParent(ObjectBase* InrBase);
+    
+    bool AddChild(ObjectBase* InrBase);
+    bool AddChildren(vector<ObjectBase*>* InrBaseList);
+
 protected:
     
 private:
 
     static uint64 iID;
     const uint64 iHash;
+
+    ObjectBase* rParent = nullptr;
+
+    vector<ObjectBase*> rChildren;
 };
 
 inline void ObjectBase::SetName(string const& InsName) { sName=InsName; }

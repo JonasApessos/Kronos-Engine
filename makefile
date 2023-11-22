@@ -2,12 +2,16 @@ DEBUG = 1
 
 USE_CLANG = 0
 
-LINUXLDFLAGS = -lassimp -lglfw -lGLEW -lGLESv2 -lGLU -lGL -ldl -lpthread -lX11
-WINLDFLAGS = -lassimp -lglfw3 -lglew32 -lglu32 -lopengl32
+LINUX_LIB = -lassimp -lglfw -lGLEW -lGLESv2 -lGLU -lGL -ldl -lpthread -lX11
+WIN_LIB = -lassimp -lglfw3 -lglew32 -lglu32 -lopengl32
 
-HFLAGS = -I Header
+HFLAGS = -IHeader -IDep
 
 SOURCE = Source
+
+DEP = Dep
+
+IMGUI_PATH = ""
 
 PROGRAM = KronosEngine
 
@@ -25,8 +29,12 @@ else
 	LDFLAGS = -fuse-ld=mold -pthread -s
 endif
 
-.PHONY: Rebuild-All Clean Setup All Run Link Build
-
+IMGUI_OBJ=$(BUILD_PATH)/imgui.o $\
+$(BUILD_PATH)/imgui_draw.o $\
+$(BUILD_PATH)/imgui_tables.o $\
+$(BUILD_PATH)/imgui_widgets.o $\
+$(BUILD_PATH)/imgui_impl_glfw.o $\
+$(BUILD_PATH)/imgui_impl_opengl3.o
 
 OBJ=$(BUILD_PATH)/Standard.o $\
 $(BUILD_PATH)/Object.o $\
@@ -49,25 +57,35 @@ $(BUILD_PATH)/Export.o $\
 $(BUILD_PATH)/Import.o $\
 $(BUILD_PATH)/GeomGenerator.o
 
-All: Setup Build Run
+All:
+	-make Build -j
+	-make Link
+	-make Run
+
+Rebuild:
+	-make Build -j
+	-make Link
 
 Clean:
 	-rm -r $(BUILD_PATH)
 
 Setup:
+	-git submodule update --init --recursive
 	-mkdir $(BUILD_PATH)
 	-rm $(BUILD_PATH)/Timings
 	-touch $(BUILD_PATH)/Timings
 
-Build:$(OBJ) Link
-
-Rebuild-All:Clean Setup Build
+Rebuild-All:Clean Setup Rebuild
 
 Run:
 	./$(BUILD_PATH)/KronosEngine
 
+Build:ImGui-Build $(OBJ)
+
+ImGui-Build: imgui.o imgui_draw.o imgui_tables.o imgui_widgets.o imgui_impl_glfw.o imgui_impl_opengl3.o
+
 Link:
-	$(CXX) $(SOURCE)/$(PROGRAM).cpp $(OBJ) $(CXXFLAGS) $(HFLAGS) $(LDFLAGS) $(LINUXLDFLAGS) -o $(BUILD_PATH)/$(PROGRAM)
+	$(CXX) $(SOURCE)/$(PROGRAM).cpp $(OBJ) $(IMGUI_OBJ) $(CXXFLAGS) $(HFLAGS) $(LDFLAGS) $(LINUX_LIB) -o $(BUILD_PATH)/$(PROGRAM)
 
 $(OBJ): %.o: %.cpp
 
@@ -75,3 +93,23 @@ $(OBJ): %.o: %.cpp
 
 %.cpp:
 	$(CXX) -c $(CXXFLAGS) $(HFLAGS) $(patsubst $(BUILD_PATH)/%,$(SOURCE)/%, $@) -o $(patsubst %.cpp,%.o, $@)
+
+imgui.o:
+	$(CXX) -c $(CXXFLAGS) $(HFLAGS) $(DEP)/imgui.cpp -o $(BUILD_PATH)/imgui.o
+
+imgui_draw.o:
+	$(CXX) -c $(CXXFLAGS) $(HFLAGS) $(DEP)/imgui_draw.cpp -o $(BUILD_PATH)/imgui_draw.o
+
+imgui_tables.o:
+	$(CXX) -c $(CXXFLAGS) $(HFLAGS) $(DEP)/imgui_tables.cpp -o $(BUILD_PATH)/imgui_tables.o
+
+imgui_widgets.o:
+	$(CXX) -c $(CXXFLAGS) $(HFLAGS) $(DEP)/imgui_widgets.cpp -o $(BUILD_PATH)/imgui_widgets.o
+
+imgui_impl_glfw.o:
+	$(CXX) -c $(CXXFLAGS) $(HFLAGS) $(DEP)/backends/imgui_impl_glfw.cpp -o $(BUILD_PATH)/imgui_impl_glfw.o
+
+imgui_impl_opengl3.o:
+	$(CXX) -c $(CXXFLAGS) $(HFLAGS) $(DEP)/backends/imgui_impl_opengl3.cpp -o $(BUILD_PATH)/imgui_impl_opengl3.o
+
+.PHONY: Rebuild-All Clean Setup All Run Link Build Rebuild ImGui-Build

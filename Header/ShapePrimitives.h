@@ -244,7 +244,7 @@ struct SShapePrimCircle : SShapePrimBase
 
     void CyrcleConstruction()
     {
-        rLog.SetLogName("CyrclePrimGenerator");
+        rLog.SetLogName("CirclePrimGenerator");
 
         GenerateVertexData();
         GenerateIndicesData();
