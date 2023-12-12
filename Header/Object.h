@@ -69,8 +69,6 @@ public:
     constexpr inline vec3 GetRotation() const noexcept;
     constexpr inline vec3 GetScale() const noexcept;
 
-    void Test();
-
 protected:
 
 private:

@@ -46,14 +46,4 @@ bool ObjectBase::AddChildren(vector<ObjectBase*>* InrBaseList)
     return true;
 }
 
-void Object3D::Test()
-{
-    std::cout << "test";
-}
-
-
-Object3D::Object3D() 
-{
-    //string a = "TestHandle";
-    //InputKeyHandler<Object3D, this> rTest(a, EGLFWInputKey::EGLFWIK_0, 21);
-}
+Object3D::Object3D() {}
