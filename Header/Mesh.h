@@ -154,7 +154,7 @@ inline void MeshBase::TranslateOffset(vec3 const& InrVector)
 
 	while(i < rVertices.size())
 	{
-		rVertices[i].Position += InrVector;
+		rVertices[i].rPosition += InrVector;
 		
 		++i;
 	}
@@ -170,7 +170,7 @@ inline void MeshBase::RotateOffset(float InfRad, vec3 const& InrVector)
 
 	while(i < rVertices.size())
 	{
-		rVertices[i].Position = MatTest * vec4(rVertices[i].Position, 0.f);
+		rVertices[i].rPosition = MatTest * vec4(rVertices[i].rPosition, 0.f);
 
 		++i;
 	}
@@ -182,7 +182,7 @@ inline void MeshBase::ScaleOffset(vec3 const& InrVector)
 
 	while(i < rVertices.size())
 	{
-		rVertices[i].Position *= InrVector;
+		rVertices[i].rPosition *= InrVector;
 
 		++i;
 	}

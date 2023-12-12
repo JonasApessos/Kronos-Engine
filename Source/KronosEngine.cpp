@@ -1,4 +1,20 @@
 #include "KronosEngine.h"
+#include "Primitives.h"
+#include "Log.h"
+#include "Standard.h"
+#include "App.h"
+#include "Window.h"
+#include "Texture.h"
+#include "Framebuffer.h"
+#include "Shader.h"
+#include "Camera.h"
+#include "Renderer.h"
+#include "Mesh.h"
+#include "Model.h"
+#include "Gizmo.h"
+#include "ShapePrimitives.h"
+#include "Import.h"
+#include "Export.h"
 
 using glm::vec3, glm::vec2 , glm::mat4;
 
@@ -20,7 +36,9 @@ static int Index = 0;
 
 const char* ctest[] = {"test1", "test2", "Test3", "Test4", "Test5", "Test6", "Test7", "Test8", "Test9"};
 
-
+/**
+ * @deprecated Deprecated function
+*/
 void ProcessInput(GLFWwindow* InrWindow)
 {
 	if (glfwGetKey(InrWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -29,6 +47,7 @@ void ProcessInput(GLFWwindow* InrWindow)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	else if (glfwGetKey(InrWindow, GLFW_KEY_1) == GLFW_RELEASE)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
 
 	if (glfwGetKey(InrWindow, GLFW_KEY_W) == GLFW_PRESS)
 		rMainCamera.TravelForwards(1.0f * DeltaTime);
@@ -46,8 +65,9 @@ void ProcessInput(GLFWwindow* InrWindow)
 		rMainCamera.TravelUpwards(-1.0f * DeltaTime);
 }
 
-bool FirstMouse = true;
-
+/**
+ * @deprecated Deprecated function callback
+*/
 void MouseCallback(GLFWwindow* InrWindow, double XPosIn, double YPosIn)
 {
 	ImGui_ImplGlfw_CursorPosCallback(InrWindow, XPosIn, YPosIn);
@@ -72,6 +92,9 @@ void MouseCallback(GLFWwindow* InrWindow, double XPosIn, double YPosIn)
 	rMainCamera.AddPitch(YOffset);
 }
 
+/**
+ * @deprecated Deprecated function callback
+*/
 void ScrollCallback(GLFWwindow* InrWindow, double XOffset, double YOffset)
 {
 	ImGui_ImplGlfw_ScrollCallback(InrWindow, XOffset, YOffset);
@@ -294,6 +317,68 @@ bool InitGUI(Window* InrWindow)
 	return true;
 }
 
+void OnMouseScroll()
+{
+	SMouseScrollInputFrame rMouseScrollInput = InputManager::GetInstance()->GetMouseScrollInputFrame();
+
+	ImGui_ImplGlfw_ScrollCallback(InputManager::GetCurrentWindow(), rMouseScrollInput.dScrollX, rMouseScrollInput.dScrollY);
+
+	rMainCamera.SetFOV(rMainCamera.GetFOV() - static_cast<float>(rMouseScrollInput.dScrollY));
+
+	if (rMainCamera.GetFOV() < 1.0f)
+		rMainCamera.SetFOV(1.0f);
+	else if (rMainCamera.GetFOV() > 45.0f)
+		rMainCamera.SetFOV(45.0f);
+}
+
+bool FirstMouse = true;
+
+void OnMouseMove()
+{
+	SMouseMotionInputFrame rMouseMotion = InputManager::GetInstance()->GetMouseMotionInputFrame();
+
+	ImGui_ImplGlfw_CursorPosCallback(InputManager::GetCurrentWindow(), rMouseMotion.dXPos, rMouseMotion.dYPos);
+
+	const float XPos = static_cast<float>(rMouseMotion.dXPos);
+	const float YPos = static_cast<float>(rMouseMotion.dYPos);
+
+	if (FirstMouse)
+	{
+		MouseLastX = XPos;
+		MouseLastY = YPos;
+		FirstMouse = false;
+	}
+
+	const float XOffset = (XPos - MouseLastX) * 4.0f * DeltaTime;
+	const float YOffset = (MouseLastY - YPos) * 4.0f * DeltaTime;
+
+	MouseLastX = XPos;
+	MouseLastY = YPos;
+
+	rMainCamera.AddYaw(XOffset);
+	rMainCamera.AddPitch(YOffset);
+}
+
+void MoveCameraForwards()
+{
+	rMainCamera.TravelForwards(1.0f * DeltaTime);
+}
+
+void MoveCameraBackwards()
+{
+	rMainCamera.TravelForwards(-1.0f * DeltaTime);
+}
+
+void MoveCameraLeftwards()
+{
+	rMainCamera.TravelSideways(-1.0f * DeltaTime);
+}
+
+void MoveCameraRightwards()
+{
+	rMainCamera.TravelSideways(1.0f * DeltaTime);
+}
+
 int main(int argc, char **argv)
 {
 	try 
@@ -323,8 +408,8 @@ int main(int argc, char **argv)
 				return -3;
 			}
 			
-			glfwSetCursorPosCallback(rMainWindow->GetWindow(), MouseCallback);
-			glfwSetScrollCallback(rMainWindow->GetWindow(), ScrollCallback);
+			//glfwSetCursorPosCallback(rMainWindow->GetWindow(), MouseCallback);
+			//glfwSetScrollCallback(rMainWindow->GetWindow(), ScrollCallback);
 			
 			GLint nrAttributes;
 			glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
@@ -391,6 +476,15 @@ int main(int argc, char **argv)
 
 			GizmoTransform test = GizmoTransform();
 
+			InputManager::GetInstance()->SetCurrentWindow(rMainWindow->GetWindow());
+
+			InputManager::GetInstance()->BindInput("MoveForwards", EGLFWInputKey::EGLFWIK_W, EGLFWInputState::EGLFWIS_Repeat, &MoveCameraForwards);
+			InputManager::GetInstance()->BindInput("MoveBackwords", EGLFWInputKey::EGLFWIK_S, EGLFWInputState::EGLFWIS_Repeat, &MoveCameraBackwards);
+			InputManager::GetInstance()->BindInput("MoveLeftwards", EGLFWInputKey::EGLFWIK_A, EGLFWInputState::EGLFWIS_Repeat, &MoveCameraLeftwards);
+			InputManager::GetInstance()->BindInput("MoveRightwords", EGLFWInputKey::EGLFWIK_D, EGLFWInputState::EGLFWIS_Repeat, &MoveCameraRightwards);
+			InputManager::GetInstance()->BindInput("MouseMovement", EDeviceType::EDT_Mouse, &OnMouseMove);
+			InputManager::GetInstance()->BindInput("MouseScroll",EDeviceType::EDT_Mouse, &OnMouseScroll);
+
 			//Main loop
 			while (!glfwWindowShouldClose(rMainWindow->GetWindow()))
 			{
@@ -435,7 +529,8 @@ int main(int argc, char **argv)
 				
 				glfwSwapBuffers(rMainWindow->GetWindow());
 				rRenderer->Clear();
-				ProcessInput(rMainWindow->GetWindow());
+				//ProcessInput(rMainWindow->GetWindow());
+				InputManager::GetInstance()->ProcessInput();
 				glfwPollEvents();
 			}
 

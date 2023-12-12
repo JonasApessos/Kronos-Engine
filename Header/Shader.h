@@ -8,9 +8,9 @@
 #include <sstream>
 #include <iostream>
 
-#include <GL/glew.h>
 #include <glm/glm.hpp>
 
+#include "Standard.h"
 #include "Primitives.h"
 #include "Log.h"
 #include "FileHandler.h"

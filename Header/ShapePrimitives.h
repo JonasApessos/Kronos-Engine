@@ -188,7 +188,9 @@ struct SShapePrimLine : SShapePrimBase
 
     void LineConstruction()
     {
-        rLog.SetLogName("LinePrimGenerator");
+        rLog.SetLogName("LogLinePrimGenerator");
+
+        rLog.WriteAndDisplay("Generating Line...");
 
         GenerateVertexData();
         GenerateIndicesData();
@@ -200,6 +202,8 @@ struct SShapePrimLine : SShapePrimBase
         rMeshList[0].SetDrawMode(EGLDrawMode::EGLDM_LineStrip);
 
         rModel.SetMeshList(rMeshList);
+
+        rLog.WriteAndDisplay("Generating Done...");
     }
 
     void GenerateVertexData() override
@@ -244,7 +248,9 @@ struct SShapePrimCircle : SShapePrimBase
 
     void CyrcleConstruction()
     {
-        rLog.SetLogName("CirclePrimGenerator");
+        rLog.SetLogName("LogCirclePrimGenerator");
+
+        rLog.WriteAndDisplay("Generating Cyrcle...");
 
         GenerateVertexData();
         GenerateIndicesData();
@@ -256,6 +262,8 @@ struct SShapePrimCircle : SShapePrimBase
         rMeshList[0].SetDrawMode(EGLDrawMode::EGLDM_LineLoop);
 
         rModel.SetMeshList(rMeshList);
+
+        rLog.WriteAndDisplay("Generating Done...");
     }
 
     void GenerateVertexData() override
@@ -324,7 +332,9 @@ struct SShapePrimPlane : SShapePrimBase
 
     void PlaneConstruction()
     {
-        rLog.SetLogName("PlanePrimGenerator");
+        rLog.SetLogName("LogPlanePrimGenerator");
+
+        rLog.WriteAndDisplay("Generating Plane...");
 
         GenerateVertexData();
         GenerateIndicesData();
@@ -336,6 +346,8 @@ struct SShapePrimPlane : SShapePrimBase
         rMeshList[0].SetDrawMode(EGLDrawMode::EGLDM_TriangleStrip);
 
         rModel.SetMeshList(rMeshList);
+
+        rLog.WriteAndDisplay("Generating Done...");
     }
 
     void GenerateVertexData() override
@@ -383,7 +395,7 @@ struct SShapePrimCube : SShapePrimBase
 
     void BoxConstruction()
     {
-        rLog.SetLogName("CubePrimGenerator");
+        rLog.SetLogName("LogCubePrimGenerator");
 
         rLog.WriteAndDisplay("Generating Cube...");
 
@@ -457,7 +469,7 @@ struct SShapePrimSphere : SShapePrimBase
 
     void SphereConsruction()
     {
-        rLog.SetLogName("SpherePrimGenerator");
+        rLog.SetLogName("LogSpherePrimGenerator");
 
         if(iResW < 3)
             iResW = 3;
@@ -740,7 +752,7 @@ struct SShapePrimCylinder : SShapePrimBase
 
     void CylinderConstruction()
     {
-        rLog.SetLogName("CylinderPrimGenerator");
+        rLog.SetLogName("LogCylinderPrimGenerator");
 
         if(iResW < 3)
             iResW = 3;

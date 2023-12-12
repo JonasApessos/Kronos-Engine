@@ -1,9 +1,8 @@
 #pragma once
-#include <GL/glew.h>
 
 #include "Primitives.h"
-#include "Log.h"
 #include "Standard.h"
+#include "Log.h"
 #include "Vector.h"
 
 using KronosPrim::uint32;

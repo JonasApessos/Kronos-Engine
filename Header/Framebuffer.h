@@ -1,12 +1,9 @@
 #pragma once
-
 #include <iostream>
 
-#include <GL/glew.h>
-
 #include "Primitives.h"
-#include "Log.h"
 #include "Standard.h"
+#include "Log.h"
 #include "Texture.h"
 
 using KronosPrim::int32, KronosPrim::uint32;

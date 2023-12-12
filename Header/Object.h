@@ -6,6 +6,7 @@
 #include "glm/glm.hpp"
 
 #include "Primitives.h"
+#include "InputManager.h"
 
 using std::string, std::hash, std::to_string, std::vector;
 
@@ -67,6 +68,8 @@ public:
     constexpr inline vec3 GetPosition() const noexcept;
     constexpr inline vec3 GetRotation() const noexcept;
     constexpr inline vec3 GetScale() const noexcept;
+
+    void Test();
 
 protected:
 

@@ -2,10 +2,10 @@
 
 #include <iostream>
 
-#include <GL/glew.h>
 #include <assimp/scene.h>
 #include "stb/stb_image.h"
 
+#include "Standard.h"
 #include "Primitives.h"
 #include "Log.h"
 

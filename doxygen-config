@@ -2730,3 +2730,5 @@ GENERATE_LEGEND        = YES
 # The default value is: YES.
 
 DOT_CLEANUP            = YES
+
+EXCLUDE_PATTERNS = */Dep/*
