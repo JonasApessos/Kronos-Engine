@@ -1,18 +1,16 @@
 #pragma once
-#include <GL/glew.h>
+#include <iostream>
 
 #include "Primitives.h"
-#include "Log.h"
 #include "Standard.h"
+#include "Log.h"
 #include "Texture.h"
-
-#include <iostream>
 
 using KronosPrim::int32, KronosPrim::uint32;
 using std::cout, std::cerr, std::to_string;
 
-/** \enum EGLFramebufferStatus
-* 	\brief enum for opengl framebuffer status*/
+/** @enum EGLFramebufferStatus
+* 	@brief enum for opengl framebuffer status*/
 enum class EGLFramebufferStatus : uint32
 {
 	EGLFS_Complete = GL_FRAMEBUFFER_COMPLETE,
@@ -26,8 +24,8 @@ enum class EGLFramebufferStatus : uint32
 	EGLFS_IncompleteLayerTargets = GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS
 };
 
-/** \enum EGLFramebufferOp
-* 	\brief enum for opengl framebuffer operation*/
+/** @enum EGLFramebufferOp
+* 	@brief enum for opengl framebuffer operation*/
 enum class EGLFramebufferOp : uint32
 {
 	EGLFO_Draw = GL_DRAW_FRAMEBUFFER,
@@ -35,8 +33,8 @@ enum class EGLFramebufferOp : uint32
 	EGLFO_FrameBuffer = GL_FRAMEBUFFER
 };
 
-/** \enum EGLFramebufferAttach
-* 	\brief enum for opengl framebuffer attachment type*/
+/** @enum EGLFramebufferAttach
+* 	@brief enum for opengl framebuffer attachment type*/
 enum class EGLFramebufferAttach : uint32
 {
 	EGLFA_Color = GL_COLOR_ATTACHMENT0,
@@ -45,8 +43,8 @@ enum class EGLFramebufferAttach : uint32
 	EGLFA_DepthStencil = GL_DEPTH_STENCIL_ATTACHMENT,
 };
 
-/** \enum EGLFrambufferCubemap
-* 	\brief enum for opengl framebuffer Cubemap coord*/
+/** @enum EGLFrambufferCubemap
+* 	@brief enum for opengl framebuffer Cubemap coord*/
 enum class EGLFrambufferCubemap : uint32
 {
 	EGLFC_TexturePosX = GL_TEXTURE_CUBE_MAP_POSITIVE_X,
@@ -57,8 +55,8 @@ enum class EGLFrambufferCubemap : uint32
 	EGLFC_TextureNegZ = GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
 };
 
-/** \enum EGLFramebufferTex
-* 	\brief enum for opengl framebuffer texture type*/
+/** @enum EGLFramebufferTex
+* 	@brief enum for opengl framebuffer texture type*/
 enum class EGLFramebufferTex : uint32
 {
 	EGLFT_Texture1D = GL_TEXTURE_1D,
@@ -68,8 +66,8 @@ enum class EGLFramebufferTex : uint32
 	EGLFT_Texture2DMultisample = GL_TEXTURE_2D_MULTISAMPLE
 };
 
-/** \class Framebuffer
-* 	\brief class that handles opengl framebuffers*/
+/** @class Framebuffer
+* 	@brief class that handles opengl framebuffers*/
 class Framebuffer
 {
 public:

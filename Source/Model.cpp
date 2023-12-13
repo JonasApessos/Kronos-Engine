@@ -1,14 +1,15 @@
 #include "Model.h"
 
 Model::Model() : 
-rLog(){}
+rLog() {}
 
 Model::Model(vector<Mesh> const& InrMeshes) : 
 rMeshes(InrMeshes) {}
 
 Model::Model(Model const& InrModel) : 
 rLog(InrModel.rLog),
-rMeshes(InrModel.rMeshes) {}
+rMeshes(InrModel.rMeshes),
+rTransform(InrModel.rTransform) {}
 
 Model::Model(Model&& InrModel)
 {
@@ -16,6 +17,7 @@ Model::Model(Model&& InrModel)
     {
         rLog = InrModel.rLog;
         rMeshes = InrModel.rMeshes;
+        rTransform = InrModel.rTransform;
 
         InrModel.rMeshes.clear();
     }
@@ -29,6 +31,7 @@ Model Model::operator=(Model const& InrModel)
 {
     rLog = InrModel.rLog;
     rMeshes = InrModel.rMeshes;
+    rTransform = InrModel.rTransform;
 
     return InrModel;
 }
@@ -39,6 +42,7 @@ Model& Model::operator=(Model&& InrModel)
     {
         rLog = InrModel.rLog;
         rMeshes = InrModel.rMeshes;
+        rTransform = InrModel.rTransform;
     }
 
     return InrModel;
@@ -49,8 +53,8 @@ void Model::Draw(Shader& InrShader)
     vector<Mesh>::iterator rIt = rMeshes.begin();
 
     while(rIt != rMeshes.end())
-    {
-        static_cast<Mesh>(*rIt).Draw(InrShader);
+    {        
+        rIt->Draw(InrShader);
 
         ++rIt;
     }

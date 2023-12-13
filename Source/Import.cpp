@@ -72,24 +72,24 @@ Mesh Import::ProcessMesh(string const& InsDirectory, aiMesh* InrMesh, aiScene co
     SVector rVertex;
     aiFace rFace;
 
-    //Get Vertices, Normal and UV from mesh
+    //Get Vertices, rNormal and UV from mesh
     while(iIndex < InrMesh->mNumVertices)
     {
-        rVertex.Position.x = InrMesh->mVertices[iIndex].x;
-        rVertex.Position.y = InrMesh->mVertices[iIndex].y;
-        rVertex.Position.z = InrMesh->mVertices[iIndex].z;
+        rVertex.rPosition.x = InrMesh->mVertices[iIndex].x;
+        rVertex.rPosition.y = InrMesh->mVertices[iIndex].y;
+        rVertex.rPosition.z = InrMesh->mVertices[iIndex].z;
 
-        rVertex.Normal.x = InrMesh->mNormals[iIndex].x;
-        rVertex.Normal.y = InrMesh->mNormals[iIndex].y;
-        rVertex.Normal.z = InrMesh->mNormals[iIndex].z;
+        rVertex.rNormal.x = InrMesh->mNormals[iIndex].x;
+        rVertex.rNormal.y = InrMesh->mNormals[iIndex].y;
+        rVertex.rNormal.z = InrMesh->mNormals[iIndex].z;
 
         if (InrMesh->mTextureCoords[0] != nullptr)
         {
-            rVertex.TexCoords.x = InrMesh->mTextureCoords[0][iIndex].x;
-            rVertex.TexCoords.y = InrMesh->mTextureCoords[0][iIndex].y;
+            rVertex.rTexCoords.x = InrMesh->mTextureCoords[0][iIndex].x;
+            rVertex.rTexCoords.y = InrMesh->mTextureCoords[0][iIndex].y;
         }
         else
-            rVertex.TexCoords = vec2(0.0f, 0.0f);
+            rVertex.rTexCoords = vec2(0.0f, 0.0f);
 
         rVertices.push_back(rVertex);
 

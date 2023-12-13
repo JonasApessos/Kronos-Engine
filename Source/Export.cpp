@@ -66,7 +66,7 @@ void Export::ExportAsObj(Model& InrModel)
         //Vertex List
         while(iSubIndex < rVectorList.size())
         {
-            sData.append("v " + to_string(rVectorList[iSubIndex].Position.x) + " " + to_string(rVectorList[iSubIndex].Position.y) + " " + to_string(rVectorList[iSubIndex].Position.z) + " " + to_string(1.0f) + "\r\n"); 
+            sData.append("v " + to_string(rVectorList[iSubIndex].rPosition.x) + " " + to_string(rVectorList[iSubIndex].rPosition.y) + " " + to_string(rVectorList[iSubIndex].rPosition.z) + " " + to_string(1.0f) + "\r\n"); 
 
             ++iSubIndex;
         }
@@ -79,18 +79,18 @@ void Export::ExportAsObj(Model& InrModel)
         //Texture coord List
         while(iSubIndex < rVectorList.size())
         {
-            sData.append("vt " + to_string(rVectorList[iSubIndex].TexCoords.x) + " " + to_string(rVectorList[iSubIndex].TexCoords.y) + "\r\n");
+            sData.append("vt " + to_string(rVectorList[iSubIndex].rTexCoords.x) + " " + to_string(rVectorList[iSubIndex].rTexCoords.y) + "\r\n");
             ++iSubIndex;
         }
 
         iSubIndex = 0;
 
-        sData.append("#Normal List\r\n");
+        sData.append("#rNormal List\r\n");
 
-        //Vertex Normal List
+        //Vertex rNormal List
         while(iSubIndex < rVectorList.size())
         {                
-            sData.append("vp " + to_string(rVectorList[iSubIndex].Normal.x) + " " + to_string(rVectorList[iSubIndex].Normal.y) + " " + to_string(rVectorList[iSubIndex].Normal.z) + "\r\n");
+            sData.append("vp " + to_string(rVectorList[iSubIndex].rNormal.x) + " " + to_string(rVectorList[iSubIndex].rNormal.y) + " " + to_string(rVectorList[iSubIndex].rNormal.z) + "\r\n");
             ++iSubIndex;
         }
 

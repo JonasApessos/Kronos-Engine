@@ -1,17 +1,18 @@
 #pragma once
 
+#include <string>
+
+#include "Standard.h"
 #include "GLFW/glfw3.h"
 
 #include "Primitives.h"
 
-#include <string>
-
-using KronosPrim::uint32, KronosPrim::int32;
 using std::string;
+using KronosPrim::uint32, KronosPrim::int32;
 
-/** \enum EGLFWInputKey
-* 	\brief enum for glfw input key map*/
-enum class EGLFWInputKey : int32
+/** @enum EGLFWInputKey
+* 	@brief enum for glfw input key map*/
+/*enum class EGLFWInputKey : int32
 {
 	EGLFWIK_Unknown = GLFW_KEY_UNKNOWN,
 	EGLFWIK_Space = GLFW_KEY_SPACE,
@@ -135,23 +136,23 @@ enum class EGLFWInputKey : int32
 	EGLFWIK_RightSuper = GLFW_KEY_RIGHT_SUPER,
 	EGLFWIK_Menu = GLFW_KEY_MENU,
 	EGLFWIK_Last = GLFW_KEY_LAST,
-};
+};*/
 
-/** \enum EGLFWInputState
-* 	\brief enum for glfw key state*/
-enum class EGLFWInputState : int32
+/** @enum EGLFWInputState
+* 	@brief enum for glfw key state*/
+/*enum class EGLFWInputState : int32
 {
 	EGLFWIS_Release = GLFW_RELEASE,
 	EGLFWIS_Repeat = GLFW_REPEAT,
 	EGLFWIS_Press = GLFW_PRESS
-};
+};*/
 
-/** \class Import
-*   \brief Singleton importer class.
+/** @class Import
+*   @brief Singleton importer class.
 *    
 *   The singleton class imports object from files.
 */
-template<typename T, typename ObjectReference>
+/*template<typename T, typename ObjectReference>
 class InputKeyHandler
 {
 public:
@@ -210,26 +211,4 @@ inline void InputKeyHandler<T, ObjectReference>::OnRelease()
 { 
 	if (OnReleaseFuncCallback != nullptr)
 		(rCalleeClass->*OnReleaseFuncCallback)();
-}
-
-
-template<typename T, typename ObjectReference>
-void InputKeyHandler<T, ObjectReference>::BindCallback(EGLFWInputState IneInputState, ObjectReference* InrCallee, T (ObjectReference::*InrCallbackFunc)())
-{
-	rCalleeClass = InrCallee;
-
-	switch (IneInputState)
-	{
-	case EGLFWInputState::EGLFWIS_Press:
-		OnPressedFuncCallback = InrCallbackFunc;
-		break;
-
-	case EGLFWInputState::EGLFWIS_Release:
-		OnContinuedFuncCallback = InrCallbackFunc;
-		break;
-
-	case EGLFWInputState::EGLFWIS_Repeat:
-		OnReleaseFuncCallback = InrCallbackFunc;
-		break;
-	}
-}
+}*/

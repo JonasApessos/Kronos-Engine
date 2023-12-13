@@ -52,7 +52,6 @@ FileHandler FileHandler::operator=(FileHandler && InrFileHandler)
 
 void FileHandler::Init()
 {
-	rFile.fixed;
 	rFile.precision(2);
 
 	if(!CreateDirectory())

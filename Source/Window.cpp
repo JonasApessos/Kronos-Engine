@@ -111,8 +111,9 @@ void Window::SetAspect(float IniAspectX, float IniAspectY)
 
 void Window::OnResize(GLFWwindow* InrWindow, int32 IniWidth, int32 IniHeight)
 {
-	glViewport(0, 0, static_cast<GLsizei>(IniWidth), static_cast<GLsizei>(IniHeight));
-	glfwSetWindowSize(InrWindow, IniWidth, IniHeight);
+	glViewport(static_cast<GLint>(IniWidth*0.166), static_cast<GLint>(IniHeight*0.333 - 18), static_cast<GLsizei>(IniWidth - IniWidth*0.333), static_cast<GLsizei>(IniHeight*0.667));
+
+	//glfwSetWindowSize(InrWindow, IniWidth, IniHeight);
 }
 
 void Window::Initialize()
@@ -124,10 +125,10 @@ void Window::Initialize()
 
 	glfwMakeContextCurrent(rWindow);
 
-	glfwSetWindowAspectRatio(rWindow, iRatioX, iRatioY);
-	glfwSetInputMode(rWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	//glfwSetWindowAspectRatio(rWindow, iRatioX, iRatioY);
+	//glfwSetInputMode(rWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
-	glViewport(0, 0, GetWidth(), GetHeight());
+	glViewport(GetWidth()*0.166, GetHeight()*0.333 - 18, GetWidth() - GetWidth()*0.333, GetHeight()*0.667);
 
 	glfwSetWindowSizeCallback(rWindow, Window::OnResize);
 

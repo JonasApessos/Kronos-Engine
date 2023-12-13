@@ -1,6 +1,6 @@
 #include "InputHandler.h"
 
-template<typename T, typename ObjectReference>
+/*template<typename T, typename ObjectReference>
 InputKeyHandler<T, ObjectReference>::InputKeyHandler(string const& InsName, EGLFWInputKey IneKeyCode, uint32 IniHandlerID) :
 	sName(InsName),
 	eKeyCode(IneKeyCode),
@@ -37,3 +37,24 @@ void InputKeyHandler<T, ObjectReference>::ExecInputEvent(EGLFWInputState IneInpu
 		break;
 	}
 }
+
+template<typename T, typename ObjectReference>
+void InputKeyHandler<T, ObjectReference>::BindCallback(EGLFWInputState IneInputState, ObjectReference* InrCallee, T (ObjectReference::*InrCallbackFunc)())
+{
+	rCalleeClass = InrCallee;
+
+	switch (IneInputState)
+	{
+	case EGLFWInputState::EGLFWIS_Press:
+		OnPressedFuncCallback = InrCallbackFunc;
+		break;
+
+	case EGLFWInputState::EGLFWIS_Release:
+		OnContinuedFuncCallback = InrCallbackFunc;
+		break;
+
+	case EGLFWInputState::EGLFWIS_Repeat:
+		OnReleaseFuncCallback = InrCallbackFunc;
+		break;
+	}
+}*/

@@ -6,23 +6,23 @@
 using glm::vec3, glm::mat4;
 using glm::perspective, glm::normalize, glm::radians, glm::lookAt;
 
-/** \class Camera
-* 	\brief Camera class for 3d space
+/** @class Camera
+* 	@brief Camera class for 3d space
 * 
 */
 class Camera
 {
-/*! \fn Camera
-	*	\param InrCameraLoc
-	*	\param InrCameraFront
-	*	\param InrCameraUp
-	*	\param InfFOV
-	*	\param InfAspectRatio
-	*	\param InfTravelSpeed
-	*	\param InfNearClip
-	*	\param InfFarClip
+/*! @fn Camera
+	*	@param InrCameraLoc
+	*	@param InrCameraFront
+	*	@param InrCameraUp
+	*	@param InfFOV
+	*	@param InfAspectRatio
+	*	@param InfTravelSpeed
+	*	@param InfNearClip
+	*	@param InfFarClip
 	*
-	* 	\brief constructor method
+	* 	@brief constructor method
 	* */
 
 public:
@@ -38,76 +38,76 @@ public:
 		float InfNearClip,
 		float InfFarClip);
 
-	inline void TravelForwards(float InfTravelSpeed); //!< \param InfTravelSpeed \brief Forward traveling vector
-	inline void TravelSideways(float InfTravelSpeed); //!< \param InfTravelSpeed \brief Sideways traveling vector
-	inline void TravelUpwards(float InfTravelSpeed); //!< \param InfTravelSpeed \brief Upwards traveling vector
+	inline void TravelForwards(float InfTravelSpeed); //!< @param InfTravelSpeed @brief Forward traveling vector
+	inline void TravelSideways(float InfTravelSpeed); //!< @param InfTravelSpeed @brief Sideways traveling vector
+	inline void TravelUpwards(float InfTravelSpeed); //!< @param InfTravelSpeed @brief Upwards traveling vector
 
-	inline void AddLocation(vec3 InrVectorLoc); //!< \param InrVectorLoc \brief Add vector location
-	inline void AddLocX(float InfLocX); //!< \param InfLocX \brief Add x location vector
-	inline void AddLocY(float InfLocY); //!< \param InfLocY \brief Add y location vector
-	inline void AddLocZ(float InfLocZ); //!< \param InfLocZ \brief Add z location vector
+	inline void AddLocation(vec3 InrVectorLoc); //!< @param InrVectorLoc @brief Add vector location
+	inline void AddLocX(float InfLocX); //!< @param InfLocX @brief Add x location vector
+	inline void AddLocY(float InfLocY); //!< @param InfLocY @brief Add y location vector
+	inline void AddLocZ(float InfLocZ); //!< @param InfLocZ @brief Add z location vector
 
-	inline void AddRotation(vec3 InrVectorRot); //!< \param InrVectorRot \brief Add vector rotation
-	inline void AddYaw(float InfYaw); //!< \param InfYaw \brief Add x rotation vector
-	inline void AddPitch(float InfPitch); //!< \param InfPitch \brief Add y rotation vector
-	inline void AddRoll(float InfRoll); //!< \param InfRoll \brief Add z rotation vector
+	inline void AddRotation(vec3 InrVectorRot); //!< @param InrVectorRot @brief Add vector rotation
+	inline void AddYaw(float InfYaw); //!< @param InfYaw @brief Add x rotation vector
+	inline void AddPitch(float InfPitch); //!< @param InfPitch @brief Add y rotation vector
+	inline void AddRoll(float InfRoll); //!< @param InfRoll @brief Add z rotation vector
 
-	inline void SetLocation(vec3 InrVectorLoc); //!< \param InrVectorLoc \brief Set vector location
-	inline void SetLocX(float InfLocX); //!< \param InfLocX \brief Set x location vector
-	inline void SetLocY(float InfLocY); //!< \param InfLocY \brief Set y location vector
-	inline void SetLocZ(float InfLocZ); //!< \param InfLocZ \brief Set z location vector
+	inline void SetLocation(vec3 InrVectorLoc); //!< @param InrVectorLoc @brief Set vector location
+	inline void SetLocX(float InfLocX); //!< @param InfLocX @brief Set x location vector
+	inline void SetLocY(float InfLocY); //!< @param InfLocY @brief Set y location vector
+	inline void SetLocZ(float InfLocZ); //!< @param InfLocZ @brief Set z location vector
 
-	inline void SetRotation(vec3 InrVectorRot); //!< \param InrVectorRot \brief Set vector rotation
-	inline void SetYaw(float InfYaw); //!< \param InfYaw \brief Set x rotation vector
-	inline void SetPitch(float InfPitch); //!< \param InfPitch \brief Set y rotation vector
-	inline void SetRoll(float InfRoll); //!< \param InfRoll \brief Set z rotation vector
+	inline void SetRotation(vec3 InrVectorRot); //!< @param InrVectorRot @brief Set vector rotation
+	inline void SetYaw(float InfYaw); //!< @param InfYaw @brief Set x rotation vector
+	inline void SetPitch(float InfPitch); //!< @param InfPitch @brief Set y rotation vector
+	inline void SetRoll(float InfRoll); //!< @param InfRoll @brief Set z rotation vector
 
-	inline void SetMaxRotation(vec3 InrMaxRotation); //!< \param InrMaxRotation \brief Set maximum rotation vector
-	inline void SetMinRotation(vec3 InrMinRotation); //!< \param InrMinRotation \brief Set Minimum rotation vector
+	inline void SetMaxRotation(vec3 InrMaxRotation); //!< @param InrMaxRotation @brief Set maximum rotation vector
+	inline void SetMinRotation(vec3 InrMinRotation); //!< @param InrMinRotation @brief Set Minimum rotation vector
 
-	inline void SetFOV(float InfFOV); //!< \param InfFOV \brief Set camera FOV
+	inline void SetFOV(float InfFOV); //!< @param InfFOV @brief Set camera FOV
 
-	constexpr inline vec3 GetLocation() const; //!< \return vec3 \brief Get vector location
-	constexpr inline vec3 GetRotation() const; //!< \return vec3 \brief Get vector rotation
+	constexpr inline vec3 GetLocation() const; //!< @return vec3 @brief Get vector location
+	constexpr inline vec3 GetRotation() const; //!< @return vec3 @brief Get vector rotation
 
-	constexpr inline float GetFOV() const; //!< \return float \brief Get FOV
-	constexpr inline vec3 GetFront() const; //!< \return vec3 \brief Get Front vector
-	constexpr inline vec3 GetUp() const; //!< \return vec3 \brief Get Up vector
-	constexpr inline mat4 GetView() const; //!< \return mat4 \brief Get view matrix
-	constexpr inline mat4 GetProjection() const; //!< \return mat4 \brief Get projection matrix
+	constexpr inline float GetFOV() const; //!< @return float @brief Get FOV
+	constexpr inline vec3 GetFront() const; //!< @return vec3 @brief Get Front vector
+	constexpr inline vec3 GetUp() const; //!< @return vec3 @brief Get Up vector
+	constexpr inline mat4 GetView() const; //!< @return mat4 @brief Get view matrix
+	constexpr inline mat4 GetProjection() const; //!< @return mat4 @brief Get projection matrix
 
-	void Update(); //!< \brief Update camera data matrices
+	void Update(); //!< @brief Update camera data matrices
 
 protected:
-	/*! \var float fFOV
-	*	\brief Field of view
+	/*! @var float fFOV
+	*	@brief Field of view
 	*
-	*	\var float fAspectRation
-	*	\brief screen Aspect Ratio
+	*	@var float fAspectRation
+	*	@brief screen Aspect Ratio
 	*
-	*	\var float fTravelSpeed
-	*	\brief Camera travel speed*/
+	*	@var float fTravelSpeed
+	*	@brief Camera travel speed*/
 	float fFOV = 45.0f, fAspectRation = 16.0f/9.0f, fTravelSpeed = 0.001f;
 
-	/*! \var float fNearClip
-	*	\brief Near Clip plane
+	/*! @var float fNearClip
+	*	@brief Near Clip plane
 	*
-	*	\var float fFarClip
-	*	\brief Far Clip plane*/
+	*	@var float fFarClip
+	*	@brief Far Clip plane*/
 	float fNearClip = 0.1f, fFarClip = 100.0f;
 
-	/*! \var vec3 rLocation
-	*	\brief Camera location in 3D space
+	/*! @var vec3 rLocation
+	*	@brief Camera location in 3D space
 	*
-	*	\var vec3 rRotation
-	*	\brief Camera rotation in 3D space*/
+	*	@var vec3 rRotation
+	*	@brief Camera rotation in 3D space*/
 	vec3 rLocation = vec3(0.0f), rRotation = vec3(0.0f);
 
-	/*! \var vec3 rMaxRotation
-	*	\brief Maximum camera rotation
+	/*! @var vec3 rMaxRotation
+	*	@brief Maximum camera rotation
 	*
-	*	\var float rMinRotation
-	*	\brief Minimum camera rotation*/
+	*	@var float rMinRotation
+	*	@brief Minimum camera rotation*/
 	vec3 rMaxRotation = vec3(0.0f), rMinRotation = vec3(0.0f);
 
 private:

@@ -366,3 +366,5 @@ build-rel
 Resource/Object/Cube2.obj
 .vscode
 DOCS
+imgui.ini
+Kronos-Engine.code-workspace

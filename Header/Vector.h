@@ -1,20 +1,20 @@
 #pragma once
 
-#include <glm/glm.hpp>
-
 #include <vector>
+
+#include <glm/glm.hpp>
 
 #include "math.h"
 
 using glm::vec2, glm::vec3;
 
-/** \struct SVector
-*   \brief Vector structure*/
+/** @struct SVector
+*   @brief Vector structure*/
 struct SVector
 {
-	vec3 Position;
-	vec3 Normal;
-	vec2 TexCoords;
+	vec3 rPosition;
+	vec3 rNormal;
+	vec2 rTexCoords;
 
 	SVector() noexcept;
 	SVector(vec3 const& InrPos, vec3 const& InrNorm, vec2 const& InrTexCoord) noexcept;
@@ -54,57 +54,57 @@ struct SVector
 
 
 
-inline SVector SVector::operator+(SVector const& InrVertex) noexcept { Position += InrVertex.Position; return InrVertex; }
-inline void SVector::operator+(vec3 const& InrVector) noexcept { Position += InrVector; }
+inline SVector SVector::operator+(SVector const& InrVertex) noexcept { rPosition += InrVertex.rPosition; return InrVertex; }
+inline void SVector::operator+(vec3 const& InrVector) noexcept { rPosition += InrVector; }
 
-inline SVector SVector::operator-(SVector const& InrVertex) noexcept { Position -= InrVertex.Position; return InrVertex; }
-inline void SVector::operator-(vec3 const& InrVector) noexcept { Position -= InrVector; }
+inline SVector SVector::operator-(SVector const& InrVertex) noexcept { rPosition -= InrVertex.rPosition; return InrVertex; }
+inline void SVector::operator-(vec3 const& InrVector) noexcept { rPosition -= InrVector; }
 
-inline SVector SVector::operator*(SVector const& InrVertex) noexcept { Position *= InrVertex.Position; return InrVertex; }
-inline void SVector::operator*(vec3 const& InrVector) noexcept { Position *= InrVector;}
+inline SVector SVector::operator*(SVector const& InrVertex) noexcept { rPosition *= InrVertex.rPosition; return InrVertex; }
+inline void SVector::operator*(vec3 const& InrVector) noexcept { rPosition *= InrVector;}
 
-inline SVector SVector::operator/(SVector const& InrVertex) { Position /= InrVertex.Position; return InrVertex; }
-inline void SVector::operator/(vec3 const& InrVector) { Position /= InrVector; }
+inline SVector SVector::operator/(SVector const& InrVertex) { rPosition /= InrVertex.rPosition; return InrVertex; }
+inline void SVector::operator/(vec3 const& InrVector) { rPosition /= InrVector; }
 
-inline void SVector::SetPosition(vec3 const& InrPos) noexcept { Position = InrPos; }
-inline void SVector::SetPosition(float const InrPosX, float const InrPosY, float const InrPosZ) noexcept { Position.x = InrPosX; Position.y = InrPosY; Position.z = InrPosZ; }
+inline void SVector::SetPosition(vec3 const& InrPos) noexcept { rPosition = InrPos; }
+inline void SVector::SetPosition(float const InrPosX, float const InrPosY, float const InrPosZ) noexcept { rPosition.x = InrPosX; rPosition.y = InrPosY; rPosition.z = InrPosZ; }
 
-inline void SVector::SetNormal(vec3 const& InrNorm) noexcept { Normal = InrNorm; }
-inline void SVector::SetNormal(float const InrNormX, float const InrNormY, float const InrNormZ) noexcept { Normal.x = InrNormX; Normal.y = InrNormY; Normal.z = InrNormZ; }
+inline void SVector::SetNormal(vec3 const& InrNorm) noexcept { rNormal = InrNorm; }
+inline void SVector::SetNormal(float const InrNormX, float const InrNormY, float const InrNormZ) noexcept { rNormal.x = InrNormX; rNormal.y = InrNormY; rNormal.z = InrNormZ; }
 
-inline void SVector::SetTexCoord(vec2 const& InrTexCoord) noexcept { TexCoords = InrTexCoord; }
-inline void SVector::SetTexCoord(float const InrTexCoordX, float const InrTexCoordY) noexcept { TexCoords.x = InrTexCoordX; TexCoords.y = InrTexCoordY; }
+inline void SVector::SetTexCoord(vec2 const& InrTexCoord) noexcept { rTexCoords = InrTexCoord; }
+inline void SVector::SetTexCoord(float const InrTexCoordX, float const InrTexCoordY) noexcept { rTexCoords.x = InrTexCoordX; rTexCoords.y = InrTexCoordY; }
 
-constexpr inline vec3 SVector::GetPosition() const noexcept { return Position; }
-constexpr inline vec3 SVector::GetNormal() const noexcept { return Normal; }
-constexpr inline vec2 SVector::SetTexCoord() const noexcept { return TexCoords; }
+constexpr inline vec3 SVector::GetPosition() const noexcept { return rPosition; }
+constexpr inline vec3 SVector::GetNormal() const noexcept { return rNormal; }
+constexpr inline vec2 SVector::SetTexCoord() const noexcept { return rTexCoords; }
 
 constexpr inline float SVector::GetDotProduct(vec3 const& InrVertex) const  noexcept
 {
-	return Position.x * InrVertex.x +
-		   Position.y * InrVertex.y +
-		   Position.z * InrVertex.z;
+	return rPosition.x * InrVertex.x +
+		   rPosition.y * InrVertex.y +
+		   rPosition.z * InrVertex.z;
 }
 
 constexpr inline vec3 SVector::GetCrossProduct(vec3 const& InrVec) const noexcept
 {
-	return vec3(Position.y * InrVec.z - Position.z * InrVec.y,
-				Position.x * InrVec.z - Position.z * InrVec.x,
-				Position.x * InrVec.y - Position.y * InrVec.x);
+	return vec3(rPosition.y * InrVec.z - rPosition.z * InrVec.y,
+				rPosition.x * InrVec.z - rPosition.z * InrVec.x,
+				rPosition.x * InrVec.y - rPosition.y * InrVec.x);
 }
 
 constexpr inline vec3 SVector::GetDirection(vec3 const& InrVertex) const noexcept
 {
-	return vec3(abs(abs(Position.x) - abs(InrVertex.x)),
-		   abs(abs(Position.y) - abs(InrVertex.y)),
-		   abs(abs(Position.z) - abs(InrVertex.z)));
+	return vec3(abs(abs(rPosition.x) - abs(InrVertex.x)),
+		   abs(abs(rPosition.y) - abs(InrVertex.y)),
+		   abs(abs(rPosition.z) - abs(InrVertex.z)));
 }
 
 constexpr inline float SVector::GetLength(vec3 const& InrVec) const noexcept
 {
-	return abs(abs(Position.x) - abs(InrVec.x)) +
-		   abs(abs(Position.y) - abs(InrVec.y)) +
-		   abs(abs(Position.z) - abs(InrVec.z));
+	return abs(abs(rPosition.x) - abs(InrVec.x)) +
+		   abs(abs(rPosition.y) - abs(InrVec.y)) +
+		   abs(abs(rPosition.z) - abs(InrVec.z));
 }
 
 constexpr inline float SVector::GetDistance(vec3 const& InrVec) const noexcept { return powf(GetLength(InrVec),2) + 1; }

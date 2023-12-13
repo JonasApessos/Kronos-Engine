@@ -1,15 +1,14 @@
 #pragma once
-#include <GL/glew.h>
 
 #include "Primitives.h"
-#include "Log.h"
 #include "Standard.h"
+#include "Log.h"
 #include "Vector.h"
 
 using KronosPrim::uint32;
 
-/** \enum EGLEnable
-	\brief Enable types for glEnable() for opengl*/
+/** @enum EGLEnable
+	@brief Enable types for glEnable() for opengl*/
 enum class EGLEnable : uint32
 {
 	EGLE_Blend = GL_BLEND,
@@ -38,12 +37,12 @@ enum class EGLEnable : uint32
 	EGLE_SampleMask = GL_SAMPLE_MASK,
 	EGLE_ScissorTest = GL_SCISSOR_TEST,
 	EGLE_StencilTest = GL_STENCIL_TEST,
-	EGLE_TextureCubemapSeamles = GL_TEXTURE_CUBE_MAP_SEAMLESS,
+	EGLE_TextureCubemapSeamless = GL_TEXTURE_CUBE_MAP_SEAMLESS,
 	EGLE_ProgramPointSize = GL_PROGRAM_POINT_SIZE
 };
 
-/** \enum EGLDrawBuffer
-	\brief Draw for frame buffer for opengl*/
+/** @enum EGLDrawBuffer
+	@brief Draw for frame buffer for opengl*/
 enum class EGLDrawBuffer : uint32
 {
 	EGLDB_None = GL_NONE,
@@ -58,8 +57,8 @@ enum class EGLDrawBuffer : uint32
 	EGLDB_FrontAndBack = GL_FRONT_AND_BACK,
 };
 
-/** \enum EGLFunc
-	\brief Logic func for opengl*/
+/** @enum EGLFunc
+	@brief Logic func for opengl*/
 enum class EGLFunc : uint32
 {
 	EGLDF_Never = GL_NEVER,
@@ -72,8 +71,8 @@ enum class EGLFunc : uint32
 	EGLDF_Always = GL_ALWAYS
 };
 
-/** \enum EGLCullFace
-	\brief face culling type for opengl*/
+/** @enum EGLCullFace
+	@brief face culling type for opengl*/
 enum class EGLCullFace : uint32
 {
 	EGLCF_Back = GL_BACK,
@@ -81,8 +80,8 @@ enum class EGLCullFace : uint32
 	EGLCF_FrontAndBack = GL_FRONT_AND_BACK
 };
 
-/** \enum EGLStencilOp
-	\brief stencil operation for opengl*/
+/** @enum EGLStencilOp
+	@brief stencil operation for opengl*/
 enum class EGLStencilOp : uint32
 {
 	EGLSO_Keep = GL_KEEP,
@@ -95,8 +94,8 @@ enum class EGLStencilOp : uint32
 	EGLSO_Invert = GL_INVERT
 };
 
-/** \enum EGLPolygonMode
-	\brief polygon mode type for opengl*/
+/** @enum EGLPolygonMode
+	@brief polygon mode type for opengl*/
 enum class EGLPolygonMode : uint32
 {
 	EGLP_Point = GL_POINT,
@@ -104,8 +103,8 @@ enum class EGLPolygonMode : uint32
 	EGLP_Fill = GL_FILL
 };
 
-/** \enum EGLClearBuffer
-	\brief clear buffer type for opengl*/
+/** @enum EGLClearBuffer
+	@brief clear buffer type for opengl*/
 enum EGLClearBuffer : uint32
 {
 	EGLC_ColorBufferBit = GL_COLOR_BUFFER_BIT,
@@ -113,8 +112,8 @@ enum EGLClearBuffer : uint32
 	EGLC_StencilBufferBit = GL_STENCIL_BUFFER_BIT
 };
 
-/** \enum EViewMode
-	\brief view mode type*/
+/** @enum EViewMode
+	@brief view mode type*/
 enum class EViewMode : uint32
 {
 	EVM_Solid = 0,
@@ -126,9 +125,9 @@ enum class EViewMode : uint32
 };
 
 //TODO:Extend documentation
-/** \class Renderer
-*   \brief Handles rendering context
-*	\todo Extend documentation
+/** @class Renderer
+*   @brief Handles rendering context
+*	@todo Extend documentation
 */
 class Renderer
 {
@@ -139,7 +138,7 @@ public:
 
 	void Initialize();
 
-	bool EnableMode(EGLEnable IneEnable, bool InbEnable);
+	void EnableMode(EGLEnable IneEnable, bool InbEnable);
 
 	inline void Clear();
 
@@ -176,6 +175,8 @@ public:
 protected:
 	//TODO: in the future there will be a factory class making those!
 	Log rLog = Log("LogRenderer");
+
+	string TransModeToStr(EGLEnable IneEnable);
 
 private:
 	

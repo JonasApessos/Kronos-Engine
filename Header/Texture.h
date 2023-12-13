@@ -1,19 +1,20 @@
 #pragma once
 
-#include <GL/glew.h>
+#include <iostream>
+
 #include <assimp/scene.h>
 #include "stb/stb_image.h"
 
+#include "Standard.h"
 #include "Primitives.h"
 #include "Log.h"
 
-#include <iostream>
-
-using KronosPrim::uint32, KronosPrim::int32, KronosPrim::uint32;
 using std::cout, std::string, std::cerr, std::to_string;
+using KronosPrim::uint32, KronosPrim::int32, KronosPrim::uint32;
 
-/** \enum EGLTextureParameter
-	\brief opengl enum texture parameter*/
+
+/** @enum EGLTextureParameter
+	@brief opengl enum texture parameter*/
 enum class EGLTextureParameter:uint32
 {
     EGLTP_DepthStencilTextureMode = GL_DEPTH_STENCIL_TEXTURE_MODE,
@@ -37,8 +38,8 @@ enum class EGLTextureParameter:uint32
     EGLTP_SwizzleRGBA = GL_TEXTURE_SWIZZLE_RGBA
 };
 
-/** \enum EGLTextureWrap
-	\brief opengl enum texture wrap type*/
+/** @enum EGLTextureWrap
+	@brief opengl enum texture wrap type*/
 enum class EGLTextureWrap:uint32
 {
     EGLTW_Repeat = GL_REPEAT,
@@ -47,16 +48,16 @@ enum class EGLTextureWrap:uint32
     EGLTW_Border = GL_CLAMP_TO_BORDER
 };
 
-/** \enum EGLTextureMagFilter
-	\brief opengl texture filter*/
+/** @enum EGLTextureMagFilter
+	@brief opengl texture filter*/
 enum class EGLTextureMagFilter:uint32
 {
     EGLTMF_Linear = GL_LINEAR,
     EGLTMF_Nearest = GL_NEAREST
 };
 
-/** \enum EGLTextureMinFilter
-	\brief opengl mipmap filter*/
+/** @enum EGLTextureMinFilter
+	@brief opengl mipmap filter*/
 enum class EGLTextureMinFilter:uint32
 {
     EGLTMF_Linear = GL_LINEAR,
@@ -67,8 +68,8 @@ enum class EGLTextureMinFilter:uint32
     EGLTMF_LinearMipMapLinear = GL_LINEAR_MIPMAP_LINEAR
 };
 
-/** \enum EGLTextureSlot
-	\brief opengl Texture slot*/
+/** @enum EGLTextureSlot
+	@brief opengl Texture slot*/
 enum EGLTextureSlot:uint32
 {
     EGLTS_Slot0 = GL_TEXTURE0,
@@ -89,8 +90,8 @@ enum EGLTextureSlot:uint32
     EGLTS_Slot15 = GL_TEXTURE15
 };
 
-/** \enum EGLTextureDataType
-	\brief opengl texture data type*/
+/** @enum EGLTextureDataType
+	@brief opengl texture data type*/
 enum class EGLTextureDataType:uint32
 {
     EGLTDT_Texture1D = GL_TEXTURE_1D,
@@ -104,8 +105,8 @@ enum class EGLTextureDataType:uint32
     EGLTDT_TextureCubeMapArray = GL_TEXTURE_CUBE_MAP_ARRAY,
 };
 
-/** \enum ETextureType
-	\brief Assimp imported texture type*/
+/** @enum ETextureType
+	@brief Assimp imported texture type*/
 enum class ETextureType:uint32
 {
     ETT_Diffuse = aiTextureType::aiTextureType_DIFFUSE,
@@ -134,8 +135,8 @@ enum class ETextureType:uint32
     ETT_RGBA_Mask = 23
 };
 
-/** \enum EGLTextureFormat
-	\brief opengl texture channel format*/
+/** @enum EGLTextureFormat
+	@brief opengl texture channel format*/
 enum class EGLTextureFormat:uint32
 {
     EGLTF_RED = GL_RED,
@@ -146,8 +147,8 @@ enum class EGLTextureFormat:uint32
     EGLTF_RGBA = GL_RGBA
 };
 
-/** \class Texture
-*   \brief handles textures*/
+/** @class Texture
+*   @brief handles textures*/
 class Texture
 {
 public:
@@ -191,7 +192,7 @@ public:
     inline void SetTextureMagFilter(EGLTextureMagFilter IneTextureFilter);
 
     //Get
-    inline uint32 GetId() const;
+    constexpr inline uint32 GetId() const;
 
     inline EGLTextureWrap GetTextureWrapS() const;
     inline EGLTextureWrap GetTextureWrapT() const;
@@ -203,8 +204,8 @@ public:
     inline ETextureType GetTextureType() const;
     inline EGLTextureDataType GetTextureDataType() const;
 
-    inline void Active();
-    inline void Use();
+    inline void Active() const;
+    inline void Use() const;
 
 protected:
     ETextureType eTextureType = ETextureType::ETT_Albedo;
@@ -285,7 +286,7 @@ inline void Texture::SetTextureMagFilter(EGLTextureMagFilter IneTextureFilter)
 inline void Texture::SetTextureType(ETextureType IneTextureType) { eTextureType = IneTextureType; }
 inline void Texture::SetTextureType(aiTextureType InaiTextureType) { eTextureType = static_cast<ETextureType>(InaiTextureType); }
 
-inline uint32 Texture::GetId() const { return iTextureId; }
+constexpr inline uint32 Texture::GetId() const { return iTextureId; }
 
 inline EGLTextureWrap Texture::GetTextureWrapS() const { return eTextureWrapS; }
 inline EGLTextureWrap Texture::GetTextureWrapT() const { return eTextureWrapT; }
@@ -298,6 +299,6 @@ inline EGLTextureSlot Texture::GetTextureSlot() const { return eTextureSlot; }
 inline ETextureType Texture::GetTextureType() const { return eTextureType; }
 inline EGLTextureDataType Texture::GetTextureDataType() const { return eTextureDataType; }
 
-inline void Texture::Active() { glActiveTexture(static_cast<GLenum>(eTextureSlot)); }
+inline void Texture::Active() const { glActiveTexture(static_cast<GLenum>(eTextureSlot)); }
 
-inline void Texture::Use() { glBindTexture(static_cast<GLenum>(EGLTextureDataType::EGLTDT_Texture2D), iTextureId); }
+inline void Texture::Use() const { glBindTexture(static_cast<GLenum>(EGLTextureDataType::EGLTDT_Texture2D), iTextureId); }

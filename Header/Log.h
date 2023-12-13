@@ -1,20 +1,19 @@
 #pragma once
 
+#include <iostream>
+
 #include "MacroUtils.h"
 
 #define __STDC_WANT_LIB_EXT1__ 1
 
-
 #include "Primitives.h"
 #include "FileHandler.h"
-
-#include <iostream>
 
 using KronosPrim::int32, KronosPrim::uint32;
 using std::cout, std::cerr;
 
-/** \enum ELogSeverity
-* 	\brief enum for log severity*/
+/** @enum ELogSeverity
+* 	@brief enum for log severity*/
 enum class ELogSeverity : uint32
 {
 	ELS_Info = 0,
@@ -23,8 +22,8 @@ enum class ELogSeverity : uint32
 	ELS_Critical = 3
 };
 
-/** \class Log
-*   \brief class for loggins system*/
+/** @class Log
+*   @brief class for loggins system*/
 class Log
 {
 public:

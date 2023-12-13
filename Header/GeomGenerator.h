@@ -1,22 +1,23 @@
 #pragma once
+
+#include <vector>
+#include <string>
+
 #include "glm/glm.hpp"
 
 #include "Primitives.h"
 #include "Vector.h"
-
-#include <vector>
-#include <string>
 
 using std::vector, std::string;
 using glm::vec3;
 using KronosPrim::uint32;
 
 //TODO add a equation translator to the generator with a custom number of vertex and generate geometry with it
-/** \class GeomGenerator
-*   \brief Geometry Generator handles the generation of geometry
-*   \details Generate geometry using vertices, 
+/** @class GeomGenerator
+*   @brief Geometry Generator handles the generation of geometry
+*   @details Generate geometry using vertices, 
 *    the data generated can be parsed in a mesh class or combine it with other specialized classes in order to generate interesting shapes
-*   \todo add a equation translator to the generator with a custom number of vertex and generate geometry with it
+*   @todo add a equation translator to the generator with a custom number of vertex and generate geometry with it
 */
 class GeomGenerator
 {
