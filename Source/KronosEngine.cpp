@@ -65,6 +65,8 @@ void ProcessInput(GLFWwindow* InrWindow)
 		rMainCamera.TravelUpwards(-1.0f * DeltaTime);
 }
 
+bool FirstMouse = true;
+
 /**
  * @deprecated Deprecated function callback
 */
@@ -330,8 +332,6 @@ void OnMouseScroll()
 	else if (rMainCamera.GetFOV() > 45.0f)
 		rMainCamera.SetFOV(45.0f);
 }
-
-bool FirstMouse = true;
 
 void OnMouseMove()
 {

@@ -363,6 +363,11 @@ MigrationBackup/
 FodyWeavers.xsd
 build-debug
 build-rel
+build
+builddir
+subprojects
+man
+imgui
 Resource/Object/Cube2.obj
 .vscode
 DOCS
