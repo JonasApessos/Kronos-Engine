@@ -60,16 +60,41 @@ void Shader::CompileShader(uint32& IniShaderID, char const* IncShaderCode, EShad
         case EShaderCompilationType::ESCT_Fragment:
             IniShaderID = glCreateShader(GL_FRAGMENT_SHADER);
             break;
+        
+        //TODO: Geometry shader creation
+        case EShaderCompilationType::ESCT_Geometry:
+            rLog.WriteAndDisplay("Geometry shader creation not supported yet");
+            break;
+
+        //TODO: Mesh shader creation
+        case EShaderCompilationType::ESCT_Mesh:
+            rLog.WriteAndDisplay("Mesh shader creation not supported yet");
+            break;
+        
+        //TODO: Raytracing shader creation
+        case EShaderCompilationType::ESCT_Raytracing:
+            rLog.WriteAndDisplay("RayTracing shader creation not supported yet");
+            break;
+        
+        //TODO: Tesselation shader creation
+        case EShaderCompilationType::ESCT_Tessellation:
+            rLog.WriteAndDisplay("Tessellation shader creation not supported yet");
+            break;
+        
+        //TODO: Compute shader creation
+        case EShaderCompilationType::ESCT_Compute:
+            rLog.WriteAndDisplay("Compute shader creation not supported yet");
+            break;
     }
     
-    glShaderSource(IniShaderID, 1, &IncShaderCode, NULL);
+    glShaderSource(IniShaderID, 1, &IncShaderCode, nullptr);
     glCompileShader(IniShaderID);
 
     glGetShaderiv(IniShaderID, GL_COMPILE_STATUS, &iSuccess);
 
     if (!iSuccess)
     {
-        glGetShaderInfoLog(IniShaderID, 512, NULL, cInfoLog);
+        glGetShaderInfoLog(IniShaderID, 512, nullptr, cInfoLog);
 
         string sInfoLog = cInfoLog;
 
@@ -92,7 +117,7 @@ void Shader::CreateShaderProg(uint32& IniVertShaderID, uint32& IniFragShaderID)
 
     if (!iSuccess)
     {
-        glGetProgramInfoLog(iShaderProgID, 512, NULL, cInfoLog);
+        glGetProgramInfoLog(iShaderProgID, 512, nullptr, cInfoLog);
 
         string sInfoLog = cInfoLog;
 

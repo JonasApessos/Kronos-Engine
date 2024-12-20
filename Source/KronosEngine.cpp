@@ -31,7 +31,6 @@ float DeltaTime = 0.0f, LastFrame = 0.0f;
 
 Log rGlobalLog("Log");
 
-
 static int Index = 0;
 
 const char* ctest[] = {"test1", "test2", "Test3", "Test4", "Test5", "Test6", "Test7", "Test8", "Test9"};
@@ -93,6 +92,7 @@ void MouseCallback(GLFWwindow* InrWindow, double XPosIn, double YPosIn)
 	rMainCamera.AddYaw(XOffset);
 	rMainCamera.AddPitch(YOffset);
 }
+
 
 /**
  * @deprecated Deprecated function callback
@@ -319,6 +319,40 @@ bool InitGUI(Window* InrWindow)
 	return true;
 }
 
+void DestroyGUIContext()
+{
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
+}
+
+void SetupRenderer(Renderer* InrRenderer)
+{
+	InrRenderer->EnableMode(EGLEnable::EGLE_DepthTest, true);
+	InrRenderer->EnableMode(EGLEnable::EGLE_StencilTest, true);
+	InrRenderer->EnableMode(EGLEnable::EGLE_CullFace, true);
+	InrRenderer->EnableMode(EGLEnable::EGLE_ProgramPointSize, true);
+
+	glPointSize(10);
+
+	InrRenderer->SetCullFace(EGLCullFace::EGLCF_Back);
+
+	InrRenderer->EnableDepthMask(true);
+	InrRenderer->SetDepthFunc(EGLFunc::EGLDF_Less);
+
+	InrRenderer->SetStencilMask(0xFF);
+	InrRenderer->SetStencilFunc(EGLFunc::EGLDF_GEqual, 1, 0xFF);
+
+	InrRenderer->SetStencilOp(EGLStencilOp::EGLSO_Keep);
+
+	InrRenderer->SetPolygonMode(EGLCullFace::EGLCF_FrontAndBack, EGLPolygonMode::EGLP_Fill);
+
+	InrRenderer->SetClearColor(.2f * 0.3f, .4f * 0.3f, .3f * 0.3f, 1.f);
+
+	InrRenderer->SetClearBuffer(EGLClearBuffer::EGLC_ColorBufferBit | EGLClearBuffer::EGLC_DepthBufferBit | EGLClearBuffer::EGLC_StencilBufferBit);
+
+}
+
 void OnMouseScroll()
 {
 	SMouseScrollInputFrame rMouseScrollInput = InputManager::GetInstance()->GetMouseScrollInputFrame();
@@ -437,29 +471,10 @@ int main(int argc, char **argv)
 			Shader rShaderCubeLight("Resource/Shader/LightColorCube.vs", "Resource/Shader/LightColorCube.fs");
 			Shader rShaderStencil("Resource/Shader/Stencil.vs", "Resource/Shader/Stencil.fs");
 
-			rRenderer->EnableMode(EGLEnable::EGLE_DepthTest, true);
-			rRenderer->EnableMode(EGLEnable::EGLE_StencilTest, true);
-			rRenderer->EnableMode(EGLEnable::EGLE_CullFace, true);
-			rRenderer->EnableMode(EGLEnable::EGLE_ProgramPointSize, true);
 
-			glPointSize(10);
+			SetupRenderer(rRenderer);
 
-			rRenderer->SetCullFace(EGLCullFace::EGLCF_Back);
-
-			rRenderer->EnableDepthMask(true);
-			rRenderer->SetDepthFunc(EGLFunc::EGLDF_Less);
-
-			rRenderer->SetStencilMask(0xFF);
-			rRenderer->SetStencilFunc(EGLFunc::EGLDF_GEqual, 1, 0xFF);
-
-			rRenderer->SetStencilOp(EGLStencilOp::EGLSO_Keep);
-
-			rRenderer->SetPolygonMode(EGLCullFace::EGLCF_FrontAndBack, EGLPolygonMode::EGLP_Fill);
-
-			rRenderer->SetClearColor(.2f * 0.3f, .4f * 0.3f, .3f * 0.3f, 1.f);
-
-			rRenderer->SetClearBuffer(EGLClearBuffer::EGLC_ColorBufferBit | EGLClearBuffer::EGLC_DepthBufferBit | EGLClearBuffer::EGLC_StencilBufferBit);
-
+			
 			glfwSwapInterval(1);
 
 			rMainCamera.SetYaw(-89.0f);
@@ -534,9 +549,7 @@ int main(int argc, char **argv)
 				glfwPollEvents();
 			}
 
-			ImGui_ImplOpenGL3_Shutdown();
-			ImGui_ImplGlfw_Shutdown();
-			ImGui::DestroyContext();
+			DestroyGUIContext();
 
 			delete rFramebuffer;
 			delete rRenderer;

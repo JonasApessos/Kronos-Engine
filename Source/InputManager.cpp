@@ -28,11 +28,13 @@ EGLFWInputKey IneInputKey,
 EGLFWInputState IneInputState,
 void (*InrCallback)())
 {
-	rKeyboardKeyList[EDeviceType::EDT_Keyboard].push_back(SInputInfo(InsName,
-		static_cast<int32>(IneInputKey),
-		static_cast<int32>(IneInputState),
-		0,
-		*InrCallback));
+	rKeyboardKeyList[EDeviceType::EDT_Keyboard].push_back(
+		SInputInfo(
+			InsName,
+			static_cast<int32>(IneInputKey),
+			static_cast<int32>(IneInputState),
+			0,
+			*InrCallback));
 }
 
 void InputManager::BindInput(string const& InsName,
@@ -40,11 +42,13 @@ EGLFWMouseKey IneInputMouseKey,
 EGLFWInputState IneInputState,
 void (*InrCallback)())
 {
-	rKeyboardKeyList[EDeviceType::EDT_Mouse].push_back(SInputInfo(InsName,
-	static_cast<int32>(IneInputMouseKey),
-	static_cast<int32>(IneInputState),
-	0,
-	*InrCallback));
+	rKeyboardKeyList[EDeviceType::EDT_Mouse].push_back(
+		SInputInfo(
+			InsName,
+			static_cast<int32>(IneInputMouseKey),
+			static_cast<int32>(IneInputState),
+			0,
+			*InrCallback));
 }
 
 void InputManager::BindInput(string const& InsName, EDeviceType IneDeviceType, void (*InrCallback)())
@@ -104,10 +108,17 @@ void InputManager::ProcessInput()
 				CallScrollInputList(rIt.second);
 				break;
 
+			//TODO: Handle gamepad input
 			case EDeviceType::EDT_Gamepad:
 				break;
 
+			//TODO: Handle Joystic input
 			case EDeviceType::EDT_Joystic:
+				break;
+
+			//TODO: Error binding input device, Unknown device
+			case EDeviceType::EDT_Unknown:
+				rLog.WriteAndDisplay("failed to bind device input, unknown device detected. can't handle input, aborting.");
 				break;
 		}
 	}
@@ -123,10 +134,10 @@ void InputManager::CallKeyInputList(vector<SInputInfo> const& InsInputInfo)
 		{
 			if(static_cast<EGLFWInputKey>(InsInputInfo[iLoop].iInputKey) == rKeyInputFrame.eKeyPressed &&
 			static_cast<EGLFWInputState>(InsInputInfo[iLoop].iInputState) == rKeyInputFrame.eAction &&
-			InsInputInfo[iLoop].iInputMod == static_cast<uint32>(rKeyInputFrame.iMods))
+			InsInputInfo[iLoop].iInputMod == static_cast<int32>(rKeyInputFrame.iMods) &&
+			InsInputInfo[iLoop].rCallback != nullptr)
 			{
-				if(InsInputInfo[iLoop].rCallback != nullptr)
-					InsInputInfo[iLoop].rCallback();
+				InsInputInfo[iLoop].rCallback();
 			}
 
 			++iLoop;
@@ -164,10 +175,10 @@ void InputManager::CallMouseButtonInputList(vector<SInputInfo> const& InsInputIn
 		{
 			if(static_cast<EGLFWMouseKey>(InsInputInfo[iLoop].iInputKey) == rMouseInputFrame.eMouseKey &&
 			static_cast<EGLFWInputState>(InsInputInfo[iLoop].iInputState) == rMouseInputFrame.eInputState &&
-			InsInputInfo[iLoop].iInputMod == static_cast<uint32>(rMouseInputFrame.iMods))
+			InsInputInfo[iLoop].iInputMod == static_cast<int32>(rMouseInputFrame.iMods) &&
+			InsInputInfo[iLoop].rCallback != nullptr)
 			{
-				if(InsInputInfo[iLoop].rCallback != nullptr)
-					InsInputInfo[iLoop].rCallback();
+				InsInputInfo[iLoop].rCallback();
 			}
 
 			++iLoop;

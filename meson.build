@@ -1,9 +1,9 @@
 project('KronosEngine', ['cpp', 'c'],
-  version : '0.1',
+  version : '0.2',
   meson_version: '>= 0.62.0',
-  default_options : ['warning_level=Wall','c_std=c18','cpp_std=c++20'])
+  license: 'MIT')
 
-glewdep = dependency('GLEW', method : 'pkg-config')
+glewdep = dependency('GLEW', method : 'auto')
 
 opengldep = dependency('GL', method : 'auto')
 
@@ -11,15 +11,17 @@ dldep = dependency('dl', method : 'auto')
 
 x11dep = dependency('X11', method : 'auto')
 
-waylanddep = dependency('wayland-client', method : 'auto')
+waylanddep = dependency('wayland-client', method : 'auto', required : false)
 
-threaddep = dependency('threads', method : 'system')
+threaddep = dependency('threads', method : 'auto')
 
-glfwdep = dependency('glfw3', method : 'pkg-config')
+glmdep = dependency('glm', method : 'auto')
+
+glfwdep = dependency('glfw3', method : 'auto')
 
 assimpdep = dependency('assimp', method : 'auto')
 
-imguidep = dependency('imgui', method : 'pkg-config')
+imguidep = dependency('imgui', method : 'auto')
 
 headers = include_directories('Header')
 
@@ -53,6 +55,7 @@ glewdep,
 x11dep,
 waylanddep,
 threaddep,
+glmdep,
 glfwdep,
 assimpdep,
 imguidep
@@ -61,8 +64,6 @@ imguidep
 exe = executable('KronosEngine',
 [sources],
 dependencies : dep,
-cpp_args : ['-O0','-g3','-ggdb','-Wextra','--debug'],
-link_args : ['-pthread'],
 include_directories : [headers],
 install : true)
 

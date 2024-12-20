@@ -10,8 +10,8 @@ Framebuffer::Framebuffer(
 	eFramebufferOp(IneFrameBufferOp),
 	eFramebufferAttach(IneFramebufferAttach),
 	eFramebufferTex(IneFramebufferTex),
-	rTexture(InrTexture),
-	iLevel(IniLevel)
+	iLevel(IniLevel),
+	rTexture(InrTexture)
 {
 	CreateBuffer();
 }
@@ -30,7 +30,7 @@ Framebuffer::Framebuffer(Framebuffer const& InrFramebuffer) :
 }
 
 Framebuffer::Framebuffer(Framebuffer&& InrFramebuffer) noexcept :
-	eFramebufferOp(InrFramebuffer.eFramebufferOp), 
+	eFramebufferOp(InrFramebuffer.eFramebufferOp),
 	eFramebufferAttach(InrFramebuffer.eFramebufferAttach),
 	eFramebufferTex(InrFramebuffer.eFramebufferTex),
 	iLevel(InrFramebuffer.iLevel)

@@ -72,11 +72,12 @@ class Framebuffer
 {
 public:
 	uint32 iFrameBufferID = 0;
-	int32 iLevel = 0;
 
 	EGLFramebufferOp eFramebufferOp = EGLFramebufferOp::EGLFO_FrameBuffer;
 	EGLFramebufferAttach eFramebufferAttach = EGLFramebufferAttach::EGLFA_Color;
 	EGLFramebufferTex eFramebufferTex = EGLFramebufferTex::EGLFT_Texture2D;
+
+	int32 iLevel = 0;
 
 	Framebuffer(EGLFramebufferOp IneFrameBufferOp, EGLFramebufferAttach IneFramebufferAttach, EGLFramebufferTex IneFramebufferTex, Texture* InrTexture, int32 IniLevel);
 	Framebuffer(Framebuffer const& InrFramebuffer);
