@@ -49,8 +49,6 @@ if you need to use multithread build then add the following argument:
 
 change the number to the number the jobs you need to build faster
 
-<code>make Build DEBUG=0</code> or <code>make Build -j DEBUG=0</code> for release build
-
 After build you will find the executable in the buildgcc directory:<br>
 
 # Optional
