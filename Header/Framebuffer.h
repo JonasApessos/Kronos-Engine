@@ -1,8 +1,9 @@
 #pragma once
 #include <iostream>
 
-#include "Primitives.h"
 #include "Standard.h"
+
+#include "Primitives.h"
 #include "Log.h"
 #include "Texture.h"
 

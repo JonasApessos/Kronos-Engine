@@ -361,15 +361,14 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-build-debug
-build-rel
 build
-builddir
-subprojects
-man
-imgui
-Resource/Object/Cube2.obj
 .vscode
 DOCS
-imgui.ini
-Kronos-Engine.code-workspace
+buildgcc
+buildgcc_release
+buildclang
+buildclang_release
+GLFW
+imgui
+.sconsign.dblite
+*.o

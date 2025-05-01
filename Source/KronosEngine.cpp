@@ -1,20 +1,4 @@
 #include "KronosEngine.h"
-#include "Primitives.h"
-#include "Log.h"
-#include "Standard.h"
-#include "App.h"
-#include "Window.h"
-#include "Texture.h"
-#include "Framebuffer.h"
-#include "Shader.h"
-#include "Camera.h"
-#include "Renderer.h"
-#include "Mesh.h"
-#include "Model.h"
-#include "Gizmo.h"
-#include "ShapePrimitives.h"
-#include "Import.h"
-#include "Export.h"
 
 using glm::vec3, glm::vec2 , glm::mat4;
 
@@ -272,15 +256,15 @@ void GUIAssetTab(Window*  InrWindow)
 	}
 }
 
-bool InitGlew()
+bool InitGlad()
 {
-	if (glewInit() == GLEW_OK)
-		glewExperimental = true; // Needed for core profile
-	else
-	{
-		rGlobalLog.WriteAndDisplay("Glew context failed to load", ELogSeverity::ELS_Critical);
+	uint32 version = gladLoadGL((GLADloadfunc)glfwGetProcAddress);
+
+	if ( version == 0)
 		return false;
-	}
+
+	rGlobalLog.WriteAndDisplay("Loaded OpengGL Context Version: "  + to_string(GLAD_VERSION_MAJOR(version)) + "."+ to_string(GLAD_VERSION_MINOR(version)));
+	rGlobalLog.WriteAndDisplay("Driver OpenGL version: " + string((const char*)glGetString(GL_VERSION)));
 
 	return true;
 }
@@ -301,6 +285,8 @@ bool InitGUI(Window* InrWindow)
 		rGlobalLog.WriteAndDisplay("ImGui failed to detect requested opengl version", ELogSeverity::ELS_Critical);
 		//return false;
 	}
+
+	rGlobalLog.WriteAndDisplay("ImGui Version: " + string(IMGUI_VERSION));
 
 	ImGuiStyle& rStyle = ImGui::GetStyle();
 
@@ -413,6 +399,14 @@ void MoveCameraRightwards()
 	rMainCamera.TravelSideways(1.0f * DeltaTime);
 }
 
+void ExecuteInputManager(int Stop)
+{
+	while(Stop)
+	{
+		InputManager::GetInstance()->ProcessInput();
+	}
+}
+
 int main(int argc, char **argv)
 {
 	try 
@@ -426,13 +420,14 @@ int main(int argc, char **argv)
 
 			Window* rMainWindow = new Window(1024, static_cast<int32>(1024.f * (9.0f / 16.0f)), "Kronos Engine");
 
-
-			if(!InitGlew())
+			if(!InitGlad())
 			{
-				rGlobalLog.WriteAndDisplay("Failed to init glew. Clossing");
+				rGlobalLog.WriteAndDisplay("Failed to init glad...clossing application");
 				rKronosApp->Destroy();
 				return -2;
 			}
+
+			glViewport(rMainWindow->GetWidth()*0.166, rMainWindow->GetHeight()*0.333 - 18, rMainWindow->GetWidth() - rMainWindow->GetWidth()*0.333, rMainWindow->GetHeight()*0.667);
 			
 
 			if(!InitGUI(rMainWindow))
@@ -441,6 +436,10 @@ int main(int argc, char **argv)
 				rKronosApp->Destroy();
 				return -3;
 			}
+
+			rGlobalLog.WriteAndDisplay("GLFW version: " + to_string(GLFW_VERSION_MAJOR) + "." + to_string(GLFW_VERSION_MINOR) + "." + to_string(GLFW_VERSION_REVISION));
+			rGlobalLog.WriteAndDisplay("Assimp version: " + to_string(aiGetVersionMajor()) + "." + to_string(aiGetVersionMinor()) + "." + to_string(aiGetVersionRevision()));
+			rGlobalLog.WriteAndDisplay("GLM Version: " + to_string(GLM_VERSION));
 			
 			//glfwSetCursorPosCallback(rMainWindow->GetWindow(), MouseCallback);
 			//glfwSetScrollCallback(rMainWindow->GetWindow(), ScrollCallback);
@@ -474,7 +473,6 @@ int main(int argc, char **argv)
 
 			SetupRenderer(rRenderer);
 
-			
 			glfwSwapInterval(1);
 
 			rMainCamera.SetYaw(-89.0f);
@@ -489,21 +487,22 @@ int main(int argc, char **argv)
 
 			glReleaseShaderCompiler();
 
-			GizmoTransform test = GizmoTransform();
+			GizmoTransform Gizmo = GizmoTransform();
+
+			Gizmo.ConstructGizmo();
 
 			InputManager::GetInstance()->SetCurrentWindow(rMainWindow->GetWindow());
 
-			InputManager::GetInstance()->BindInput("MoveForwards", EGLFWInputKey::EGLFWIK_W, EGLFWInputState::EGLFWIS_Repeat, &MoveCameraForwards);
-			InputManager::GetInstance()->BindInput("MoveBackwords", EGLFWInputKey::EGLFWIK_S, EGLFWInputState::EGLFWIS_Repeat, &MoveCameraBackwards);
-			InputManager::GetInstance()->BindInput("MoveLeftwards", EGLFWInputKey::EGLFWIK_A, EGLFWInputState::EGLFWIS_Repeat, &MoveCameraLeftwards);
-			InputManager::GetInstance()->BindInput("MoveRightwords", EGLFWInputKey::EGLFWIK_D, EGLFWInputState::EGLFWIS_Repeat, &MoveCameraRightwards);
+			InputManager::GetInstance()->BindInput("MoveForwards", EInputKey::EIK_W, EInputState::EIS_Hold, &MoveCameraForwards);
+			InputManager::GetInstance()->BindInput("MoveBackwords", EInputKey::EIK_S, EInputState::EIS_Hold, &MoveCameraBackwards);
+			InputManager::GetInstance()->BindInput("MoveLeftwards", EInputKey::EIK_A, EInputState::EIS_Hold, &MoveCameraLeftwards);
+			InputManager::GetInstance()->BindInput("MoveRightwords", EInputKey::EIK_D, EInputState::EIS_Hold, &MoveCameraRightwards);
 			InputManager::GetInstance()->BindInput("MouseMovement", EDeviceType::EDT_Mouse, &OnMouseMove);
 			InputManager::GetInstance()->BindInput("MouseScroll",EDeviceType::EDT_Mouse, &OnMouseScroll);
 
 			//Main loop
 			while (!glfwWindowShouldClose(rMainWindow->GetWindow()))
 			{
-
 				WindowRenderLoop();
 
 				ImGui_ImplOpenGL3_NewFrame();
@@ -535,16 +534,15 @@ int main(int argc, char **argv)
 				//NewModel->Draw(rShaderCubeLight);
 				//NewModel2.Draw(rShaderCubeLight);
 
-				rShaderCubeLight.SetMat4("Model", test.GetTransformMatrix());
+				rShaderCubeLight.SetMat4("Model", Gizmo.GetTransformMatrix());
 
-				test.Draw(rShaderCubeLight);
+				Gizmo.Draw(rShaderCubeLight);
 
 				ImGui::Render();
 				ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 				
 				glfwSwapBuffers(rMainWindow->GetWindow());
 				rRenderer->Clear();
-				//ProcessInput(rMainWindow->GetWindow());
 				InputManager::GetInstance()->ProcessInput();
 				glfwPollEvents();
 			}

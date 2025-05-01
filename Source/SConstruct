@@ -1,0 +1,15 @@
+Import("Kronos_Env")
+
+s_Kronos_Env = Kronos_Env.Clone()
+
+Kronos_Env["CPPPATH"] = [
+    "../Dep/glad/include",
+    "../Dep/GLFW/include",
+    "../Header",
+    "../Dep/imgui"]
+
+Source = [Glob("*.cpp")]
+
+SourceObj = Kronos_Env.Object(Source)
+
+Return("SourceObj")

@@ -128,9 +128,9 @@ void Window::Initialize()
 	//glfwSetWindowAspectRatio(rWindow, iRatioX, iRatioY);
 	//glfwSetInputMode(rWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
-	glViewport(GetWidth()*0.166, GetHeight()*0.333 - 18, GetWidth() - GetWidth()*0.333, GetHeight()*0.667);
+	//glViewport(GetWidth()*0.166, GetHeight()*0.333 - 18, GetWidth() - GetWidth()*0.333, GetHeight()*0.667);
 
 	glfwSetWindowSizeCallback(rWindow, Window::OnResize);
 
-	printf("%s\n", glGetString(GL_VERSION));
+	//printf("%s\n", glGetString(GL_VERSION));
 }

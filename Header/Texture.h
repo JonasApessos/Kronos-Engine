@@ -5,8 +5,9 @@
 #include <assimp/scene.h>
 #include "stb/stb_image.h"
 
-#include "Standard.h"
 #include "Primitives.h"
+#include "Standard.h"
+
 #include "Log.h"
 
 using std::cout, std::string, std::cerr, std::to_string;

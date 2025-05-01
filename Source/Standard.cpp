@@ -1,5 +1,9 @@
 #include "Standard.h"
 
+#define GLFW_INCLUDE_NONE
+#include <glad/gl.h>
+#include <GLFW/glfw3.h>
+
 bool GLError(uint32 IniGLError)
 {
 	Log rGLLog("LogOpenGL");

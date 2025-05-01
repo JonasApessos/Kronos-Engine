@@ -1,8 +1,11 @@
 #pragma once
 
-#include "GL/glew.h"
-
 #include "Primitives.h"
+
+#define GLFW_INCLUDE_NONE
+#include "glad/gl.h"
+#include "GLFW/glfw3.h"
+
 #include "Log.h"
 
 using KronosPrim::uint32;
