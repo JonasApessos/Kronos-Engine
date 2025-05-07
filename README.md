@@ -15,10 +15,7 @@ Also install:<br>
 if you are using Linux distrubution you can install the following packages with the command below:
 Debian:<br>
   <code>sudo apt install libglfw3-dev libglfw3 libassimp-dev libstb-dev libstb0 libglm-dev</code>
-  
-your also going to need the mold linker:<br>
-  <code>sudo apt install mold</code>
-
+ 
 <h2>imgui</h2>
 you will need to download imgui from the github source yourself and add it in the dependency folder, rename the folder to imgui or the build system won't be able to find the dependency
 
@@ -44,12 +41,12 @@ In order to build the project after installing all the necessary libraries, you 
 If you need to build in debug:<br>
 <code>scons --build=debug</code>
 
-if you need to use multithread build then add the following argument:
-<code>scons -j4</code>
+if you need to use multiple jobs to build the project then add the following argument:
+<code>scons -jn</code>
 
-change the number to the number the jobs you need to build faster
+change the number of jobs you need to build faster
 
-After build you will find the executable in the buildgcc directory:<br>
+After build you will find the executable in the build directory:<br>
 
 # Optional
 You can generate documentation for the project using doxygen:<br>

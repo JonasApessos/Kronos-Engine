@@ -363,8 +363,8 @@ MigrationBackup/
 FodyWeavers.xsd
 .vscode
 DOCS
-buildgcc
-buildgcc_release
+build
+build_release
 GLFW
 imgui
 imgui.ini

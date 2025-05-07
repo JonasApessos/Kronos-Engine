@@ -37,7 +37,7 @@ cpp_Compiler = "g++"
 cpp_CCFlags = c_CCFlags
 
 #Linker type
-Linker = ["-fuse-ld=mold"]
+Linker = ["-fuse-ld=gold"]
 
 #Linker Flags
 Link_Flags = ["-pthread"]
@@ -84,9 +84,17 @@ Libs = [
     "X11",
     "wayland-client"]
 
-#Link All
-Kronos_Env.Program("buildgcc/KronosEngine", Source, LIBS=Libs, LIBPATH=LibPath)
+if GetOption("build") == "debug":
+    #Link All
+    Kronos_Env.Program("build/KronosEngine", Source, LIBS=Libs, LIBPATH=LibPath)
 
-#Copy needed resource for program too access during runtime
-if not os.path.exists("buildgcc/Resource"):
-    shutil.copytree("./Resource", "buildgcc/Resource")
+    #Copy needed resource for program too access during runtime
+    if not os.path.exists("build/Resource"):
+        shutil.copytree("./Resource", "build/Resource")
+else:
+    #Link All
+    Kronos_Env.Program("build_release/KronosEngine", Source, LIBS=Libs, LIBPATH=LibPath)
+
+    #Copy needed resource for program too access during runtime
+    if not os.path.exists("build_release/Resource"):
+        shutil.copytree("./Resource", "build_release/Resource")
