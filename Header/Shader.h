@@ -10,8 +10,9 @@
 
 #include <glm/glm.hpp>
 
-#include "Standard.h"
 #include "Primitives.h"
+#include "Standard.h"
+
 #include "Log.h"
 #include "FileHandler.h"
 

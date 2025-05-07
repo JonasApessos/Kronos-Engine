@@ -2,7 +2,6 @@
 
 #include <iomanip>
 
-
 #include "Model.h"
 #include "FileHandler.h"
 

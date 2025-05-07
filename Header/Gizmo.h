@@ -1,6 +1,6 @@
 #pragma once
 
-#include "glm/glm.hpp"
+#include <glm/glm.hpp>
 
 #include "Standard.h"
 #include "Model.h"
@@ -12,10 +12,9 @@ class GizmoBase : public Model
 {
 public:
     GizmoBase();
+    virtual void ConstructGizmo() = 0;
 
 protected:
-
-    virtual void ConstructGizmo() = 0;
 
 private:
     vec3 rTransformVector;
@@ -25,10 +24,9 @@ private:
 class GizmoTranslate : public GizmoBase
 {
 public:
-    GizmoTranslate();
+    void ConstructGizmo() override;
 
 protected:
-    void ConstructGizmo() override;
 
 private:
 };
@@ -37,10 +35,9 @@ private:
 class GizmoRotate : public GizmoBase
 {
 public:
-    GizmoRotate();
+    void ConstructGizmo() override;
 
 protected:
-    void ConstructGizmo() override;
 
 private:
 };
@@ -49,10 +46,9 @@ private:
 class GizmoScale : public GizmoBase
 {
 public:
-    GizmoScale();
+    void ConstructGizmo() override;
 
 protected:
-    void ConstructGizmo() override;
 
 private:
 };
@@ -61,10 +57,9 @@ private:
 class GizmoTransform : public GizmoBase
 {
 public:
-    GizmoTransform();
+    void ConstructGizmo() override;
 
 protected:
-    void ConstructGizmo() override;
 
     void ConstructTranslate();
     void ConstructRotate();

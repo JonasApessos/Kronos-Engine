@@ -4,7 +4,6 @@ Log InputManager::rLog("LogInputManager");
 
 map<EDeviceType, vector<SInputInfo>> InputManager::rKeyboardKeyList;
 
-SKeyInputFrame InputManager::rKeyInputFrame = SKeyInputFrame();
 SMouseKeyInputFrame InputManager::rMouseInputFrame = SMouseKeyInputFrame();
 SMouseMotionInputFrame InputManager::rMouseMotionInputFrame = SMouseMotionInputFrame();
 SMouseScrollInputFrame InputManager::rMouseScrollInputFrame = SMouseScrollInputFrame();
@@ -24,27 +23,31 @@ InputManager* InputManager::GetInstance()
 }
 
 void InputManager::BindInput(string const& InsName,
-EGLFWInputKey IneInputKey,
-EGLFWInputState IneInputState,
+EInputKey IneInputKey,
+EInputState IneInputState,
 void (*InrCallback)())
 {
-	rKeyboardKeyList[EDeviceType::EDT_Keyboard].push_back(SInputInfo(InsName,
-		static_cast<int32>(IneInputKey),
-		static_cast<int32>(IneInputState),
-		0,
-		*InrCallback));
+	rKeyboardKeyList[EDeviceType::EDT_Keyboard].push_back(
+		SInputInfo(
+			InsName,
+			static_cast<int32>(IneInputKey),
+			static_cast<int32>(IneInputState),
+			0,
+			*InrCallback));
 }
 
 void InputManager::BindInput(string const& InsName,
-EGLFWMouseKey IneInputMouseKey,
-EGLFWInputState IneInputState,
+EMouseKey IneInputMouseKey,
+EInputState IneInputState,
 void (*InrCallback)())
 {
-	rKeyboardKeyList[EDeviceType::EDT_Mouse].push_back(SInputInfo(InsName,
-	static_cast<int32>(IneInputMouseKey),
-	static_cast<int32>(IneInputState),
-	0,
-	*InrCallback));
+	rKeyboardKeyList[EDeviceType::EDT_Mouse].push_back(
+		SInputInfo(
+			InsName,
+			static_cast<int32>(IneInputMouseKey),
+			static_cast<int32>(IneInputState),
+			0,
+			*InrCallback));
 }
 
 void InputManager::BindInput(string const& InsName, EDeviceType IneDeviceType, void (*InrCallback)())
@@ -54,12 +57,14 @@ void InputManager::BindInput(string const& InsName, EDeviceType IneDeviceType, v
 
 void InputManager::OnKey(GLFWwindow* InrWindow, int IniKeyCode, int IniScanCode, int IniAction, int IniMods)
 {
-	rKeyInputFrame.eKeyPressed = static_cast<EGLFWInputKey>(IniKeyCode);
-	rKeyInputFrame.iScanCode = static_cast<uint32>(IniScanCode);
-	rKeyInputFrame.eAction = static_cast<EGLFWInputState>(IniAction);
-	rKeyInputFrame.iMods = static_cast<EGLFWModKey>(IniMods);
-
-	rKeyInputFrame.IsInputConsumed = false;
+	for (map<EDeviceType, vector<SInputInfo>>::iterator::value_type &rIt : rKeyboardKeyList)
+	{
+		for(int32 i = 0; i < rIt.second.size(); i++)
+		{
+			rIt.second[i].iCurrentInputState = glfwGetKey(InrWindow, rIt.second[i].iInputKey);
+			rIt.second[i].bIsInputConsumed = !(static_cast<EInputState>(rIt.second[i].iCurrentInputState) == EInputState::EIS_Press);
+		}
+	}
 }
 
 void InputManager::OnMousePos(GLFWwindow* InrWindow, double IndPosX, double IndPosY)
@@ -72,9 +77,9 @@ void InputManager::OnMousePos(GLFWwindow* InrWindow, double IndPosX, double IndP
 
 void InputManager::OnMouseButton(GLFWwindow* InrWindow, int IniButton, int IniAction, int IniMods)
 {
-	rMouseInputFrame.eMouseKey = static_cast<EGLFWMouseKey>(IniButton);
-	rMouseInputFrame.eInputState = static_cast<EGLFWInputState>(IniAction);
-	rMouseInputFrame.iMods = static_cast<EGLFWModKey>(IniMods);
+	rMouseInputFrame.eMouseKey = static_cast<EMouseKey>(IniButton);
+	rMouseInputFrame.eInputState = static_cast<EInputState>(IniAction);
+	rMouseInputFrame.iMods = static_cast<EMod>(IniMods);
 
 	rMouseInputFrame.IsInputConsumed = false;
 }
@@ -89,8 +94,7 @@ void InputManager::OnScroll(GLFWwindow* InrWindow, double IndOffsetX, double Ind
 
 void InputManager::ProcessInput()
 {
-
-	for(map<EDeviceType, vector<SInputInfo>>::iterator::value_type rIt : rKeyboardKeyList)
+	for(map<EDeviceType, vector<SInputInfo>>::iterator::value_type &rIt : rKeyboardKeyList)
 	{
 		switch(rIt.first)
 		{
@@ -104,36 +108,66 @@ void InputManager::ProcessInput()
 				CallScrollInputList(rIt.second);
 				break;
 
+			//TODO: Handle gamepad input
 			case EDeviceType::EDT_Gamepad:
 				break;
 
+			//TODO: Handle Joystic input
 			case EDeviceType::EDT_Joystic:
+				break;
+
+			//TODO: Error binding input device, Unknown device
+			case EDeviceType::EDT_Unknown:
+				rLog.WriteAndDisplay("failed to bind device input, unknown device detected. can't handle input, aborting.");
 				break;
 		}
 	}
 }
 
-void InputManager::CallKeyInputList(vector<SInputInfo> const& InsInputInfo)
+void InputManager::CallKeyInputList(vector<SInputInfo> & InsInputInfo)
 {
-	if(!rKeyInputFrame.IsInputConsumed)
+	uint32 iLoop = 0;
+
+	while(iLoop < InsInputInfo.size())
 	{
-		uint32 iLoop = 0;
-
-		while(iLoop < InsInputInfo.size())
+		if(!InsInputInfo[iLoop].bIsInputConsumed)
 		{
-			if(static_cast<EGLFWInputKey>(InsInputInfo[iLoop].iInputKey) == rKeyInputFrame.eKeyPressed &&
-			static_cast<EGLFWInputState>(InsInputInfo[iLoop].iInputState) == rKeyInputFrame.eAction &&
-			InsInputInfo[iLoop].iInputMod == static_cast<uint32>(rKeyInputFrame.iMods))
+			switch(static_cast<EInputState>(InsInputInfo[iLoop].iInputState))
 			{
-				if(InsInputInfo[iLoop].rCallback != nullptr)
-					InsInputInfo[iLoop].rCallback();
-			}
+				case EInputState::EIS_Press:
+				case EInputState::EIS_Release:
+				{
+					if(static_cast<EInputState>(InsInputInfo[iLoop].iCurrentInputState) == static_cast<EInputState>(InsInputInfo[iLoop].iInputState))
+					{
+						InsInputInfo[iLoop].rCallback();
+						InsInputInfo[iLoop].bIsInputConsumed = true;
+					}
+					break;
+				}
 
-			++iLoop;
+				case EInputState::EIS_Hold:
+				{
+					if(static_cast<EInputState>(InsInputInfo[iLoop].iCurrentInputState) == EInputState::EIS_Press)
+						InsInputInfo[iLoop].rCallback();
+					else if(static_cast<EInputState>(InsInputInfo[iLoop].iCurrentInputState) == EInputState::EIS_Release)
+						InsInputInfo[iLoop].bIsInputConsumed = true;
+
+					break;
+				}
+
+				default:
+				{
+
+					break;
+				}
+			}
 		}
 
-		rKeyInputFrame.IsInputConsumed = true;
+		++iLoop;
 	}
+	
+
+	//rKeyInputFrame.IsKeyPressed = false;
 }
 
 void InputManager::CallMousePosList(vector<SInputInfo> const& InsInputInfo)
@@ -162,12 +196,12 @@ void InputManager::CallMouseButtonInputList(vector<SInputInfo> const& InsInputIn
 
 		while(iLoop < InsInputInfo.size())
 		{
-			if(static_cast<EGLFWMouseKey>(InsInputInfo[iLoop].iInputKey) == rMouseInputFrame.eMouseKey &&
-			static_cast<EGLFWInputState>(InsInputInfo[iLoop].iInputState) == rMouseInputFrame.eInputState &&
-			InsInputInfo[iLoop].iInputMod == static_cast<uint32>(rMouseInputFrame.iMods))
+			if(static_cast<EMouseKey>(InsInputInfo[iLoop].iInputKey) == rMouseInputFrame.eMouseKey &&
+			static_cast<EInputState>(InsInputInfo[iLoop].iInputState) == rMouseInputFrame.eInputState &&
+			InsInputInfo[iLoop].iInputMod == static_cast<int32>(rMouseInputFrame.iMods) &&
+			InsInputInfo[iLoop].rCallback != nullptr)
 			{
-				if(InsInputInfo[iLoop].rCallback != nullptr)
-					InsInputInfo[iLoop].rCallback();
+				InsInputInfo[iLoop].rCallback();
 			}
 
 			++iLoop;

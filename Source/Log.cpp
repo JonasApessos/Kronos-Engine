@@ -6,8 +6,8 @@ Log::Log() :
 rLogFile("Log/","Log.txt", ios_base::in | ios_base::out | ios_base::app) { Init(); }
 
 Log::Log(string const& InsLogName) : 
-rLogFile("Log/","Log.txt", ios_base::in | ios_base::out | ios_base::app),
-sLogName(InsLogName) { Init(); }
+sLogName(InsLogName),
+rLogFile("Log/","Log.txt", ios_base::in | ios_base::out | ios_base::app) { Init(); }
 
 Log::Log(
 	string const& InsLogName,
@@ -22,7 +22,7 @@ Log::Log(
 	string const& InsFileName,
 	int32 IniBitFlagMode) :
 	sLogName(InsLogName),
-	rLogFile(InsFilePath, InsFileName, ios_base::in | ios_base::out | ios_base::app) { Init(); }
+	rLogFile(InsFilePath, InsFileName, static_cast<ios_base::openmode>(IniBitFlagMode)) { Init(); }
 
 Log::Log(Log&& InrLog) noexcept : 
 	sLogName(InrLog.sLogName), 

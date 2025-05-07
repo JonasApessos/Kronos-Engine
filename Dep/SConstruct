@@ -1,0 +1,23 @@
+DepObj = []
+
+Import("c_Dep_Env")
+Import("cpp_Dep_Env")
+
+c_Dep_Env["CPPPATH"] = ["glad/include"]
+
+DepObj = c_Dep_Env.Object("glad/src/gl", "glad/src/gl.c")
+
+
+
+Source = [
+    Glob("imgui/*.cpp"),
+    "imgui/backends/imgui_impl_glfw.cpp",
+    "imgui/backends/imgui_impl_opengl3.cpp"]
+
+cpp_Dep_Env["CPPPATH"] = [
+    "imgui",
+    "GLFW/include"]
+
+DepObj += cpp_Dep_Env.Object(Source)
+
+Return("DepObj")

@@ -68,21 +68,21 @@ enum class EGLFWError : uint32
 	EGLFWE_NoWindowContect = GLFW_NO_WINDOW_CONTEXT
 };
 
-/** @class Window
+/** @class Canvas
 *   @brief unified window system using glfw library*/
-class Window
+class Canvas
 {
 public:
 	bool bIsAspectLocked = true;
 
-	Window(int32 IniWidth, int32 IniHeight, string const& InsTitle);
-	Window(Window&& InrWindow) noexcept;
-	Window(Window const& InrWindow) noexcept;
+	Canvas(int32 IniWidth, int32 IniHeight, string const& InsTitle);
+	Canvas(Canvas&& InrCanvas) noexcept;
+	Canvas(Canvas const& InrCanvas) noexcept;
 
-	~Window();
+	~Canvas();
 
-	Window& operator=(Window const& InrWindow) noexcept;
-	Window& operator=(Window&& InrWindow) noexcept;
+	Canvas& operator=(Canvas const& InrCanvas) noexcept;
+	Canvas& operator=(Canvas&& InrCanvas) noexcept;
 
 	void Destroy();
 
@@ -126,25 +126,25 @@ private:
 	void Initialize();
 };
 
-inline void Window::CreateWindow()
+inline void Canvas::CreateWindow()
 {
 	// Open a window and create its OpenGL context
 	rWindow = glfwCreateWindow(static_cast<int>(iWidth), static_cast<int>(iHeight), sTitle.c_str(), NULL, NULL);
 }
 
-inline void Window::SetIsAspectLocked(bool InbIsApsectLocked) { bIsAspectLocked = InbIsApsectLocked; }
+inline void Canvas::SetIsAspectLocked(bool InbIsApsectLocked) { bIsAspectLocked = InbIsApsectLocked; }
 
-inline void Window::SetScreenSize(int32 IniWidth, int32 IniHeight) { iWidth = IniWidth; iHeight = IniHeight; }
-inline void Window::SetWidth(int32 IniWidth) { ((IniWidth > 0) ? iWidth = IniWidth : iWidth = 1024); }
-inline void Window::SetHeight(int32 IniHeight) { ((IniHeight > 0) ? iHeight = IniHeight : iHeight = static_cast<int32>(GetAspectRatioHeight() * static_cast<float>(GetWidth()))); }
+inline void Canvas::SetScreenSize(int32 IniWidth, int32 IniHeight) { iWidth = IniWidth; iHeight = IniHeight; }
+inline void Canvas::SetWidth(int32 IniWidth) { ((IniWidth > 0) ? iWidth = IniWidth : iWidth = 1024); }
+inline void Canvas::SetHeight(int32 IniHeight) { ((IniHeight > 0) ? iHeight = IniHeight : iHeight = static_cast<int32>(GetAspectRatioHeight() * static_cast<float>(GetWidth()))); }
 
 
-inline bool Window::GetIsAspectLocked() const { return bIsAspectLocked; }
+inline bool Canvas::GetIsAspectLocked() const { return bIsAspectLocked; }
 
-inline float Window::GetAspectRatioWidth() const { return iRatioX / iRatioY; }
-inline float Window::GetAspectRatioHeight() const { return iRatioY / iRatioX; }
+inline float Canvas::GetAspectRatioWidth() const { return iRatioX / iRatioY; }
+inline float Canvas::GetAspectRatioHeight() const { return iRatioY / iRatioX; }
 
-inline int32 Window::GetWidth() { int X,Y; glfwGetWindowSize(rWindow, &X, &Y); iWidth = X; iHeight = Y; return iWidth; }
-inline int32 Window::GetHeight() { int X,Y; glfwGetWindowSize(rWindow, &X, &Y); iWidth = X; iHeight = Y; return iHeight; }
+inline int32 Canvas::GetWidth() { int X,Y; glfwGetWindowSize(rWindow, &X, &Y); iWidth = X; iHeight = Y; return iWidth; }
+inline int32 Canvas::GetHeight() { int X,Y; glfwGetWindowSize(rWindow, &X, &Y); iWidth = X; iHeight = Y; return iHeight; }
 
-inline GLFWwindow* Window::GetWindow() const { return rWindow; }
+inline GLFWwindow* Canvas::GetWindow() const { return rWindow; }

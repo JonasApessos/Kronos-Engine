@@ -5,12 +5,14 @@
 #include "Primitives.h"
 
 #define PI_F 3.1415927f
-#define HALF_PI_F PI_F/2.f
-#define DOUBLE_PI_F PI_F * 2.f
+#define QUARTER_PI_F PI_F * 0.25f
+#define HALF_PI_F PI_F * 0.5f
+#define TWO_PI_F PI_F * 2.f
 
 #define PI 3.1415926535897932385
-#define HALF_PI PI/2.0
-#define DOUBLE_PI PI * 2.0
+#define QUARTER_PI PI * 0.25
+#define HALF_PI PI * 0.5
+#define TWO_PI PI * 2.0
 
 template<typename T>
 inline T DegToRad(T InDeg) noexcept(true) { return (InDeg * HALF_PI) / 90.0; }

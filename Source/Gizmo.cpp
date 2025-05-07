@@ -6,11 +6,6 @@ GizmoBase::GizmoBase()
 }
 
 //-------------<GIZMO TRANSLATE>-------------//
-GizmoTranslate::GizmoTranslate()
-{
-    ConstructGizmo();
-}
-
 void GizmoTranslate::ConstructGizmo()
 {
     SShapePrimCone rCone(4, 0.1f, 0.2f);
@@ -77,11 +72,6 @@ void GizmoTranslate::ConstructGizmo()
 
 
 //-------------<GIZMO ROTATE>-------------//
-GizmoRotate::GizmoRotate()
-{
-    ConstructGizmo();
-}
-
 void GizmoRotate::ConstructGizmo()
 {
     SShapePrimCircle rCircle(64, 1.f);
@@ -140,11 +130,6 @@ void GizmoRotate::ConstructGizmo()
 }
 
 //-------------<GIZMO SCALE>-------------//
-GizmoScale::GizmoScale()
-{
-    ConstructGizmo();
-}
-
 void GizmoScale::ConstructGizmo()
 {
     SShapePrimCube rCube(0.1f, 0.1f);
@@ -202,11 +187,6 @@ void GizmoScale::ConstructGizmo()
 }
 
 //-------------<GIZMO TRANSFORM>-------------//
-GizmoTransform::GizmoTransform()
-{
-    ConstructGizmo();
-}
-
 void GizmoTransform::ConstructGizmo()
 {
     ConstructTranslate();

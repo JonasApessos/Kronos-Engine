@@ -2,10 +2,10 @@
 
 #include <assert.h>
 
-#include "MacroUtils.h"
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+
+#include "MacroUtils.h"
 
 #include "Log.h"
 #include "Utils.h"
@@ -274,7 +274,7 @@ struct SShapePrimCircle : SShapePrimBase
 
         float fSinDistanceRadius = 0.f, fCosDistanceRadius = 0.f;
 
-        float fRadByDiv = DOUBLE_PI_F/static_cast<float>(iResW);
+        float fRadByDiv = TWO_PI_F/static_cast<float>(iResW);
 
         rVertices.reserve(iResW);
 
@@ -496,7 +496,7 @@ struct SShapePrimSphere : SShapePrimBase
         //reserve before operation to avoid memory reservetion with every new element
         rVertices.reserve(GetResW() * (GetResH()-1) + 2);
 
-        const float fFullRad = DOUBLE_PI_F/static_cast<float>(iResW);
+        const float fFullRad = TWO_PI_F/static_cast<float>(iResW);
         const float fHalfRad = PI_F/static_cast<float>(iResH);
         const float fQuarterRad = HALF_PI_F/static_cast<float>(iResH);
 
@@ -659,7 +659,7 @@ struct SShapePrimCone : SShapePrimBase
 
         uint32 iLoopW = 0;
 
-        const float fRadByDiv = DOUBLE_PI_F/static_cast<float>(iResW);
+        const float fRadByDiv = TWO_PI_F/static_cast<float>(iResW);
 
         float fSinDistanceRadius = 0.0f, fCosDistanceRadius = 0.0f;
 
@@ -773,7 +773,7 @@ struct SShapePrimCylinder : SShapePrimBase
 
         uint32 iLoopW = 0;
 
-        const float fRadByDiv = DOUBLE_PI_F/static_cast<float>(iResW);
+        const float fRadByDiv = TWO_PI_F/static_cast<float>(iResW);
 
         float fSinDistanceRadius = 0.0f, fCosDistanceRadius = 0.0f;
 

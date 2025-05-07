@@ -1,111 +1,25 @@
 #include "KronosEngine.h"
-#include "Primitives.h"
-#include "Log.h"
-#include "Standard.h"
-#include "App.h"
-#include "Window.h"
-#include "Texture.h"
-#include "Framebuffer.h"
-#include "Shader.h"
-#include "Camera.h"
-#include "Renderer.h"
-#include "Mesh.h"
-#include "Model.h"
-#include "Gizmo.h"
-#include "ShapePrimitives.h"
-#include "Import.h"
-#include "Export.h"
 
 using glm::vec3, glm::vec2 , glm::mat4;
 
 using std::cout, std::exception;
 
-constexpr int32 WindowWidth = 1280;
-constexpr int32 WindowHeight = static_cast<int32>(static_cast<float>(WindowWidth) * static_cast<float>(9.0f / 16.0f));
+constexpr int32 CanvasWidth = 1280;
+constexpr int32 CanvasHeight = static_cast<int32>(static_cast<float>(CanvasWidth) * 9.f / 16.f);
 
-float MouseLastX = WindowWidth / 2, MouseLastY = WindowHeight / 2;
+float MouseLastX = CanvasWidth * 0.5f, MouseLastY = CanvasHeight * 0.5f;
 
-Camera rMainCamera(vec3(0.0f, 0.0f, 10.0f), vec3(0.0f, 0.0f, 1.0f), vec3(0.0f, 1.0f, 0.0f), 45.0f, (16.0f / 9.0f), 10.0f, 0.1f, 100.0f);
+Camera rMainCamera(vec3(0.f, 0.f, 10.f), vec3(0.f, 0.f, 1.f), vec3(0.f, 1.f, 0.f), 45.f, (16.f / 9.f), 10.f, 0.1f, 100.f);
 
-float DeltaTime = 0.0f, LastFrame = 0.0f;
+float DeltaTime = 0.f, LastFrame = 0.f;
 
 Log rGlobalLog("Log");
-
 
 static int Index = 0;
 
 const char* ctest[] = {"test1", "test2", "Test3", "Test4", "Test5", "Test6", "Test7", "Test8", "Test9"};
 
-/**
- * @deprecated Deprecated function
-*/
-void ProcessInput(GLFWwindow* InrWindow)
-{
-	if (glfwGetKey(InrWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		glfwSetWindowShouldClose(InrWindow, true);
-	else if (glfwGetKey(InrWindow, GLFW_KEY_1) == GLFW_PRESS)
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	else if (glfwGetKey(InrWindow, GLFW_KEY_1) == GLFW_RELEASE)
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-
-	if (glfwGetKey(InrWindow, GLFW_KEY_W) == GLFW_PRESS)
-		rMainCamera.TravelForwards(1.0f * DeltaTime);
-	else if (glfwGetKey(InrWindow, GLFW_KEY_S) == GLFW_PRESS)
-		rMainCamera.TravelForwards(-1.0f * DeltaTime);
-
-	if (glfwGetKey(InrWindow, GLFW_KEY_A) == GLFW_PRESS)
-		rMainCamera.TravelSideways(-1.0f * DeltaTime);
-	else if (glfwGetKey(InrWindow, GLFW_KEY_D) == GLFW_PRESS)
-		rMainCamera.TravelSideways(1.0f * DeltaTime);
-
-	if (glfwGetKey(InrWindow, GLFW_KEY_E) == GLFW_PRESS)
-		rMainCamera.TravelUpwards(1.0f * DeltaTime);
-	else if (glfwGetKey(InrWindow, GLFW_KEY_Q) == GLFW_PRESS)
-		rMainCamera.TravelUpwards(-1.0f * DeltaTime);
-}
-
-/**
- * @deprecated Deprecated function callback
-*/
-void MouseCallback(GLFWwindow* InrWindow, double XPosIn, double YPosIn)
-{
-	ImGui_ImplGlfw_CursorPosCallback(InrWindow, XPosIn, YPosIn);
-
-	const float XPos = static_cast<float>(XPosIn);
-	const float YPos = static_cast<float>(YPosIn);
-
-	if (FirstMouse)
-	{
-		MouseLastX = XPos;
-		MouseLastY = YPos;
-		FirstMouse = false;
-	}
-
-	const float XOffset = (XPos - MouseLastX) * 4.0f * DeltaTime;
-	const float YOffset = (MouseLastY - YPos) * 4.0f * DeltaTime;
-
-	MouseLastX = XPos;
-	MouseLastY = YPos;
-
-	rMainCamera.AddYaw(XOffset);
-	rMainCamera.AddPitch(YOffset);
-}
-
-/**
- * @deprecated Deprecated function callback
-*/
-void ScrollCallback(GLFWwindow* InrWindow, double XOffset, double YOffset)
-{
-	ImGui_ImplGlfw_ScrollCallback(InrWindow, XOffset, YOffset);
-
-	rMainCamera.SetFOV(rMainCamera.GetFOV() - static_cast<float>(YOffset));
-
-	if (rMainCamera.GetFOV() < 1.0f)
-		rMainCamera.SetFOV(1.0f);
-	else if (rMainCamera.GetFOV() > 45.0f)
-		rMainCamera.SetFOV(45.0f);
-}
+bool FirstMouse = true;
 
 
 GLvoid DepthView() noexcept
@@ -131,7 +45,7 @@ GLvoid MaterialView() noexcept
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
-GLvoid WindowRenderLoop()
+GLvoid CanvasRenderLoop()
 {
 	const float CurrentFrame = static_cast<float>(glfwGetTime());
 
@@ -141,9 +55,9 @@ GLvoid WindowRenderLoop()
 	rMainCamera.Update();
 }
 
-void GUIMainMenu(Window* InrWindow)
+void GUIMainMenu(Canvas* InrCanvas)
 {
-	bool IsMainWindowVisible = true;
+	bool IsMainCanvasVisible = true;
 
 	if(ImGui::BeginMainMenuBar())
 	{
@@ -158,7 +72,7 @@ void GUIMainMenu(Window* InrWindow)
 
 		if(ImGui::BeginMenu("Edit"))
 		{
-			ImGui::MenuItem("Prefrences");
+			ImGui::MenuItem("Preferences");
 			ImGui::Separator();
 			ImGui::MenuItem("Settings");
 
@@ -178,13 +92,13 @@ void GUIMainMenu(Window* InrWindow)
 	}
 }
 
-void GUICreatorTab(Window*  InrWindow)
+void GUICreatorTab(Canvas* InrCanvas)
 {
-	bool IsMainWindowVisible = true;
+	bool IsMainCanvasVisible = true;
 
 	//Creator Tab
 	if(ImGui::Begin("Creator Tab",
-	&IsMainWindowVisible,
+	&IsMainCanvasVisible,
 	ImGuiWindowFlags_NoCollapse |
 	ImGuiWindowFlags_NoResize |
 	ImGuiWindowFlags_NoDecoration |
@@ -192,8 +106,15 @@ void GUICreatorTab(Window*  InrWindow)
 	ImGuiWindowFlags_NoBringToFrontOnFocus))
 	{
 		
-		ImGui::SetWindowPos(ImVec2(0,18));
-		ImGui::SetWindowSize(ImVec2(InrWindow->GetWidth()*0.166, InrWindow->GetHeight()*0.667));
+		ImGui::SetWindowPos(
+			ImVec2(
+				0.f,
+				18.f));
+
+		ImGui::SetWindowSize(
+			ImVec2(
+				static_cast<float>(InrCanvas->GetWidth()) * 0.166f,
+				static_cast<float>(InrCanvas->GetHeight()) * 0.667f));
 
 		ImGui::Text("Creator TAB");
 
@@ -201,22 +122,29 @@ void GUICreatorTab(Window*  InrWindow)
 	}
 }
 
-void GUIOutlineTab(Window* InrWindow)
+void GUIOutlineTab(Canvas* InrCanvas)
 {
 
-	bool IsMainWindowVisible = true;
+	bool IsMainCanvasVisible = true;
 
 	//Outliner Tab
 	if(ImGui::Begin("Outliner",
-	&IsMainWindowVisible,
+	&IsMainCanvasVisible,
 	ImGuiWindowFlags_NoCollapse |
 	ImGuiWindowFlags_NoResize |
 	ImGuiWindowFlags_NoDecoration |
 	ImGuiWindowFlags_NoMove |
 	ImGuiWindowFlags_NoBringToFrontOnFocus))
 	{
-		ImGui::SetWindowPos(ImVec2(InrWindow->GetWidth() - InrWindow->GetWidth()*0.166, 18));
-		ImGui::SetWindowSize(ImVec2(InrWindow->GetWidth()*0.166, InrWindow->GetHeight()*0.667));
+		ImGui::SetWindowPos(
+			ImVec2(
+				static_cast<float>(InrCanvas->GetWidth()) - static_cast<float>(InrCanvas->GetWidth()) * 0.166f,
+				18.f));
+
+		ImGui::SetWindowSize(
+			ImVec2(
+			static_cast<float>(InrCanvas->GetWidth()) * 0.166f,
+			static_cast<float>(InrCanvas->GetHeight()) * 0.667f));
 
 		if(ImGui::BeginTabBar("OutlineTab"))
 		{
@@ -227,12 +155,19 @@ void GUIOutlineTab(Window* InrWindow)
 		}
 
 
-		if(ImGui::BeginListBox("OutlineList", ImVec2(InrWindow->GetWidth()*0.166, InrWindow->GetHeight()*0.667)))
+		if(ImGui::BeginListBox(
+			"OutlineList",
+			ImVec2(
+				static_cast<float>(InrCanvas->GetWidth()) * 0.166f,
+				static_cast<float>(InrCanvas->GetHeight()) * 0.667f)))
 		{
+
+			bool is_selected = false;
 
 			for (int n = 0; n < IM_ARRAYSIZE(ctest); n++)
 			{
-				const bool is_selected = (Index == n);
+				is_selected = (Index == n);
+				
 				if (ImGui::Selectable(ctest[n], is_selected))
 					Index = n;
 
@@ -247,22 +182,29 @@ void GUIOutlineTab(Window* InrWindow)
 	}
 }
 
-void GUIAssetTab(Window*  InrWindow)
+void GUIAssetTab(Canvas* InrCanvas)
 {
 
-	bool IsMainWindowVisible = true;
+	bool IsMainCanvasVisible = true;
 
 	//Asset Browser Tab
 	if(ImGui::Begin("Asset Browser Tab", 
-	&IsMainWindowVisible,
+	&IsMainCanvasVisible,
 	ImGuiWindowFlags_NoCollapse | 
 	ImGuiWindowFlags_NoResize |
 	ImGuiWindowFlags_NoDecoration |
 	ImGuiWindowFlags_NoMove |
 	ImGuiWindowFlags_NoBringToFrontOnFocus))
 	{
-		ImGui::SetWindowPos(ImVec2(0, InrWindow->GetHeight()*0.667 + 18));
-		ImGui::SetWindowSize(ImVec2(InrWindow->GetWidth(), InrWindow->GetHeight()*0.333 - 18));
+		ImGui::SetWindowPos(
+			ImVec2(
+				0.f,
+				static_cast<float>(InrCanvas->GetHeight()) * 0.667f + 18.f));
+
+		ImGui::SetWindowSize(
+			ImVec2(
+			static_cast<float>(InrCanvas->GetWidth()),
+			static_cast<float>(InrCanvas->GetHeight()) * 0.333f - 18.f));
 
 		ImGui::Text("Asset TAB");
 
@@ -270,40 +212,12 @@ void GUIAssetTab(Window*  InrWindow)
 	}
 }
 
-bool InitGlew()
+bool GUISetupStyle(Canvas* InrCanvas)
 {
-	if (glewInit() == GLEW_OK)
-		glewExperimental = true; // Needed for core profile
-	else
-	{
-		rGlobalLog.WriteAndDisplay("Glew context failed to load", ELogSeverity::ELS_Critical);
-		return false;
-	}
-
-	return true;
-}
-
-bool InitGUI(Window* InrWindow)
-{
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-
-	if(!ImGui_ImplGlfw_InitForOpenGL(InrWindow->GetWindow(), true))
-	{
-		rGlobalLog.WriteAndDisplay("ImGui failed to bind to Opengl", ELogSeverity::ELS_Critical);
-		return false;
-	}
-
-	if(!ImGui_ImplOpenGL3_Init("#version 450"))
-	{
-		rGlobalLog.WriteAndDisplay("ImGui failed to detect requested opengl version", ELogSeverity::ELS_Critical);
-		//return false;
-	}
-
 	ImGuiStyle& rStyle = ImGui::GetStyle();
 
-	rStyle.WindowPadding = ImVec2(0,0);
-	rStyle.DisplayWindowPadding = ImVec2(0,0);
+	rStyle.WindowPadding = ImVec2(0.f,0.f);
+	rStyle.DisplayWindowPadding = ImVec2(0.f,0.f);
 	rStyle.WindowBorderSize = 1.f;
 
 	rStyle.Colors[ImGuiCol_WindowBg] = ImVec4(0.1f,0.1f,0.1f,1.f);
@@ -315,6 +229,34 @@ bool InitGUI(Window* InrWindow)
 	rStyle.Colors[ImGuiCol_TabActive] = ImVec4(0.8f,0.4f,0.f,1.f);
 
 	return true;
+}
+
+
+void SetupRenderer(Renderer* InrRenderer)
+{
+	InrRenderer->EnableMode(EGLEnable::EGLE_DepthTest, true);
+	InrRenderer->EnableMode(EGLEnable::EGLE_StencilTest, true);
+	InrRenderer->EnableMode(EGLEnable::EGLE_CullFace, true);
+	InrRenderer->EnableMode(EGLEnable::EGLE_ProgramPointSize, true);
+
+	glPointSize(10);
+
+	InrRenderer->SetCullFace(EGLCullFace::EGLCF_Back);
+
+	InrRenderer->EnableDepthMask(true);
+	InrRenderer->SetDepthFunc(EGLFunc::EGLDF_Less);
+
+	InrRenderer->SetStencilMask(0xFF);
+	InrRenderer->SetStencilFunc(EGLFunc::EGLDF_GEqual, 1, 0xFF);
+
+	InrRenderer->SetStencilOp(EGLStencilOp::EGLSO_Keep);
+
+	InrRenderer->SetPolygonMode(EGLCullFace::EGLCF_FrontAndBack, EGLPolygonMode::EGLP_Fill);
+
+	InrRenderer->SetClearColor(.2f * 0.3f, .4f * 0.3f, .3f * 0.3f, 1.f);
+
+	InrRenderer->SetClearBuffer(EGLClearBuffer::EGLC_ColorBufferBit | EGLClearBuffer::EGLC_DepthBufferBit | EGLClearBuffer::EGLC_StencilBufferBit);
+
 }
 
 void OnMouseScroll()
@@ -330,8 +272,6 @@ void OnMouseScroll()
 	else if (rMainCamera.GetFOV() > 45.0f)
 		rMainCamera.SetFOV(45.0f);
 }
-
-bool FirstMouse = true;
 
 void OnMouseMove()
 {
@@ -379,37 +319,45 @@ void MoveCameraRightwards()
 	rMainCamera.TravelSideways(1.0f * DeltaTime);
 }
 
+void ExecuteInputManager(int Stop)
+{
+	while(Stop)
+	{
+		InputManager::GetInstance()->ProcessInput();
+	}
+}
+
 int main(int argc, char **argv)
 {
 	try 
 	{
 		App* rKronosApp = new App(argc, argv);
 
-		if (rKronosApp->IsInitSuccess())
+		Canvas* rMainCanvas = new Canvas(CanvasWidth, CanvasHeight, "Kronos Engine");
+
+		if (rKronosApp->Init(rMainCanvas))
 		{
+			rGlobalLog.WriteAndDisplay("OpenGL Driver version: " + rKronosApp->GetOpenglVersion());
+			rGlobalLog.WriteAndDisplay("OpenGL Loaded version: " + rKronosApp->GetGladVersion());
+			rGlobalLog.WriteAndDisplay("GLFW version: " + rKronosApp->GetGLFWVersion());
+			rGlobalLog.WriteAndDisplay("Imgui version: " + rKronosApp->GetImguiVersion());
+			rGlobalLog.WriteAndDisplay("Assimp version: " + rKronosApp->GetAssimpVersion());
+			rGlobalLog.WriteAndDisplay("GLM Version: " + rKronosApp->GetGLMVersion());
+
 			rMainCamera.SetMinRotation(vec3(-360.0f, -89.0f, -360.0f));
 			rMainCamera.SetMaxRotation(vec3(360.0f, 89.0f, 360.0f));
 
-			Window* rMainWindow = new Window(1024, static_cast<int32>(1024.f * (9.0f / 16.0f)), "Kronos Engine");
+			GUISetupStyle(rMainCanvas);
 
-
-			if(!InitGlew())
-			{
-				rGlobalLog.WriteAndDisplay("Failed to init glew. Clossing");
-				rKronosApp->Destroy();
-				return -2;
-			}
+			glViewport(
+				rMainCanvas->GetWidth()*0.166,
+				rMainCanvas->GetHeight()*0.333,
+				rMainCanvas->GetWidth() - rMainCanvas->GetWidth()*0.333,
+				rMainCanvas->GetHeight()*0.667);
 			
-
-			if(!InitGUI(rMainWindow))
-			{
-				rGlobalLog.WriteAndDisplay("Failed to init ImGui. Closing");
-				rKronosApp->Destroy();
-				return -3;
-			}
 			
-			//glfwSetCursorPosCallback(rMainWindow->GetWindow(), MouseCallback);
-			//glfwSetScrollCallback(rMainWindow->GetWindow(), ScrollCallback);
+			//glfwSetCursorPosCallback(rMainCanvas->GetCanvas(), MouseCallback);
+			//glfwSetScrollCallback(rMainCanvas->GetCanvas(), ScrollCallback);
 			
 			GLint nrAttributes;
 			glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
@@ -417,8 +365,8 @@ int main(int argc, char **argv)
 			rGlobalLog.WriteAndDisplay("Maximum nr if vertex attributes supported: " + to_string(nrAttributes));
 
 			Texture* FrameBufferTexture = new Texture(
-				rMainWindow->GetWidth(),
-				rMainWindow->GetHeight(),
+				rMainCanvas->GetWidth(),
+				rMainCanvas->GetHeight(),
 				ETextureType::ETT_Albedo,
 				EGLTextureDataType::EGLTDT_Texture2D,
 				EGLTextureSlot::EGLTS_Slot0,
@@ -431,42 +379,18 @@ int main(int argc, char **argv)
 				FrameBufferTexture,
 				0);
 
-			Renderer* rRenderer = new Renderer();
+			Renderer* rViewportRenderer = new Renderer();
 
 			Shader rShaderLight("Resource/Shader/Light.vs", "Resource/Shader/Light.fs");
 			Shader rShaderCubeLight("Resource/Shader/LightColorCube.vs", "Resource/Shader/LightColorCube.fs");
 			Shader rShaderStencil("Resource/Shader/Stencil.vs", "Resource/Shader/Stencil.fs");
 
-			rRenderer->EnableMode(EGLEnable::EGLE_DepthTest, true);
-			rRenderer->EnableMode(EGLEnable::EGLE_StencilTest, true);
-			rRenderer->EnableMode(EGLEnable::EGLE_CullFace, true);
-			rRenderer->EnableMode(EGLEnable::EGLE_ProgramPointSize, true);
 
-			glPointSize(10);
-
-			rRenderer->SetCullFace(EGLCullFace::EGLCF_Back);
-
-			rRenderer->EnableDepthMask(true);
-			rRenderer->SetDepthFunc(EGLFunc::EGLDF_Less);
-
-			rRenderer->SetStencilMask(0xFF);
-			rRenderer->SetStencilFunc(EGLFunc::EGLDF_GEqual, 1, 0xFF);
-
-			rRenderer->SetStencilOp(EGLStencilOp::EGLSO_Keep);
-
-			rRenderer->SetPolygonMode(EGLCullFace::EGLCF_FrontAndBack, EGLPolygonMode::EGLP_Fill);
-
-			rRenderer->SetClearColor(.2f * 0.3f, .4f * 0.3f, .3f * 0.3f, 1.f);
-
-			rRenderer->SetClearBuffer(EGLClearBuffer::EGLC_ColorBufferBit | EGLClearBuffer::EGLC_DepthBufferBit | EGLClearBuffer::EGLC_StencilBufferBit);
+			SetupRenderer(rViewportRenderer);
 
 			glfwSwapInterval(1);
 
 			rMainCamera.SetYaw(-89.0f);
-
-			Model NewModel2(SShapePrimCube(0.2f,0.2f).GetModel());
-
-			NewModel2.Translate(vec3(1.f, 0.f, 0.f));
 			
 			mat4 View = rMainCamera.GetView();
 			mat4 Projection = rMainCamera.GetProjection();
@@ -474,31 +398,32 @@ int main(int argc, char **argv)
 
 			glReleaseShaderCompiler();
 
-			GizmoTransform test = GizmoTransform();
+			GizmoTransform Gizmo = GizmoTransform();
 
-			InputManager::GetInstance()->SetCurrentWindow(rMainWindow->GetWindow());
+			Gizmo.ConstructGizmo();
 
-			InputManager::GetInstance()->BindInput("MoveForwards", EGLFWInputKey::EGLFWIK_W, EGLFWInputState::EGLFWIS_Repeat, &MoveCameraForwards);
-			InputManager::GetInstance()->BindInput("MoveBackwords", EGLFWInputKey::EGLFWIK_S, EGLFWInputState::EGLFWIS_Repeat, &MoveCameraBackwards);
-			InputManager::GetInstance()->BindInput("MoveLeftwards", EGLFWInputKey::EGLFWIK_A, EGLFWInputState::EGLFWIS_Repeat, &MoveCameraLeftwards);
-			InputManager::GetInstance()->BindInput("MoveRightwords", EGLFWInputKey::EGLFWIK_D, EGLFWInputState::EGLFWIS_Repeat, &MoveCameraRightwards);
+			InputManager::GetInstance()->SetCurrentWindow(rMainCanvas->GetWindow());
+
+			InputManager::GetInstance()->BindInput("MoveForwards", EInputKey::EIK_W, EInputState::EIS_Hold, &MoveCameraForwards);
+			InputManager::GetInstance()->BindInput("MoveBackwords", EInputKey::EIK_S, EInputState::EIS_Hold, &MoveCameraBackwards);
+			InputManager::GetInstance()->BindInput("MoveLeftwards", EInputKey::EIK_A, EInputState::EIS_Hold, &MoveCameraLeftwards);
+			InputManager::GetInstance()->BindInput("MoveRightwords", EInputKey::EIK_D, EInputState::EIS_Hold, &MoveCameraRightwards);
 			InputManager::GetInstance()->BindInput("MouseMovement", EDeviceType::EDT_Mouse, &OnMouseMove);
 			InputManager::GetInstance()->BindInput("MouseScroll",EDeviceType::EDT_Mouse, &OnMouseScroll);
 
 			//Main loop
-			while (!glfwWindowShouldClose(rMainWindow->GetWindow()))
+			while (!glfwWindowShouldClose(rMainCanvas->GetWindow()))
 			{
-
-				WindowRenderLoop();
+				CanvasRenderLoop();
 
 				ImGui_ImplOpenGL3_NewFrame();
 				ImGui_ImplGlfw_NewFrame();
 				ImGui::NewFrame();
 
-				GUIMainMenu(rMainWindow);
-				GUICreatorTab(rMainWindow);
-				GUIOutlineTab(rMainWindow);
-				GUIAssetTab(rMainWindow);
+				GUIMainMenu(rMainCanvas);
+				GUICreatorTab(rMainCanvas);
+				GUIOutlineTab(rMainCanvas);
+				GUIAssetTab(rMainCanvas);
 
 				View = rMainCamera.GetView();
 				Projection = rMainCamera.GetProjection();
@@ -514,37 +439,28 @@ int main(int argc, char **argv)
 
 				rShaderCubeLight.SetMat4("View", View);
 				rShaderCubeLight.SetMat4("Projection", Projection);
-				rShaderCubeLight.SetMat4("Model", NewModel2.GetTransformMatrix());
-				
-				
-				//NewModel->Draw(rShaderCubeLight);
-				//NewModel2.Draw(rShaderCubeLight);
+				rShaderCubeLight.SetMat4("Model", Gizmo.GetTransformMatrix());
 
-				rShaderCubeLight.SetMat4("Model", test.GetTransformMatrix());
-
-				test.Draw(rShaderCubeLight);
+				Gizmo.Draw(rShaderCubeLight);
 
 				ImGui::Render();
 				ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 				
-				glfwSwapBuffers(rMainWindow->GetWindow());
-				rRenderer->Clear();
-				//ProcessInput(rMainWindow->GetWindow());
+				glfwSwapBuffers(rMainCanvas->GetWindow());
+				rViewportRenderer->Clear();
 				InputManager::GetInstance()->ProcessInput();
 				glfwPollEvents();
 			}
 
-			ImGui_ImplOpenGL3_Shutdown();
-			ImGui_ImplGlfw_Shutdown();
-			ImGui::DestroyContext();
-
 			delete rFramebuffer;
-			delete rRenderer;
-			delete rMainWindow;
-			delete rKronosApp;
+			delete rViewportRenderer;
 		}
 		else
 			return -1;
+		
+		delete rMainCanvas;
+		delete rKronosApp;
+
 	} catch (exception &e)
 	{
 		cerr << e.what() << "\n";

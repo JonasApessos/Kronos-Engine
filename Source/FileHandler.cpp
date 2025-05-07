@@ -3,14 +3,14 @@
 FileHandler::FileHandler() {}
 
 FileHandler::FileHandler(char const* IncPath, char const* IncFileName, ios_base::openmode IniFlagType) :
-sFilePath(IncPath),
+iBitFlagMode(IniFlagType),
 sFileName(IncFileName),
-iBitFlagMode(IniFlagType) { Init(); }
+sFilePath(IncPath) { Init(); }
 
 FileHandler::FileHandler(string const& InsPath, string const& InsFileName, ios_base::openmode IniFlagType) :
-sFilePath(InsPath),
+iBitFlagMode(IniFlagType),
 sFileName(InsFileName),
-iBitFlagMode(IniFlagType) { Init(); }
+sFilePath(InsPath) { Init(); }
 
 FileHandler::FileHandler(FileHandler const& InrFileHandler)
 {

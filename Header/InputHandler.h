@@ -3,7 +3,6 @@
 #include <string>
 
 #include "Standard.h"
-#include "GLFW/glfw3.h"
 
 #include "Primitives.h"
 
@@ -11,7 +10,8 @@ using std::string;
 using KronosPrim::uint32, KronosPrim::int32;
 
 /** @enum EGLFWInputKey
-* 	@brief enum for glfw input key map*/
+* 	@brief enum for glfw input key map
+*	@todo seperate input bindings from InputManager, This class should manage for every binding the execution*/
 /*enum class EGLFWInputKey : int32
 {
 	EGLFWIK_Unknown = GLFW_KEY_UNKNOWN,
