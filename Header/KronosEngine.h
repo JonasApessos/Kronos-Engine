@@ -15,16 +15,16 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.inl>
 
+#include <assimp/version.h>
+
 #include "Standard.h"
 
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 
-#include "assimp/version.h"
-
 #include "App.h"
-#include "Window.h"
+#include "Canvas.h"
 #include "Camera.h"
 #include "Shader.h"
 #include "Renderer.h"

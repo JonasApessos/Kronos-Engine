@@ -2,10 +2,10 @@
 
 #include <assert.h>
 
-#include "MacroUtils.h"
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+
+#include "MacroUtils.h"
 
 #include "Log.h"
 #include "Utils.h"

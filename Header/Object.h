@@ -3,7 +3,7 @@
 #include <iostream>
 #include <vector>
 
-#include "glm/glm.hpp"
+#include <glm/glm.hpp>
 
 #include "Primitives.h"
 #include "InputManager.h"

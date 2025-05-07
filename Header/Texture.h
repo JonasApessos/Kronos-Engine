@@ -3,7 +3,7 @@
 #include <iostream>
 
 #include <assimp/scene.h>
-#include "stb/stb_image.h"
+#include <stb/stb_image.h>
 
 #include "Primitives.h"
 #include "Standard.h"

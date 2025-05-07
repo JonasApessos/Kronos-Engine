@@ -12,11 +12,11 @@ cpp_std = ["-std=c++20"]
 #Compiler for c
 c_Compiler = "gcc"
 
+#Compiler Flags
 c_CCFlags = "";
 cpp_CCFlags = "";
 
 if GetOption("build") == "debug":
-    #Compiler Flags
     c_CCFlags = [
         "-Og",
         "-g",
@@ -59,7 +59,7 @@ Kronos_Env["CC"] = c_Compiler
 Kronos_Env["CXX"] = cpp_Compiler
 Kronos_Env["CCFLAGS"] = cpp_CCFlags + cpp_std
 
-#Build Dependencys
+#Build Dependencies
 DepObj = SConscript("Dep/SConstruct", exports = ['c_Dep_Env', 'cpp_Dep_Env'])
 
 #Build source code

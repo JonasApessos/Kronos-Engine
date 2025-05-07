@@ -8,11 +8,10 @@
 #include <sstream>
 #include <iostream>
 
+#include <glm/glm.hpp>
 
 #include "Primitives.h"
 #include "Standard.h"
-
-#include <glm/glm.hpp>
 
 #include "Log.h"
 #include "FileHandler.h"

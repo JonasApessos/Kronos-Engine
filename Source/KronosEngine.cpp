@@ -4,14 +4,14 @@ using glm::vec3, glm::vec2 , glm::mat4;
 
 using std::cout, std::exception;
 
-constexpr int32 WindowWidth = 1280;
-constexpr int32 WindowHeight = static_cast<int32>(static_cast<float>(WindowWidth) * static_cast<float>(9.0f / 16.0f));
+constexpr int32 CanvasWidth = 1280;
+constexpr int32 CanvasHeight = static_cast<int32>(static_cast<float>(CanvasWidth) * 9.f / 16.f);
 
-float MouseLastX = WindowWidth / 2, MouseLastY = WindowHeight / 2;
+float MouseLastX = CanvasWidth * 0.5f, MouseLastY = CanvasHeight * 0.5f;
 
-Camera rMainCamera(vec3(0.0f, 0.0f, 10.0f), vec3(0.0f, 0.0f, 1.0f), vec3(0.0f, 1.0f, 0.0f), 45.0f, (16.0f / 9.0f), 10.0f, 0.1f, 100.0f);
+Camera rMainCamera(vec3(0.f, 0.f, 10.f), vec3(0.f, 0.f, 1.f), vec3(0.f, 1.f, 0.f), 45.f, (16.f / 9.f), 10.f, 0.1f, 100.f);
 
-float DeltaTime = 0.0f, LastFrame = 0.0f;
+float DeltaTime = 0.f, LastFrame = 0.f;
 
 Log rGlobalLog("Log");
 
@@ -19,79 +19,7 @@ static int Index = 0;
 
 const char* ctest[] = {"test1", "test2", "Test3", "Test4", "Test5", "Test6", "Test7", "Test8", "Test9"};
 
-/**
- * @deprecated Deprecated function
-*/
-void ProcessInput(GLFWwindow* InrWindow)
-{
-	if (glfwGetKey(InrWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		glfwSetWindowShouldClose(InrWindow, true);
-	else if (glfwGetKey(InrWindow, GLFW_KEY_1) == GLFW_PRESS)
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	else if (glfwGetKey(InrWindow, GLFW_KEY_1) == GLFW_RELEASE)
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-
-	if (glfwGetKey(InrWindow, GLFW_KEY_W) == GLFW_PRESS)
-		rMainCamera.TravelForwards(1.0f * DeltaTime);
-	else if (glfwGetKey(InrWindow, GLFW_KEY_S) == GLFW_PRESS)
-		rMainCamera.TravelForwards(-1.0f * DeltaTime);
-
-	if (glfwGetKey(InrWindow, GLFW_KEY_A) == GLFW_PRESS)
-		rMainCamera.TravelSideways(-1.0f * DeltaTime);
-	else if (glfwGetKey(InrWindow, GLFW_KEY_D) == GLFW_PRESS)
-		rMainCamera.TravelSideways(1.0f * DeltaTime);
-
-	if (glfwGetKey(InrWindow, GLFW_KEY_E) == GLFW_PRESS)
-		rMainCamera.TravelUpwards(1.0f * DeltaTime);
-	else if (glfwGetKey(InrWindow, GLFW_KEY_Q) == GLFW_PRESS)
-		rMainCamera.TravelUpwards(-1.0f * DeltaTime);
-}
-
 bool FirstMouse = true;
-
-/**
- * @deprecated Deprecated function callback
-*/
-void MouseCallback(GLFWwindow* InrWindow, double XPosIn, double YPosIn)
-{
-	ImGui_ImplGlfw_CursorPosCallback(InrWindow, XPosIn, YPosIn);
-
-	const float XPos = static_cast<float>(XPosIn);
-	const float YPos = static_cast<float>(YPosIn);
-
-	if (FirstMouse)
-	{
-		MouseLastX = XPos;
-		MouseLastY = YPos;
-		FirstMouse = false;
-	}
-
-	const float XOffset = (XPos - MouseLastX) * 4.0f * DeltaTime;
-	const float YOffset = (MouseLastY - YPos) * 4.0f * DeltaTime;
-
-	MouseLastX = XPos;
-	MouseLastY = YPos;
-
-	rMainCamera.AddYaw(XOffset);
-	rMainCamera.AddPitch(YOffset);
-}
-
-
-/**
- * @deprecated Deprecated function callback
-*/
-void ScrollCallback(GLFWwindow* InrWindow, double XOffset, double YOffset)
-{
-	ImGui_ImplGlfw_ScrollCallback(InrWindow, XOffset, YOffset);
-
-	rMainCamera.SetFOV(rMainCamera.GetFOV() - static_cast<float>(YOffset));
-
-	if (rMainCamera.GetFOV() < 1.0f)
-		rMainCamera.SetFOV(1.0f);
-	else if (rMainCamera.GetFOV() > 45.0f)
-		rMainCamera.SetFOV(45.0f);
-}
 
 
 GLvoid DepthView() noexcept
@@ -117,7 +45,7 @@ GLvoid MaterialView() noexcept
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
-GLvoid WindowRenderLoop()
+GLvoid CanvasRenderLoop()
 {
 	const float CurrentFrame = static_cast<float>(glfwGetTime());
 
@@ -127,9 +55,9 @@ GLvoid WindowRenderLoop()
 	rMainCamera.Update();
 }
 
-void GUIMainMenu(Window* InrWindow)
+void GUIMainMenu(Canvas* InrCanvas)
 {
-	bool IsMainWindowVisible = true;
+	bool IsMainCanvasVisible = true;
 
 	if(ImGui::BeginMainMenuBar())
 	{
@@ -144,7 +72,7 @@ void GUIMainMenu(Window* InrWindow)
 
 		if(ImGui::BeginMenu("Edit"))
 		{
-			ImGui::MenuItem("Prefrences");
+			ImGui::MenuItem("Preferences");
 			ImGui::Separator();
 			ImGui::MenuItem("Settings");
 
@@ -164,13 +92,13 @@ void GUIMainMenu(Window* InrWindow)
 	}
 }
 
-void GUICreatorTab(Window*  InrWindow)
+void GUICreatorTab(Canvas* InrCanvas)
 {
-	bool IsMainWindowVisible = true;
+	bool IsMainCanvasVisible = true;
 
 	//Creator Tab
 	if(ImGui::Begin("Creator Tab",
-	&IsMainWindowVisible,
+	&IsMainCanvasVisible,
 	ImGuiWindowFlags_NoCollapse |
 	ImGuiWindowFlags_NoResize |
 	ImGuiWindowFlags_NoDecoration |
@@ -178,8 +106,15 @@ void GUICreatorTab(Window*  InrWindow)
 	ImGuiWindowFlags_NoBringToFrontOnFocus))
 	{
 		
-		ImGui::SetWindowPos(ImVec2(0,18));
-		ImGui::SetWindowSize(ImVec2(InrWindow->GetWidth()*0.166, InrWindow->GetHeight()*0.667));
+		ImGui::SetWindowPos(
+			ImVec2(
+				0.f,
+				18.f));
+
+		ImGui::SetWindowSize(
+			ImVec2(
+				static_cast<float>(InrCanvas->GetWidth()) * 0.166f,
+				static_cast<float>(InrCanvas->GetHeight()) * 0.667f));
 
 		ImGui::Text("Creator TAB");
 
@@ -187,22 +122,29 @@ void GUICreatorTab(Window*  InrWindow)
 	}
 }
 
-void GUIOutlineTab(Window* InrWindow)
+void GUIOutlineTab(Canvas* InrCanvas)
 {
 
-	bool IsMainWindowVisible = true;
+	bool IsMainCanvasVisible = true;
 
 	//Outliner Tab
 	if(ImGui::Begin("Outliner",
-	&IsMainWindowVisible,
+	&IsMainCanvasVisible,
 	ImGuiWindowFlags_NoCollapse |
 	ImGuiWindowFlags_NoResize |
 	ImGuiWindowFlags_NoDecoration |
 	ImGuiWindowFlags_NoMove |
 	ImGuiWindowFlags_NoBringToFrontOnFocus))
 	{
-		ImGui::SetWindowPos(ImVec2(InrWindow->GetWidth() - InrWindow->GetWidth()*0.166, 18));
-		ImGui::SetWindowSize(ImVec2(InrWindow->GetWidth()*0.166, InrWindow->GetHeight()*0.667));
+		ImGui::SetWindowPos(
+			ImVec2(
+				static_cast<float>(InrCanvas->GetWidth()) - static_cast<float>(InrCanvas->GetWidth()) * 0.166f,
+				18.f));
+
+		ImGui::SetWindowSize(
+			ImVec2(
+			static_cast<float>(InrCanvas->GetWidth()) * 0.166f,
+			static_cast<float>(InrCanvas->GetHeight()) * 0.667f));
 
 		if(ImGui::BeginTabBar("OutlineTab"))
 		{
@@ -213,12 +155,19 @@ void GUIOutlineTab(Window* InrWindow)
 		}
 
 
-		if(ImGui::BeginListBox("OutlineList", ImVec2(InrWindow->GetWidth()*0.166, InrWindow->GetHeight()*0.667)))
+		if(ImGui::BeginListBox(
+			"OutlineList",
+			ImVec2(
+				static_cast<float>(InrCanvas->GetWidth()) * 0.166f,
+				static_cast<float>(InrCanvas->GetHeight()) * 0.667f)))
 		{
+
+			bool is_selected = false;
 
 			for (int n = 0; n < IM_ARRAYSIZE(ctest); n++)
 			{
-				const bool is_selected = (Index == n);
+				is_selected = (Index == n);
+				
 				if (ImGui::Selectable(ctest[n], is_selected))
 					Index = n;
 
@@ -233,22 +182,29 @@ void GUIOutlineTab(Window* InrWindow)
 	}
 }
 
-void GUIAssetTab(Window*  InrWindow)
+void GUIAssetTab(Canvas* InrCanvas)
 {
 
-	bool IsMainWindowVisible = true;
+	bool IsMainCanvasVisible = true;
 
 	//Asset Browser Tab
 	if(ImGui::Begin("Asset Browser Tab", 
-	&IsMainWindowVisible,
+	&IsMainCanvasVisible,
 	ImGuiWindowFlags_NoCollapse | 
 	ImGuiWindowFlags_NoResize |
 	ImGuiWindowFlags_NoDecoration |
 	ImGuiWindowFlags_NoMove |
 	ImGuiWindowFlags_NoBringToFrontOnFocus))
 	{
-		ImGui::SetWindowPos(ImVec2(0, InrWindow->GetHeight()*0.667 + 18));
-		ImGui::SetWindowSize(ImVec2(InrWindow->GetWidth(), InrWindow->GetHeight()*0.333 - 18));
+		ImGui::SetWindowPos(
+			ImVec2(
+				0.f,
+				static_cast<float>(InrCanvas->GetHeight()) * 0.667f + 18.f));
+
+		ImGui::SetWindowSize(
+			ImVec2(
+			static_cast<float>(InrCanvas->GetWidth()),
+			static_cast<float>(InrCanvas->GetHeight()) * 0.333f - 18.f));
 
 		ImGui::Text("Asset TAB");
 
@@ -256,42 +212,12 @@ void GUIAssetTab(Window*  InrWindow)
 	}
 }
 
-bool InitGlad()
+bool GUISetupStyle(Canvas* InrCanvas)
 {
-	uint32 version = gladLoadGL((GLADloadfunc)glfwGetProcAddress);
-
-	if ( version == 0)
-		return false;
-
-	rGlobalLog.WriteAndDisplay("Loaded OpengGL Context Version: "  + to_string(GLAD_VERSION_MAJOR(version)) + "."+ to_string(GLAD_VERSION_MINOR(version)));
-	rGlobalLog.WriteAndDisplay("Driver OpenGL version: " + string((const char*)glGetString(GL_VERSION)));
-
-	return true;
-}
-
-bool InitGUI(Window* InrWindow)
-{
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-
-	if(!ImGui_ImplGlfw_InitForOpenGL(InrWindow->GetWindow(), true))
-	{
-		rGlobalLog.WriteAndDisplay("ImGui failed to bind to Opengl", ELogSeverity::ELS_Critical);
-		return false;
-	}
-
-	if(!ImGui_ImplOpenGL3_Init("#version 450"))
-	{
-		rGlobalLog.WriteAndDisplay("ImGui failed to detect requested opengl version", ELogSeverity::ELS_Critical);
-		//return false;
-	}
-
-	rGlobalLog.WriteAndDisplay("ImGui Version: " + string(IMGUI_VERSION));
-
 	ImGuiStyle& rStyle = ImGui::GetStyle();
 
-	rStyle.WindowPadding = ImVec2(0,0);
-	rStyle.DisplayWindowPadding = ImVec2(0,0);
+	rStyle.WindowPadding = ImVec2(0.f,0.f);
+	rStyle.DisplayWindowPadding = ImVec2(0.f,0.f);
 	rStyle.WindowBorderSize = 1.f;
 
 	rStyle.Colors[ImGuiCol_WindowBg] = ImVec4(0.1f,0.1f,0.1f,1.f);
@@ -305,12 +231,6 @@ bool InitGUI(Window* InrWindow)
 	return true;
 }
 
-void DestroyGUIContext()
-{
-	ImGui_ImplOpenGL3_Shutdown();
-	ImGui_ImplGlfw_Shutdown();
-	ImGui::DestroyContext();
-}
 
 void SetupRenderer(Renderer* InrRenderer)
 {
@@ -413,36 +333,31 @@ int main(int argc, char **argv)
 	{
 		App* rKronosApp = new App(argc, argv);
 
-		if (rKronosApp->IsInitSuccess())
+		Canvas* rMainCanvas = new Canvas(CanvasWidth, CanvasHeight, "Kronos Engine");
+
+		if (rKronosApp->Init(rMainCanvas))
 		{
+			rGlobalLog.WriteAndDisplay("OpenGL Driver version: " + rKronosApp->GetOpenglVersion());
+			rGlobalLog.WriteAndDisplay("OpenGL Loaded version: " + rKronosApp->GetGladVersion());
+			rGlobalLog.WriteAndDisplay("GLFW version: " + rKronosApp->GetGLFWVersion());
+			rGlobalLog.WriteAndDisplay("Imgui version: " + rKronosApp->GetImguiVersion());
+			rGlobalLog.WriteAndDisplay("Assimp version: " + rKronosApp->GetAssimpVersion());
+			rGlobalLog.WriteAndDisplay("GLM Version: " + rKronosApp->GetGLMVersion());
+
 			rMainCamera.SetMinRotation(vec3(-360.0f, -89.0f, -360.0f));
 			rMainCamera.SetMaxRotation(vec3(360.0f, 89.0f, 360.0f));
 
-			Window* rMainWindow = new Window(1024, static_cast<int32>(1024.f * (9.0f / 16.0f)), "Kronos Engine");
+			GUISetupStyle(rMainCanvas);
 
-			if(!InitGlad())
-			{
-				rGlobalLog.WriteAndDisplay("Failed to init glad...clossing application");
-				rKronosApp->Destroy();
-				return -2;
-			}
-
-			glViewport(rMainWindow->GetWidth()*0.166, rMainWindow->GetHeight()*0.333 - 18, rMainWindow->GetWidth() - rMainWindow->GetWidth()*0.333, rMainWindow->GetHeight()*0.667);
+			glViewport(
+				rMainCanvas->GetWidth()*0.166,
+				rMainCanvas->GetHeight()*0.333,
+				rMainCanvas->GetWidth() - rMainCanvas->GetWidth()*0.333,
+				rMainCanvas->GetHeight()*0.667);
 			
-
-			if(!InitGUI(rMainWindow))
-			{
-				rGlobalLog.WriteAndDisplay("Failed to init ImGui. Closing");
-				rKronosApp->Destroy();
-				return -3;
-			}
-
-			rGlobalLog.WriteAndDisplay("GLFW version: " + to_string(GLFW_VERSION_MAJOR) + "." + to_string(GLFW_VERSION_MINOR) + "." + to_string(GLFW_VERSION_REVISION));
-			rGlobalLog.WriteAndDisplay("Assimp version: " + to_string(aiGetVersionMajor()) + "." + to_string(aiGetVersionMinor()) + "." + to_string(aiGetVersionRevision()));
-			rGlobalLog.WriteAndDisplay("GLM Version: " + to_string(GLM_VERSION));
 			
-			//glfwSetCursorPosCallback(rMainWindow->GetWindow(), MouseCallback);
-			//glfwSetScrollCallback(rMainWindow->GetWindow(), ScrollCallback);
+			//glfwSetCursorPosCallback(rMainCanvas->GetCanvas(), MouseCallback);
+			//glfwSetScrollCallback(rMainCanvas->GetCanvas(), ScrollCallback);
 			
 			GLint nrAttributes;
 			glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
@@ -450,8 +365,8 @@ int main(int argc, char **argv)
 			rGlobalLog.WriteAndDisplay("Maximum nr if vertex attributes supported: " + to_string(nrAttributes));
 
 			Texture* FrameBufferTexture = new Texture(
-				rMainWindow->GetWidth(),
-				rMainWindow->GetHeight(),
+				rMainCanvas->GetWidth(),
+				rMainCanvas->GetHeight(),
 				ETextureType::ETT_Albedo,
 				EGLTextureDataType::EGLTDT_Texture2D,
 				EGLTextureSlot::EGLTS_Slot0,
@@ -464,22 +379,18 @@ int main(int argc, char **argv)
 				FrameBufferTexture,
 				0);
 
-			Renderer* rRenderer = new Renderer();
+			Renderer* rViewportRenderer = new Renderer();
 
 			Shader rShaderLight("Resource/Shader/Light.vs", "Resource/Shader/Light.fs");
 			Shader rShaderCubeLight("Resource/Shader/LightColorCube.vs", "Resource/Shader/LightColorCube.fs");
 			Shader rShaderStencil("Resource/Shader/Stencil.vs", "Resource/Shader/Stencil.fs");
 
 
-			SetupRenderer(rRenderer);
+			SetupRenderer(rViewportRenderer);
 
 			glfwSwapInterval(1);
 
 			rMainCamera.SetYaw(-89.0f);
-
-			Model NewModel2(SShapePrimCube(0.2f,0.2f).GetModel());
-
-			NewModel2.Translate(vec3(1.f, 0.f, 0.f));
 			
 			mat4 View = rMainCamera.GetView();
 			mat4 Projection = rMainCamera.GetProjection();
@@ -491,7 +402,7 @@ int main(int argc, char **argv)
 
 			Gizmo.ConstructGizmo();
 
-			InputManager::GetInstance()->SetCurrentWindow(rMainWindow->GetWindow());
+			InputManager::GetInstance()->SetCurrentWindow(rMainCanvas->GetWindow());
 
 			InputManager::GetInstance()->BindInput("MoveForwards", EInputKey::EIK_W, EInputState::EIS_Hold, &MoveCameraForwards);
 			InputManager::GetInstance()->BindInput("MoveBackwords", EInputKey::EIK_S, EInputState::EIS_Hold, &MoveCameraBackwards);
@@ -501,18 +412,18 @@ int main(int argc, char **argv)
 			InputManager::GetInstance()->BindInput("MouseScroll",EDeviceType::EDT_Mouse, &OnMouseScroll);
 
 			//Main loop
-			while (!glfwWindowShouldClose(rMainWindow->GetWindow()))
+			while (!glfwWindowShouldClose(rMainCanvas->GetWindow()))
 			{
-				WindowRenderLoop();
+				CanvasRenderLoop();
 
 				ImGui_ImplOpenGL3_NewFrame();
 				ImGui_ImplGlfw_NewFrame();
 				ImGui::NewFrame();
 
-				GUIMainMenu(rMainWindow);
-				GUICreatorTab(rMainWindow);
-				GUIOutlineTab(rMainWindow);
-				GUIAssetTab(rMainWindow);
+				GUIMainMenu(rMainCanvas);
+				GUICreatorTab(rMainCanvas);
+				GUIOutlineTab(rMainCanvas);
+				GUIAssetTab(rMainCanvas);
 
 				View = rMainCamera.GetView();
 				Projection = rMainCamera.GetProjection();
@@ -528,12 +439,6 @@ int main(int argc, char **argv)
 
 				rShaderCubeLight.SetMat4("View", View);
 				rShaderCubeLight.SetMat4("Projection", Projection);
-				rShaderCubeLight.SetMat4("Model", NewModel2.GetTransformMatrix());
-				
-				
-				//NewModel->Draw(rShaderCubeLight);
-				//NewModel2.Draw(rShaderCubeLight);
-
 				rShaderCubeLight.SetMat4("Model", Gizmo.GetTransformMatrix());
 
 				Gizmo.Draw(rShaderCubeLight);
@@ -541,21 +446,21 @@ int main(int argc, char **argv)
 				ImGui::Render();
 				ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 				
-				glfwSwapBuffers(rMainWindow->GetWindow());
-				rRenderer->Clear();
+				glfwSwapBuffers(rMainCanvas->GetWindow());
+				rViewportRenderer->Clear();
 				InputManager::GetInstance()->ProcessInput();
 				glfwPollEvents();
 			}
 
-			DestroyGUIContext();
-
 			delete rFramebuffer;
-			delete rRenderer;
-			delete rMainWindow;
-			delete rKronosApp;
+			delete rViewportRenderer;
 		}
 		else
 			return -1;
+		
+		delete rMainCanvas;
+		delete rKronosApp;
+
 	} catch (exception &e)
 	{
 		cerr << e.what() << "\n";

@@ -7,7 +7,7 @@
 
 #include "Primitives.h"
 #include "InputHandler.h"
-#include "Window.h"
+#include "Canvas.h"
 
 using std::map, std::vector, std::to_string, std::thread;
 

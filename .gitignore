@@ -361,14 +361,12 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-build
 .vscode
 DOCS
 buildgcc
 buildgcc_release
-buildclang
-buildclang_release
 GLFW
 imgui
+imgui.ini
 .sconsign.dblite
 *.o

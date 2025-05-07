@@ -137,7 +137,6 @@ void InputManager::CallKeyInputList(vector<SInputInfo> & InsInputInfo)
 				case EInputState::EIS_Press:
 				case EInputState::EIS_Release:
 				{
-					rLog.WriteAndDisplay("Release");
 					if(static_cast<EInputState>(InsInputInfo[iLoop].iCurrentInputState) == static_cast<EInputState>(InsInputInfo[iLoop].iInputState))
 					{
 						InsInputInfo[iLoop].rCallback();
@@ -148,7 +147,6 @@ void InputManager::CallKeyInputList(vector<SInputInfo> & InsInputInfo)
 
 				case EInputState::EIS_Hold:
 				{
-					rLog.WriteAndDisplay("Hold");
 					if(static_cast<EInputState>(InsInputInfo[iLoop].iCurrentInputState) == EInputState::EIS_Press)
 						InsInputInfo[iLoop].rCallback();
 					else if(static_cast<EInputState>(InsInputInfo[iLoop].iCurrentInputState) == EInputState::EIS_Release)
