@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include <assimp/scene.h>
+#include "assimp/scene.h"
 #include <stb/stb_image.h>
 
 #include "Primitives.h"

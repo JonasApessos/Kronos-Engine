@@ -24,19 +24,45 @@ void App::Destroy()
 bool App::InitGLFW()
 {
 	// Initialise GLFW
-	if (glfwInit())
-	{
-		glfwWindowHint(GLFW_SAMPLES, 4); // 2x antialiasing
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4); // We want OpenGL 4.6
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-		//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
-		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // We don't want the old OpenGL 
+	if (!glfwInit())
+		return false;
 
-		return true;
-		
-	}
+	switch(glfwGetPlatform())
+		{
+			case GLFW_PLATFORM_ERROR:
+				rLog.WriteAndDisplay("Failed to load platform");
+				break;
+			
+			case GLFW_PLATFORM_NULL:
+				rLog.WriteAndDisplay("No platform found");
+				break;
+			
+			case GLFW_PLATFORM_UNAVAILABLE:
+				rLog.WriteAndDisplay("Platform is unavailable");
+				break;
+			
+			case GLFW_PLATFORM_WAYLAND:
+				rLog.WriteAndDisplay("Loaded Platform: Wayland");
+				break;
+			
+			case GLFW_PLATFORM_X11:
+				rLog.WriteAndDisplay("Loaded Platform: X11");
+				break;
+			
+			case GLFW_PLATFORM_WIN32:
+				rLog.WriteAndDisplay("Loaded Platform: Windows");
+				break;
+			
+			case GLFW_PLATFORM_COCOA:
+				rLog.WriteAndDisplay("Loaded Platform: Cocoa");
+				break;
+
+			default:
+				rLog.WriteAndDisplay("Returned platform not recognised");
+				break;
+		}
 	
-	return false;
+	return true;
 }
 
 bool App::InitGlad()
@@ -92,4 +118,14 @@ void App::DestroyImguiContext()
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
+}
+
+void App::GLFWErrorCallback(int IniErrorCode, const char* IncDescription)
+{
+	rLog.WriteAndDisplay(
+		"GLFW Error Code : "
+		+ to_string(IniErrorCode)
+		+ ", Error Name: "
+		+ GLFWErrorToString(static_cast<uint32>(IniErrorCode))
+		+ ", Error Description: " + string(IncDescription), ELogSeverity::ELS_Error);
 }

@@ -2,7 +2,7 @@
 
 #include <string>
 #include <glm/glm.hpp>
-#include <assimp/version.h>
+#include "assimp/version.h"
 
 #include "Log.h"
 #include "Canvas.h"
@@ -56,6 +56,8 @@ private:
 	bool InitImgui(Canvas const *InrCanvas);
 
 	void DestroyImguiContext();
+
+	void GLFWErrorCallback(int IniErrorCode, const char* IncDescription);
 };
 
 inline bool App::IsInitSuccess() const { return bIsInitSuccess; }

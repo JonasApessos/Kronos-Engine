@@ -77,12 +77,12 @@ LibPath = [
 
 #Libraries the executable needs to link
 Libs = [
-    "glfw3",
-    "GL",
-    "assimp",
     "dl",
+    "GL",
     "X11",
-    "wayland-client"]
+    "wayland-client",
+    "glfw3",
+    "assimp"]
 
 if GetOption("build") == "debug":
     #Link All

@@ -5,8 +5,9 @@ s_Kronos_Env = Kronos_Env.Clone()
 Kronos_Env["CPPPATH"] = [
     "../Dep/glad/include",
     "../Dep/GLFW/include",
-    "../Header",
-    "../Dep/imgui"]
+    "../Dep/imgui",
+    "../Dep/Assimp/include",
+    "../Header"]
 
 Source = [Glob("*.cpp")]
 

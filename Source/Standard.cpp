@@ -1,8 +1,74 @@
 #include "Standard.h"
 
-#define GLFW_INCLUDE_NONE
-#include <glad/gl.h>
-#include <GLFW/glfw3.h>
+string GLFWErrorToString(uint32 IniErrorCode)
+{
+	switch(static_cast<EGLFWError>(IniErrorCode))
+	{
+		case EGLFWError::EGLFWE_NoError:
+			return "No Error";
+			break;
+		
+		case EGLFWError::EGLFWE_NotInitialized:
+			return "Not Initialized";
+			break;
+		
+		case EGLFWError::EGLFWE_NoCurrentContext:
+			return "No Current Context";
+			break;
+
+		case EGLFWError::EGLFWE_InvalidEnum:
+			return "Invalid Enum";
+			break;
+		
+		case EGLFWError::EGLFWE_InvalidValue:
+			return "Invalid Value";
+			break;
+		
+		case EGLFWError::EGLFWE_OutOfMemory:
+			return "Out Of Memory";
+			break;
+		
+		case EGLFWError::EGLFWE_ApiUnavailable:
+			return "API Unavailable";
+			break;
+
+		case EGLFWError::EGLFWE_VersionUnavailable:
+			return "Version Unavailable";
+			break;
+		
+		case EGLFWError::EGLFWE_PlatformError:
+			return "Platform Error";
+			break;
+		
+		case EGLFWError::EGLFWE_FormatUnavailable:
+			return "Format Unavailable";
+			break;
+		
+		case EGLFWError::EGLFWE_NoWindowContext:
+			return "No Window Context";
+			break;
+		
+		case EGLFWError::EGLFWE_CursorUnavailable:
+			return "Cursor Unavailable";
+			break;
+		
+		case EGLFWError::EGLFWE_FeatureUnavailable:
+			return "Feature Unavailable";
+			break;
+		
+		case EGLFWError::EGLFWE_FeatureUnimplemented:
+			return "FeatureUnimplemented";
+			break;
+
+		case EGLFWError::EGLFWE_PlatformUnavailable:
+			return "Platform Unavaulable";
+			break;
+		
+		default:
+			return "Unknown";
+			break;
+	}
+}
 
 bool GLError(uint32 IniGLError)
 {

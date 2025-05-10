@@ -161,13 +161,11 @@ void InputManager::CallKeyInputList(vector<SInputInfo> & InsInputInfo)
 					break;
 				}
 			}
+
 		}
 
 		++iLoop;
 	}
-	
-
-	//rKeyInputFrame.IsKeyPressed = false;
 }
 
 void InputManager::CallMousePosList(vector<SInputInfo> const& InsInputInfo)

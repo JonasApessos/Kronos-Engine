@@ -4,7 +4,7 @@ using glm::vec3, glm::vec2 , glm::mat4;
 
 using std::cout, std::exception;
 
-constexpr int32 CanvasWidth = 1280;
+constexpr int32 CanvasWidth = 1024;
 constexpr int32 CanvasHeight = static_cast<int32>(static_cast<float>(CanvasWidth) * 9.f / 16.f);
 
 float MouseLastX = CanvasWidth * 0.5f, MouseLastY = CanvasHeight * 0.5f;
@@ -109,7 +109,7 @@ void GUICreatorTab(Canvas* InrCanvas)
 		ImGui::SetWindowPos(
 			ImVec2(
 				0.f,
-				18.f));
+				0.f));
 
 		ImGui::SetWindowSize(
 			ImVec2(
@@ -139,7 +139,7 @@ void GUIOutlineTab(Canvas* InrCanvas)
 		ImGui::SetWindowPos(
 			ImVec2(
 				static_cast<float>(InrCanvas->GetWidth()) - static_cast<float>(InrCanvas->GetWidth()) * 0.166f,
-				18.f));
+				0.f));
 
 		ImGui::SetWindowSize(
 			ImVec2(
@@ -199,12 +199,12 @@ void GUIAssetTab(Canvas* InrCanvas)
 		ImGui::SetWindowPos(
 			ImVec2(
 				0.f,
-				static_cast<float>(InrCanvas->GetHeight()) * 0.667f + 18.f));
+				static_cast<float>(InrCanvas->GetHeight()) * 0.667f));
 
 		ImGui::SetWindowSize(
 			ImVec2(
 			static_cast<float>(InrCanvas->GetWidth()),
-			static_cast<float>(InrCanvas->GetHeight()) * 0.333f - 18.f));
+			static_cast<float>(InrCanvas->GetHeight()) * 0.333f));
 
 		ImGui::Text("Asset TAB");
 
@@ -265,7 +265,7 @@ void OnMouseScroll()
 
 	ImGui_ImplGlfw_ScrollCallback(InputManager::GetCurrentWindow(), rMouseScrollInput.dScrollX, rMouseScrollInput.dScrollY);
 
-	rMainCamera.SetFOV(rMainCamera.GetFOV() - static_cast<float>(rMouseScrollInput.dScrollY));
+	rMainCamera.SetFOV(rMainCamera.GetFOV() - static_cast<float>(rMouseScrollInput.dScrollY) * DeltaTime);
 
 	if (rMainCamera.GetFOV() < 1.0f)
 		rMainCamera.SetFOV(1.0f);
@@ -349,12 +349,19 @@ int main(int argc, char **argv)
 
 			GUISetupStyle(rMainCanvas);
 
+			int x, y, z, w;
+
+			float scalex, scaley;
+
+			glfwGetWindowSize(rMainCanvas->GetWindow(), &x, &y);
+			glfwGetFramebufferSize(rMainCanvas->GetWindow(), &z, &w);
+			glfwGetWindowContentScale(rMainCanvas->GetWindow(), &scalex, &scaley);
+
 			glViewport(
-				rMainCanvas->GetWidth()*0.166,
-				rMainCanvas->GetHeight()*0.333,
-				rMainCanvas->GetWidth() - rMainCanvas->GetWidth()*0.333,
-				rMainCanvas->GetHeight()*0.667);
-			
+				static_cast<GLint>(rMainCanvas->GetWidth() * 0.166f * scalex),
+				static_cast<GLint>(rMainCanvas->GetHeight() * 0.333f * scaley),
+				static_cast<GLsizei>(rMainCanvas->GetWidth() * scalex - rMainCanvas->GetWidth() * scalex * 0.333f),
+				static_cast<GLsizei>(rMainCanvas->GetHeight() * scaley * 0.667f));
 			
 			//glfwSetCursorPosCallback(rMainCanvas->GetCanvas(), MouseCallback);
 			//glfwSetScrollCallback(rMainCanvas->GetCanvas(), ScrollCallback);

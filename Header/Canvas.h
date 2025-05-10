@@ -11,61 +11,61 @@
 
 using KronosPrim::uint32;
 
-/** @enum EGLFWHints
+/** @enum EHints
 *   @brief GLFW window hint flags*/
-enum class EGLFWHints : uint32
+enum class ECanvasHints : uint32
 {
-	EGLFWH_REDBits = GLFW_RED_BITS,
-	EGLFWH_GreenBits = GLFW_GREEN_BITS,
-	EGLFWH_BlueBits = GLFW_BLUE_BITS,
-	EGLFWH_AlphaBits = GLFW_ALPHA_BITS,
-	EGLFWH_DepthBits = GLFW_DEPTH_BITS,
-	EGLFWH_StencilBits = GLFW_STENCIL_BITS,
-	EGLFWH_AccumRedBits = GLFW_ACCUM_RED_BITS,
-	EGLFWH_AccumGreenBits = GLFW_ACCUM_GREEN_BITS,
-	EGLFWH_AccumBlueBits = GLFW_ACCUM_BLUE_BITS,
-	EGLFWH_AccumAlphaBits = GLFW_ACCUM_ALPHA_BITS,
-	EGLFWH_AuxBuffers = GLFW_AUX_BUFFERS,
-	EGLFWH_Stereo = GLFW_STEREO,
-	EGLFWH_Samples = GLFW_SAMPLES,
-	EGLFWH_SRGBCapable = GLFW_SRGB_CAPABLE,
-	EGLFWH_DoubleBuffer = GLFW_DOUBLEBUFFER,
-	EGLFWH_RefreshRate = GLFW_REFRESH_RATE,
-	EGLFWH_ClientApi = GLFW_CLIENT_API,
-	EGLFWH_ContextCreationApi = GLFW_CONTEXT_CREATION_API,
-	EGLFWH_ContextVersionMajor = GLFW_CONTEXT_VERSION_MAJOR,
-	EGLFWH_ContextVersionMinor = GLFW_CONTEXT_VERSION_MINOR,
-	EGLFWH_VersionMajor = GLFW_VERSION_MAJOR,
-	EGLFWH_VersionMinor = GLFW_VERSION_MINOR,
-	EGLFWH_OpenglForwardCompat = GLFW_OPENGL_FORWARD_COMPAT,
-	EGLFWH_OpenglDebugContext = GLFW_OPENGL_DEBUG_CONTEXT,
-	EGLFWH_OpenglProfile = GLFW_OPENGL_PROFILE,
-	EGLFWH_ContextRobustness = GLFW_CONTEXT_ROBUSTNESS,
-	EGLFWH_ContextReleaseBehavior = GLFW_CONTEXT_RELEASE_BEHAVIOR,
-	EGLFWH_ContextNoError = GLFW_CONTEXT_NO_ERROR,
-	EGLFWH_CocoaRetinaFramebuffer = GLFW_COCOA_RETINA_FRAMEBUFFER,
-	EGLFWH_CocoaFrameName = GLFW_COCOA_FRAME_NAME,
-	EGLFWH_CocoaGraphicsSwitching = GLFW_COCOA_GRAPHICS_SWITCHING,
-	EGLFWH_X11ClassName = GLFW_X11_CLASS_NAME,
-	EGLFWH_X11InstanceName = GLFW_X11_INSTANCE_NAME
+	ECH_REDBits = GLFW_RED_BITS,
+	ECH_GreenBits = GLFW_GREEN_BITS,
+	ECH_BlueBits = GLFW_BLUE_BITS,
+	ECH_AlphaBits = GLFW_ALPHA_BITS,
+	ECH_DepthBits = GLFW_DEPTH_BITS,
+	ECH_StencilBits = GLFW_STENCIL_BITS,
+	ECH_AccumRedBits = GLFW_ACCUM_RED_BITS,
+	ECH_AccumGreenBits = GLFW_ACCUM_GREEN_BITS,
+	ECH_AccumBlueBits = GLFW_ACCUM_BLUE_BITS,
+	ECH_AccumAlphaBits = GLFW_ACCUM_ALPHA_BITS,
+	ECH_AuxBuffers = GLFW_AUX_BUFFERS,
+	ECH_Stereo = GLFW_STEREO,
+	ECH_Samples = GLFW_SAMPLES,
+	ECH_SRGBCapable = GLFW_SRGB_CAPABLE,
+	ECH_DoubleBuffer = GLFW_DOUBLEBUFFER,
+	ECH_RefreshRate = GLFW_REFRESH_RATE,
+	ECH_ClientApi = GLFW_CLIENT_API,
+	ECH_ContextCreationApi = GLFW_CONTEXT_CREATION_API,
+	ECH_ContextVersionMajor = GLFW_CONTEXT_VERSION_MAJOR,
+	ECH_ContextVersionMinor = GLFW_CONTEXT_VERSION_MINOR,
+	ECH_VersionMajor = GLFW_VERSION_MAJOR,
+	ECH_VersionMinor = GLFW_VERSION_MINOR,
+	ECH_OpenglForwardCompat = GLFW_OPENGL_FORWARD_COMPAT,
+	ECH_OpenglDebugContext = GLFW_OPENGL_DEBUG_CONTEXT,
+	ECH_OpenglProfile = GLFW_OPENGL_PROFILE,
+	ECH_ContextRobustness = GLFW_CONTEXT_ROBUSTNESS,
+	ECH_ContextReleaseBehavior = GLFW_CONTEXT_RELEASE_BEHAVIOR,
+	ECH_ContextNoError = GLFW_CONTEXT_NO_ERROR,
+	ECH_CocoaRetinaFramebuffer = GLFW_COCOA_RETINA_FRAMEBUFFER,
+	ECH_CocoaFrameName = GLFW_COCOA_FRAME_NAME,
+	ECH_CocoaGraphicsSwitching = GLFW_COCOA_GRAPHICS_SWITCHING,
+	ECH_X11ClassName = GLFW_X11_CLASS_NAME,
+	ECH_X11InstanceName = GLFW_X11_INSTANCE_NAME
 
 };
 
-/** @enum EGLFWError
+/** @enum EError
 *   @brief GLFW error types*/
-enum class EGLFWError : uint32
+enum class ECanvasError : uint32
 {
-	EGLFWE_NoError = GLFW_NO_ERROR,
-	EGLFWE_NotInit = GLFW_NOT_INITIALIZED,
-	EGLFWE_NoCurrentContext = GLFW_NO_CURRENT_CONTEXT,
-	EGLFWE_InvalidEnum = GLFW_INVALID_ENUM,
-	EGLFWE_InvaludValue = GLFW_INVALID_VALUE,
-	EGLFWE_OutOfMemory = GLFW_OUT_OF_MEMORY,
-	EGLFWE_ApiUnavailable = GLFW_API_UNAVAILABLE,
-	EGLFWE_VersionUnavailable = GLFW_VERSION_UNAVAILABLE,
-	EGLFWE_PlatformError = GLFW_PLATFORM_ERROR,
-	EGLFWE_FormatUnavailable = GLFW_FORMAT_UNAVAILABLE,
-	EGLFWE_NoWindowContect = GLFW_NO_WINDOW_CONTEXT
+	ECE_NoError = GLFW_NO_ERROR,
+	ECE_NotInit = GLFW_NOT_INITIALIZED,
+	ECE_NoCurrentContext = GLFW_NO_CURRENT_CONTEXT,
+	ECE_InvalidEnum = GLFW_INVALID_ENUM,
+	ECE_InvaludValue = GLFW_INVALID_VALUE,
+	ECE_OutOfMemory = GLFW_OUT_OF_MEMORY,
+	ECE_ApiUnavailable = GLFW_API_UNAVAILABLE,
+	ECE_VersionUnavailable = GLFW_VERSION_UNAVAILABLE,
+	ECE_PlatformError = GLFW_PLATFORM_ERROR,
+	ECE_FormatUnavailable = GLFW_FORMAT_UNAVAILABLE,
+	ECE_NoWindowContect = GLFW_NO_WINDOW_CONTEXT
 };
 
 /** @class Canvas
@@ -106,8 +106,9 @@ public:
 	inline GLFWwindow* GetWindow() const;
 
 protected:
-	float iRatioX = 16.0f, iRatioY = 9.0f;
-	int32 iWidth = 1280, iHeight = iWidth * static_cast<int32>(iRatioY / iRatioX);
+	float fRatioX = 16.0f, fRatioY = 9.0f;
+	int32 iWidth = 1280, iHeight = iWidth * static_cast<int32>(fRatioY / fRatioX);
+	float fScaleX = 1.f, fScaleY = 1.f;
 
 	string sTitle = "";
 
@@ -117,34 +118,34 @@ protected:
 	GLFWmonitor* rMonitor = nullptr;
 	GLFWvidmode rVidMode;
 
-	inline void CreateWindow();
+	inline GLFWwindow* CreateWindow();
 
 	static void OnResize(GLFWwindow* InrWindow, int32 IniWidth, int32 IniHeight);
 
 private:
 
-	void Initialize();
+	void Init();
 };
 
-inline void Canvas::CreateWindow()
+inline GLFWwindow* Canvas::CreateWindow()
 {
 	// Open a window and create its OpenGL context
-	rWindow = glfwCreateWindow(static_cast<int>(iWidth), static_cast<int>(iHeight), sTitle.c_str(), NULL, NULL);
+	return glfwCreateWindow(static_cast<int>(iWidth), static_cast<int>(iHeight), sTitle.c_str(), NULL, NULL);
 }
 
 inline void Canvas::SetIsAspectLocked(bool InbIsApsectLocked) { bIsAspectLocked = InbIsApsectLocked; }
 
 inline void Canvas::SetScreenSize(int32 IniWidth, int32 IniHeight) { iWidth = IniWidth; iHeight = IniHeight; }
-inline void Canvas::SetWidth(int32 IniWidth) { ((IniWidth > 0) ? iWidth = IniWidth : iWidth = 1024); }
-inline void Canvas::SetHeight(int32 IniHeight) { ((IniHeight > 0) ? iHeight = IniHeight : iHeight = static_cast<int32>(GetAspectRatioHeight() * static_cast<float>(GetWidth()))); }
+inline void Canvas::SetWidth(int32 IniWidth) { iWidth = (IniWidth * IniWidth > 0) + (iWidth * IniWidth <= 0); }
+inline void Canvas::SetHeight(int32 IniHeight) { iHeight = (IniHeight * IniHeight > 0) + static_cast<int32>(iWidth * (fRatioY / fRatioX) * IniHeight <= 0); }
 
 
 inline bool Canvas::GetIsAspectLocked() const { return bIsAspectLocked; }
 
-inline float Canvas::GetAspectRatioWidth() const { return iRatioX / iRatioY; }
-inline float Canvas::GetAspectRatioHeight() const { return iRatioY / iRatioX; }
+inline float Canvas::GetAspectRatioWidth() const { return fRatioX / fRatioY; }
+inline float Canvas::GetAspectRatioHeight() const { return fRatioY / fRatioX; }
 
-inline int32 Canvas::GetWidth() { int X,Y; glfwGetWindowSize(rWindow, &X, &Y); iWidth = X; iHeight = Y; return iWidth; }
-inline int32 Canvas::GetHeight() { int X,Y; glfwGetWindowSize(rWindow, &X, &Y); iWidth = X; iHeight = Y; return iHeight; }
+inline int32 Canvas::GetWidth() { glfwGetWindowSize(rWindow, &iWidth, &iHeight); return iWidth; }
+inline int32 Canvas::GetHeight() { glfwGetWindowSize(rWindow, &iWidth, &iHeight); return iHeight; }
 
 inline GLFWwindow* Canvas::GetWindow() const { return rWindow; }

@@ -8,12 +8,12 @@ Canvas::Canvas(
 	iHeight(IniHeight),
 	sTitle(InsTitle)
 {
-	Initialize();
+	Init();
 }
 
 Canvas::Canvas(Canvas&& InrCanvas) noexcept :
-	iRatioX(InrCanvas.iRatioX),
-	iRatioY(InrCanvas.iRatioY),
+	fRatioX(InrCanvas.fRatioX),
+	fRatioY(InrCanvas.fRatioY),
 	iWidth(InrCanvas.iWidth),
 	iHeight(InrCanvas.iHeight),
 	sTitle(InrCanvas.sTitle),
@@ -26,8 +26,8 @@ Canvas::Canvas(Canvas&& InrCanvas) noexcept :
 }
 
 Canvas::Canvas(Canvas const& InrCanvas) noexcept :
-	iRatioX(InrCanvas.iRatioX),
-	iRatioY(InrCanvas.iRatioY),
+	fRatioX(InrCanvas.fRatioX),
+	fRatioY(InrCanvas.fRatioY),
 	iWidth(InrCanvas.iWidth),
 	iHeight(InrCanvas.iHeight),
 	sTitle(InrCanvas.sTitle),
@@ -46,8 +46,8 @@ Canvas& Canvas::operator=(Canvas const& InrCanvas) noexcept
 	{
 		iWidth = InrCanvas.iWidth;
 		iHeight = InrCanvas.iHeight;
-		iRatioX = InrCanvas.iRatioX;
-		iRatioY = InrCanvas.iRatioY;
+		fRatioX = InrCanvas.fRatioX;
+		fRatioY = InrCanvas.fRatioY;
 		sTitle = InrCanvas.sTitle;
 		rWindow = InrCanvas.rWindow;
 		rMonitor = InrCanvas.rMonitor;
@@ -63,8 +63,8 @@ Canvas& Canvas::operator=(Canvas&& InrCanvas) noexcept
 	{
 		iWidth = InrCanvas.iWidth;
 		iHeight = InrCanvas.iHeight;
-		iRatioX = InrCanvas.iRatioX;
-		iRatioY = InrCanvas.iRatioY;
+		fRatioX = InrCanvas.fRatioX;
+		fRatioY = InrCanvas.fRatioY;
 		sTitle = InrCanvas.sTitle;
 		rWindow = InrCanvas.rWindow;
 		rMonitor = InrCanvas.rMonitor;
@@ -96,41 +96,43 @@ void Canvas::Destroy()
 
 void Canvas::SetAspect(float InfAspectScalar)
 {
-	iRatioY = iRatioX = (InfAspectScalar > 1) ? InfAspectScalar : iRatioX;
+	fRatioY = fRatioX = (InfAspectScalar > 1.0f) ? InfAspectScalar : fRatioX;
 
 	SetHeight(GetWidth());
 }
 
-void Canvas::SetAspect(float IniAspectX, float IniAspectY)
+void Canvas::SetAspect(float InfAspectX, float InfAspectY)
 {
-	iRatioX = (IniAspectX > 1.0f) ? IniAspectX : 1.0f;
-	iRatioY = (IniAspectY > 1.0f) ? IniAspectY : 1.0f;
+	fRatioX = (InfAspectX * InfAspectX > 1.0f) + (1.0f * InfAspectX <= 1.0f);
+	fRatioY = (InfAspectY * InfAspectY > 1.0f) + (1.0f * InfAspectY <= 1.0f);
 
 	iHeight = GetAspectRatioHeight() * GetWidth();
 }
 
 void Canvas::OnResize(GLFWwindow* InrCanvas, int32 IniWidth, int32 IniHeight)
 {
-	glViewport(static_cast<GLint>(IniWidth*0.166), static_cast<GLint>(IniHeight*0.333 - 18), static_cast<GLsizei>(IniWidth - IniWidth*0.333), static_cast<GLsizei>(IniHeight*0.667));
-
-	//glfwSetCanvasSize(InrCanvas, IniWidth, IniHeight);
+	glViewport(
+		static_cast<GLint>(IniWidth * 0.166f * 2.0f),
+		static_cast<GLint>(IniHeight * 0.333f * 2.0f),
+		static_cast<GLsizei>((IniWidth - IniWidth * 0.333f) * 2.0f),
+		static_cast<GLsizei>((IniHeight * 0.667f) * 2.0f));
 }
 
-void Canvas::Initialize()
+void Canvas::Init()
 {
-	CreateWindow();
+	glfwWindowHint(GLFW_SAMPLES, 4); // 2x antialiasing
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4); // We want OpenGL 4.6
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // We don't want the old OpenGL 
+
+
+	rWindow = CreateWindow();
 
 	if (rWindow == nullptr)
 		rLog.WriteAndDisplay("Failed to open GLFW Canvas. If you have an Intel GPU, they are not 3.3 compatible.\n");
 
 	glfwMakeContextCurrent(rWindow);
 
-	//glfwSetCanvasAspectRatio(rWindow, iRatioX, iRatioY);
-	//glfwSetInputMode(rWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-
-	//glViewport(GetWidth()*0.166, GetHeight()*0.333 - 18, GetWidth() - GetWidth()*0.333, GetHeight()*0.667);
-
 	glfwSetWindowSizeCallback(rWindow, Canvas::OnResize);
-
-	//printf("%s\n", glGetString(GL_VERSION));
 }

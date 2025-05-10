@@ -15,7 +15,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.inl>
 
-#include <assimp/version.h>
+#include "assimp/version.h"
 
 #include "Standard.h"
 

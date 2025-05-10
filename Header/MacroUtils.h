@@ -1,5 +1,5 @@
 #define K_MAJOR_VERSION 0
-#define K_MINOR_VERSION 18
+#define K_MINOR_VERSION 19
 #define K_PATCH 2
 
 #define K_DEBUG
