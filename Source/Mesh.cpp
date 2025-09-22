@@ -111,11 +111,10 @@ void Mesh::SetupMesh()
 
 void Mesh::Draw(Shader& InrShader)
 {
-	uint32 DiffuseNr = 1;
-	uint32 SpecularNr = 1;
-
 	if (!rTextures.empty())
 	{
+		uint32 DiffuseNr = 1;
+		uint32 SpecularNr = 1;
 		uint32 DrawLoop = 0;
 
 		string Number = "";
@@ -139,7 +138,6 @@ void Mesh::Draw(Shader& InrShader)
 
 			++DrawLoop;
 		}
-
 		glActiveTexture(static_cast<GLenum>(EGLTextureSlot::EGLTS_Slot0));
 	}
 	

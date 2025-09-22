@@ -319,14 +319,6 @@ void MoveCameraRightwards()
 	rMainCamera.TravelSideways(1.0f * DeltaTime);
 }
 
-void ExecuteInputManager(int Stop)
-{
-	while(Stop)
-	{
-		InputManager::GetInstance()->ProcessInput();
-	}
-}
-
 int main(int argc, char **argv)
 {
 	try 
@@ -340,31 +332,16 @@ int main(int argc, char **argv)
 			rGlobalLog.WriteAndDisplay("OpenGL Driver version: " + rKronosApp->GetOpenglVersion());
 			rGlobalLog.WriteAndDisplay("OpenGL Loaded version: " + rKronosApp->GetGladVersion());
 			rGlobalLog.WriteAndDisplay("GLFW version: " + rKronosApp->GetGLFWVersion());
-			rGlobalLog.WriteAndDisplay("Imgui version: " + rKronosApp->GetImguiVersion());
 			rGlobalLog.WriteAndDisplay("Assimp version: " + rKronosApp->GetAssimpVersion());
 			rGlobalLog.WriteAndDisplay("GLM Version: " + rKronosApp->GetGLMVersion());
+			rGlobalLog.WriteAndDisplay("Imgui version: " + rKronosApp->GetImguiVersion());
 
 			rMainCamera.SetMinRotation(vec3(-360.0f, -89.0f, -360.0f));
 			rMainCamera.SetMaxRotation(vec3(360.0f, 89.0f, 360.0f));
 
 			GUISetupStyle(rMainCanvas);
 
-			int x, y, z, w;
-
-			float scalex, scaley;
-
-			glfwGetWindowSize(rMainCanvas->GetWindow(), &x, &y);
-			glfwGetFramebufferSize(rMainCanvas->GetWindow(), &z, &w);
-			glfwGetWindowContentScale(rMainCanvas->GetWindow(), &scalex, &scaley);
-
-			glViewport(
-				static_cast<GLint>(rMainCanvas->GetWidth() * 0.166f * scalex),
-				static_cast<GLint>(rMainCanvas->GetHeight() * 0.333f * scaley),
-				static_cast<GLsizei>(rMainCanvas->GetWidth() * scalex - rMainCanvas->GetWidth() * scalex * 0.333f),
-				static_cast<GLsizei>(rMainCanvas->GetHeight() * scaley * 0.667f));
-			
-			//glfwSetCursorPosCallback(rMainCanvas->GetCanvas(), MouseCallback);
-			//glfwSetScrollCallback(rMainCanvas->GetCanvas(), ScrollCallback);
+			rMainCanvas->test();
 			
 			GLint nrAttributes;
 			glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
@@ -379,18 +356,21 @@ int main(int argc, char **argv)
 				EGLTextureSlot::EGLTS_Slot0,
 				EGLTextureFormat::EGLTF_RGB);
 
+
 			Framebuffer* rFramebuffer = new Framebuffer(
 				EGLFramebufferOp::EGLFO_FrameBuffer,
 				EGLFramebufferAttach::EGLFA_Color,
 				EGLFramebufferTex::EGLFT_Texture2D,
 				FrameBufferTexture,
 				0);
+			
 
 			Renderer* rViewportRenderer = new Renderer();
 
 			Shader rShaderLight("Resource/Shader/Light.vs", "Resource/Shader/Light.fs");
 			Shader rShaderCubeLight("Resource/Shader/LightColorCube.vs", "Resource/Shader/LightColorCube.fs");
 			Shader rShaderStencil("Resource/Shader/Stencil.vs", "Resource/Shader/Stencil.fs");
+			Shader rSolid("Resource/Shader/Solid.vs", "Resource/Shader/Solid.fs");
 
 
 			SetupRenderer(rViewportRenderer);
@@ -448,7 +428,12 @@ int main(int argc, char **argv)
 				rShaderCubeLight.SetMat4("Projection", Projection);
 				rShaderCubeLight.SetMat4("Model", Gizmo.GetTransformMatrix());
 
-				Gizmo.Draw(rShaderCubeLight);
+				rSolid.Use();
+				rSolid.SetMat4("View", View);
+				rSolid.SetMat4("Projection", Projection);
+				rSolid.SetMat4("Model", Gizmo.GetTransformMatrix());
+
+				Gizmo.Draw(rSolid);
 
 				ImGui::Render();
 				ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -464,7 +449,7 @@ int main(int argc, char **argv)
 		}
 		else
 			return -1;
-		
+			
 		delete rMainCanvas;
 		delete rKronosApp;
 

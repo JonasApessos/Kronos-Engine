@@ -23,6 +23,7 @@
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 
+#include "Timer.h"
 #include "App.h"
 #include "Canvas.h"
 #include "Camera.h"

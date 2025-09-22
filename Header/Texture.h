@@ -88,7 +88,23 @@ enum EGLTextureSlot:uint32
     EGLTS_Slot12 = GL_TEXTURE12,
     EGLTS_Slot13 = GL_TEXTURE13,
     EGLTS_Slot14 = GL_TEXTURE14,
-    EGLTS_Slot15 = GL_TEXTURE15
+    EGLTS_Slot15 = GL_TEXTURE15,
+    EGLTS_Slot16 = GL_TEXTURE16,
+    EGLTS_Slot17 = GL_TEXTURE17,
+    EGLTS_Slot18 = GL_TEXTURE18,
+    EGLTS_Slot19 = GL_TEXTURE19,
+    EGLTS_Slot20 = GL_TEXTURE20,
+    EGLTS_Slot21 = GL_TEXTURE21,
+    EGLTS_Slot22 = GL_TEXTURE22,
+    EGLTS_Slot23 = GL_TEXTURE23,
+    EGLTS_Slot24 = GL_TEXTURE24,
+    EGLTS_Slot25 = GL_TEXTURE25,
+    EGLTS_Slot26 = GL_TEXTURE26,
+    EGLTS_Slot27 = GL_TEXTURE27,
+    EGLTS_Slot28 = GL_TEXTURE28,
+    EGLTS_Slot29 = GL_TEXTURE29,
+    EGLTS_Slot30 = GL_TEXTURE30,
+    EGLTS_Slot31 = GL_TEXTURE31
 };
 
 /** @enum EGLTextureDataType
@@ -220,7 +236,7 @@ protected:
 
     Log* rLog = new Log("LogTexture");
 
-    void Initialization();
+    void Init();
 
 private:
     unsigned char* PixelData = NULL;

@@ -109,13 +109,13 @@ void Canvas::SetAspect(float InfAspectX, float InfAspectY)
 	iHeight = GetAspectRatioHeight() * GetWidth();
 }
 
-void Canvas::OnResize(GLFWwindow* InrCanvas, int32 IniWidth, int32 IniHeight)
+void Canvas::OnResize(GLFWwindow* InrWindow, int32 IniWidth, int32 IniHeight)
 {
 	glViewport(
-		static_cast<GLint>(IniWidth * 0.166f * 2.0f),
-		static_cast<GLint>(IniHeight * 0.333f * 2.0f),
-		static_cast<GLsizei>((IniWidth - IniWidth * 0.333f) * 2.0f),
-		static_cast<GLsizei>((IniHeight * 0.667f) * 2.0f));
+		static_cast<GLint>(IniWidth * 0.166f * 1.0f),
+		static_cast<GLint>(IniHeight * 0.333f * 1.0f),
+		static_cast<GLsizei>((IniWidth - IniWidth * 0.333f) * 1.0f),
+		static_cast<GLsizei>((IniHeight * 0.667f) * 1.0f));
 }
 
 void Canvas::Init()
@@ -126,7 +126,6 @@ void Canvas::Init()
 	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // We don't want the old OpenGL 
 
-
 	rWindow = CreateWindow();
 
 	if (rWindow == nullptr)
@@ -135,4 +134,15 @@ void Canvas::Init()
 	glfwMakeContextCurrent(rWindow);
 
 	glfwSetWindowSizeCallback(rWindow, Canvas::OnResize);
+
+	glfwGetWindowContentScale(rWindow, &fScaleX, &fScaleY);
+}
+
+void Canvas::test()
+{
+	glViewport(
+		static_cast<GLint>(0),
+		static_cast<GLint>(0),
+		static_cast<GLsizei>(1280),
+		static_cast<GLsizei>(720));
 }

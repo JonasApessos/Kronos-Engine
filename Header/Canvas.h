@@ -105,6 +105,8 @@ public:
 
 	inline GLFWwindow* GetWindow() const;
 
+	void test();
+
 protected:
 	float fRatioX = 16.0f, fRatioY = 9.0f;
 	int32 iWidth = 1280, iHeight = iWidth * static_cast<int32>(fRatioY / fRatioX);
@@ -145,7 +147,7 @@ inline bool Canvas::GetIsAspectLocked() const { return bIsAspectLocked; }
 inline float Canvas::GetAspectRatioWidth() const { return fRatioX / fRatioY; }
 inline float Canvas::GetAspectRatioHeight() const { return fRatioY / fRatioX; }
 
-inline int32 Canvas::GetWidth() { glfwGetWindowSize(rWindow, &iWidth, &iHeight); return iWidth; }
-inline int32 Canvas::GetHeight() { glfwGetWindowSize(rWindow, &iWidth, &iHeight); return iHeight; }
+inline int32 Canvas::GetWidth() { return iWidth; }
+inline int32 Canvas::GetHeight() { return iHeight; }
 
 inline GLFWwindow* Canvas::GetWindow() const { return rWindow; }

@@ -18,7 +18,7 @@ Texture::Texture(
     eTextureFormat(IneTextureFormat),
     eTextureInternalFormat(IneTextureFormat)
 {
-    Initialization();
+    Init();
 }
 
 Texture::Texture(
@@ -39,7 +39,7 @@ Texture::Texture(
     PixelData = stbi_load(sPath.c_str(), &iWidth, &iHeight, &iChannels, 0);
 
     if (PixelData)
-        Initialization();
+        Init();
     else
         rLog->WriteAndDisplay("Failed to load image");
 
@@ -65,7 +65,7 @@ Texture::Texture(
     PixelData = stbi_load(sPath.c_str(), &iWidth, &iHeight, &iChannels, 0);
 
     if (PixelData)
-        Initialization();
+        Init();
     else
         rLog->WriteAndDisplay("Failed to load image");
 
@@ -103,7 +103,7 @@ Texture::Texture(
             break;
         }
 
-        Initialization();
+        Init();
     }
     else
     {
@@ -145,7 +145,7 @@ Texture::Texture(
             break;
         }
 
-        Initialization();
+        Init();
     }
     else
     {
@@ -239,7 +239,7 @@ Texture::~Texture()
         delete rLog;
 }
 
-void Texture::Initialization()
+void Texture::Init()
 {
     Active();
 

@@ -2,8 +2,7 @@ import shutil
 import os
 
 AddOption("--build", dest="build", type="string", nargs=1, action="store", help="Build using debug mode")
-
-print(GetOption("build"))
+AddOption("--linker", dest="linker", type="string", nargs=1, action="store", help="change linker to build with")
 
 #c and cpp standards
 c_std = ["-std=c17"]
@@ -11,46 +10,106 @@ cpp_std = ["-std=c++20"]
 
 #Compiler for c
 c_Compiler = "gcc"
+#Compiler for cpp
+cpp_Compiler = "g++"
 
 #Compiler Flags
-c_CCFlags = "";
-cpp_CCFlags = "";
+c_CCFlags = [
+        "-O2",
+        "-Wall",
+        "-Wpedantic",
+        "-Wextra"]
+
+#Compiler Flags
+cpp_CCFlags = ""
+
+#Dep Flags
+Dep_Flags = ["-O2"]
+
+#Linker type
+Linker = ["-fuse-ld=bfd"]
+
+#Linker Flags
+Link_Flags = ["-pthread"]
+
+#Build path
+Build_Path = "build_release"
 
 if GetOption("build") == "debug":
+    Build_Path = "build"
+
+    Dep_Flags = [
+        "-Og",
+        "-g",
+        "-ggdb3"]
+
     c_CCFlags = [
         "-Og",
         "-g",
         "-Wall",
         "-Wpedantic",
         "-Wextra",
-        "-ggdb3"]
-else:
+        "-ggdb3",
+        "-Wanalyzer-possible-null-dereference"]
+elif GetOption("build") == "size":
+    Build_Path = "build_size"
+
+    Dep_Flags = ["-Os"]
+    
     c_CCFlags = [
-        "-O2",
+        "-Os",
+        "-Wall",
+        "-Wpedantic",
+        "-Wextra"]
+elif GetOption("build") == "ex_size":
+    Build_Path = "build_ex_size"
+
+    Dep_Flags = ["-Oz"]
+
+    c_CCFlags = [
+        "-Oz",
+        "-Wall",
+        "-Wpedantic",
+        "-Wextra"]
+elif GetOption("build") == "fast":
+    Build_Path = "build_fast"
+
+    Dep_Flags = ["-O3"]
+
+    c_CCFlags = [
+        "-O3",
+        "-Wall",
+        "-Wpedantic",
+        "-Wextra"]
+elif GetOption("build") == "ex_fast":
+    Build_Path = "build_ex_fast"
+
+    Dep_Flags = ["-Ofast"]
+
+    c_CCFlags = [
+        "-Ofast",
         "-Wall",
         "-Wpedantic",
         "-Wextra"]
 
-#Compiler for cpp
-cpp_Compiler = "g++"
-#compiler Flags
+if GetOption("linker") == "mold":
+    Linker = ["-fuse-ld=mold"]
+elif GetOption("linker") == "lld":
+    Linker = ["-fuse-ld=lld"]
+elif GetOption("linker") == "gold":
+    Linker = ["-fuse-ld=gold"]
+
 cpp_CCFlags = c_CCFlags
-
-#Linker type
-Linker = ["-fuse-ld=gold"]
-
-#Linker Flags
-Link_Flags = ["-pthread"]
 
 #Dependency's Environment build
 c_Dep_Env = Environment()
 c_Dep_Env["LINKFLAGS"] += Link_Flags + Linker
 c_Dep_Env["CC"] = c_Compiler
 c_Dep_Env["CXX"] = cpp_Compiler
-c_Dep_Env["CCFLAGS"] = ["-O2"] + c_std
+c_Dep_Env["CCFLAGS"] = Dep_Flags + c_std
 
 cpp_Dep_Env = c_Dep_Env.Clone()
-cpp_Dep_Env["CCFLAGS"] = ["-O2"] + cpp_std
+cpp_Dep_Env["CCFLAGS"] = Dep_Flags + cpp_std
 
 #Kronos Engine Environment build
 Kronos_Env = Environment()
@@ -73,28 +132,24 @@ Source = [
 #Find path of libraries needed to link
 LibPath = [
     "Dep/GLFW/Lib",
+    "/usr/local/lib",
     "/usr/lib/x86_64-linux-gnu"]
 
 #Libraries the executable needs to link
 Libs = [
     "dl",
-    "GL",
     "X11",
     "wayland-client",
+    "GL",
     "glfw3",
     "assimp"]
 
-if GetOption("build") == "debug":
-    #Link All
-    Kronos_Env.Program("build/KronosEngine", Source, LIBS=Libs, LIBPATH=LibPath)
+#Link All
+Kronos_Env.Program(Build_Path + "/KronosEngine", Source, LIBS=Libs, LIBPATH=LibPath)
 
-    #Copy needed resource for program too access during runtime
-    if not os.path.exists("build/Resource"):
-        shutil.copytree("./Resource", "build/Resource")
+#Copy needed resource for program to access during runtime
+if not os.path.exists(Build_Path + "/Resource"):
+    shutil.copytree("./Resource", Build_Path + "/Resource")
 else:
-    #Link All
-    Kronos_Env.Program("build_release/KronosEngine", Source, LIBS=Libs, LIBPATH=LibPath)
-
-    #Copy needed resource for program too access during runtime
-    if not os.path.exists("build_release/Resource"):
-        shutil.copytree("./Resource", "build_release/Resource")
+    shutil.rmtree(Build_Path + "/Resource")
+    shutil.copytree("./Resource", Build_Path + "/Resource")

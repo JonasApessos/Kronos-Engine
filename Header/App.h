@@ -53,7 +53,7 @@ private:
 
 	bool InitGLFW();
 	bool InitGlad();
-	bool InitImgui(Canvas const *InrCanvas);
+	bool InitImgui(Canvas const* InrCanvas);
 
 	void DestroyImguiContext();
 
@@ -68,4 +68,4 @@ inline string App::GetGladVersion() const { return string(to_string(GLAD_VERSION
 inline string App::GetOpenglVersion() const { return string(reinterpret_cast<const char*>(glGetString(GL_VERSION))); }
 inline string App::GetAssimpVersion() const { return string(to_string(aiGetVersionMajor()) + "." + to_string(aiGetVersionMinor()) + "." + to_string(aiGetVersionPatch()) + "." + to_string(aiGetVersionRevision())); }
 inline string App::GetGLMVersion() const { return to_string(GLM_VERSION); }
-inline string App::GetImguiVersion() const { return string(IMGUI_VERSION); }
+inline string App::GetImguiVersion() const { return IMGUI_VERSION; }

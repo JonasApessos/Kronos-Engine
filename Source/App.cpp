@@ -69,7 +69,7 @@ bool App::InitGlad()
 {
 	iGladVersion = gladLoadGL((GLADloadfunc)glfwGetProcAddress);
 
-	if ( iGladVersion == 0)
+	if(iGladVersion == 0)
 		return false;
 
 	return true;
@@ -90,7 +90,10 @@ bool App::InitImgui(Canvas const* InrCanvas)
 
 		if(!ImGui_ImplOpenGL3_Init(
 			string(
-				"#version " + to_string(GLAD_VERSION_MAJOR(iGladVersion)) + to_string(GLAD_VERSION_MINOR(iGladVersion)) + "0").c_str()))
+				"#version " 
+				+ to_string(GLAD_VERSION_MAJOR(iGladVersion)) 
+				+ to_string(GLAD_VERSION_MINOR(iGladVersion)) 
+				+ "0").c_str()))
 		{
 			rLog.WriteAndDisplay("Imgui failed to detect requested opengl version", ELogSeverity::ELS_Critical);
 			return false;
@@ -106,9 +109,9 @@ bool App::Init(Canvas const* InrCanvas)
 {
 	if(!(bIsGladInit = InitGlad()))
 		rLog.WriteAndDisplay("Failed to init glad...clossing application", ELogSeverity::ELS_Critical);
-
+	
 	if(!(bIsImguiInit = InitImgui(InrCanvas)))
-		rLog.WriteAndDisplay("Failed to init ImGui. Closing", ELogSeverity::ELS_Critical);
+		rLog.WriteAndDisplay("Failed to init Imgui...clossing application", ELogSeverity::ELS_Critical);
 
 	return bIsInitSuccess = bIsGLFWInit & bIsGladInit & bIsImguiInit;
 }
