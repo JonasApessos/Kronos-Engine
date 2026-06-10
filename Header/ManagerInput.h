@@ -1,13 +1,12 @@
 #pragma once
 
 #include <thread>
-#include <functional>
 #include <vector>
 #include <map>
 
 #include "Primitives.h"
+
 #include "InputHandler.h"
-#include "Canvas.h"
 
 using std::map, std::vector, std::to_string, std::thread;
 
@@ -299,21 +298,21 @@ struct SInputInfo
 	rCallback(*InrCallback) {}
 };
 
-/** @class InputManager
+/** @class ManagerInput
 *   @brief Singleton class that manages keyboard input
 *	@todo Improve Input Manager to correclty support input states
 *	@todo Seperate Devices from Input Manager*/
-class InputManager
+class ManagerInput
 {
 public:
 
-	InputManager(InputManager const&) = delete;
-	InputManager(InputManager&&) = delete;
+	ManagerInput(ManagerInput const&) = delete;
+	ManagerInput(ManagerInput&&) = delete;
 
-	InputManager& operator=(InputManager const&) = delete;
-	InputManager& operator=(InputManager&&) = delete;
+	ManagerInput& operator=(ManagerInput const&) = delete;
+	ManagerInput& operator=(ManagerInput&&) = delete;
 
-	static InputManager* GetInstance();
+	static ManagerInput* GetInstance();
 
 	static inline void SetCurrentWindow(GLFWwindow* InrWindowP);
 
@@ -338,7 +337,7 @@ protected:
 	static void CallMouseButtonInputList(vector<SInputInfo> const& InsInputInfo);
 	static void CallScrollInputList(vector<SInputInfo> const& InsInputInfo);
 	//static void CallCursorEnterList(vector<SInputInfo> const& InsInputInfo);
-	
+
 	static void OnKey(GLFWwindow* InrWindow, int IniKeyCode, int IniScanCode, int IniAction, int IniMods);
 	static void OnMousePos(GLFWwindow* InrWindow, double IndPosX, double IndPosY);
 	static void OnMouseButton(GLFWwindow* InrWindow, int IniButton, int IniAction, int IniMods);
@@ -352,30 +351,30 @@ private:
 
 	static GLFWwindow* rCurrentWindowInput;
 
-	static InputManager* rInputManager;
+	static ManagerInput* rInputManager;
 
 	static Log rLog;
 
-	InputManager();
+	ManagerInput();
 };
 
-inline void InputManager::SetCurrentWindow(GLFWwindow* InrWindowP) 
-{ 
-	rCurrentWindowInput = InrWindowP; 
-	
+inline void ManagerInput::SetCurrentWindow(GLFWwindow* InrWindowP)
+{
+	rCurrentWindowInput = InrWindowP;
+
 	if(rCurrentWindowInput != nullptr)
 	{
-		glfwSetKeyCallback(rCurrentWindowInput, InputManager::OnKey);
-		glfwSetCursorPosCallback(rCurrentWindowInput, InputManager::OnMousePos);
-		//glfwSetCursorEnterCallback(rCurrentWindowInput, InputManager::OnCursorEnter);
-		glfwSetMouseButtonCallback(rCurrentWindowInput, InputManager::OnMouseButton);
-		glfwSetScrollCallback(rCurrentWindowInput, InputManager::OnScroll);
+		glfwSetKeyCallback(rCurrentWindowInput, ManagerInput::OnKey);
+		glfwSetCursorPosCallback(rCurrentWindowInput, ManagerInput::OnMousePos);
+		//glfwSetCursorEnterCallback(rCurrentWindowInput, ManagerInput::OnCursorEnter);
+		glfwSetMouseButtonCallback(rCurrentWindowInput, ManagerInput::OnMouseButton);
+		glfwSetScrollCallback(rCurrentWindowInput, ManagerInput::OnScroll);
 	}
 
 }
 
-inline GLFWwindow* InputManager::GetCurrentWindow() { return rCurrentWindowInput; }
+inline GLFWwindow* ManagerInput::GetCurrentWindow() { return rCurrentWindowInput; }
 
-inline SMouseKeyInputFrame InputManager::GetMouseKeyInputFrame() { return rMouseInputFrame; }
-inline SMouseMotionInputFrame InputManager::GetMouseMotionInputFrame() { return rMouseMotionInputFrame; }
-inline SMouseScrollInputFrame InputManager::GetMouseScrollInputFrame() { return rMouseScrollInputFrame; }
+inline SMouseKeyInputFrame ManagerInput::GetMouseKeyInputFrame() { return rMouseInputFrame; }
+inline SMouseMotionInputFrame ManagerInput::GetMouseMotionInputFrame() { return rMouseMotionInputFrame; }
+inline SMouseScrollInputFrame ManagerInput::GetMouseScrollInputFrame() { return rMouseScrollInputFrame; }

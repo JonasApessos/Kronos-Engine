@@ -6,10 +6,10 @@ ObjectBase::ObjectBase() :
 sName("Object_"+to_string(iID)),
 iHash(static_cast<uint64>(hash<string>{}(std::to_string(++iID)))) {}
 
-bool ObjectBase::SetParent(ObjectBase* InrBase)
+bool ObjectBase::SetParent(ObjectBase* InrParent)
 {
-    if(InrBase != nullptr)
-        rParent = InrBase;
+    if(InrParent != nullptr)
+        rParent = InrParent;
     else
         return false;
 
@@ -26,19 +26,13 @@ bool ObjectBase::AddChild(ObjectBase* InrBase)
     return true;
 }
 
-bool ObjectBase::AddChildren(vector<ObjectBase*>* InrBaseList)
+bool ObjectBase::AddChildren(vector<ObjectBase*>* InrList)
 {
-    if(InrBaseList != nullptr)
+    if(InrList != nullptr)
     {
-        vector<ObjectBase*>::iterator It = InrBaseList->begin();
+        rChildren.resize(rChildren.size() + InrList->size());
 
-        while(It != InrBaseList->end())
-        {
-            if(*It != nullptr)
-                rChildren.push_back(*It);
-
-            ++It;
-        }
+        rChildren.insert(rChildren.end(), InrList->begin(), InrList->end());
     }
     else
         return false;

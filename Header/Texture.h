@@ -2,8 +2,8 @@
 
 #include <iostream>
 
-#include "assimp/scene.h"
 #include <stb/stb_image.h>
+#include "assimp/scene.h"
 
 #include "Primitives.h"
 #include "Standard.h"
@@ -178,11 +178,36 @@ public:
 
     string sPath;
 
-    Texture(char const* IncImagePath, ETextureType IneTextureType, EGLTextureDataType IneTextureDataType, EGLTextureSlot IneTextureSlot, EGLTextureFormat IneTextureFormat);
-    Texture(char const* IncImagePath, ETextureType IneTextureType, EGLTextureDataType IneTextureDataType, EGLTextureSlot IneTextureSlot, EGLTextureFormat IneTextureFormat, EGLTextureFormat IneInternalFormat);
-    Texture(char const* IncImagePath, ETextureType IneTextureType, EGLTextureDataType IneTextureDataType, EGLTextureSlot IneTextureSlot);
-    Texture(char const* IncImagePath, aiTextureType IneTextureType, EGLTextureDataType IneTextureDataType, EGLTextureSlot IneTextureSlot);
-    Texture(int32 IniWidth, int32 IniHeight, ETextureType IneTextureType, EGLTextureDataType IneTextureDataType, EGLTextureSlot IneTextureSlot, EGLTextureFormat IneTextureFormat);
+    Texture(char const* IncImagePath,
+         ETextureType IneTextureType,
+         EGLTextureDataType IneTextureDataType,
+         EGLTextureSlot IneTextureSlot,
+         EGLTextureFormat IneTextureFormat);
+
+    Texture(char const* IncImagePath,
+        ETextureType IneTextureType,
+        EGLTextureDataType IneTextureDataType,
+        EGLTextureSlot IneTextureSlot,
+        EGLTextureFormat IneTextureFormat,
+        EGLTextureFormat IneInternalFormat);
+
+    Texture(char const* IncImagePath,
+        ETextureType IneTextureType,
+        EGLTextureDataType IneTextureDataType,
+        EGLTextureSlot IneTextureSlot);
+
+    Texture(char const* IncImagePath,
+        aiTextureType IneTextureType,
+        EGLTextureDataType IneTextureDataType,
+        EGLTextureSlot IneTextureSlot);
+
+    Texture(int32 IniWidth,
+        int32 IniHeight,
+        ETextureType IneTextureType,
+        EGLTextureDataType IneTextureDataType,
+        EGLTextureSlot IneTextureSlot,
+        EGLTextureFormat IneTextureFormat);
+        
     Texture(Texture const&);
     Texture(Texture&& InrTexture);
     
@@ -196,7 +221,10 @@ public:
     //Set
     inline void SetId(uint32 IniTextureId);
 
-    inline void SetTextureWrap(EGLTextureWrap IneTextureWrapS, EGLTextureWrap IneTextureWrapT);
+    inline void SetTextureWrap(
+        EGLTextureWrap IneTextureWrapS,
+        EGLTextureWrap IneTextureWrapT);
+
     inline void SetTextureWrap(EGLTextureWrap IneTextureWrap);
     inline void SetTextureWrapS(EGLTextureWrap IneTextureWrap);
     inline void SetTextureWrapT(EGLTextureWrap IneTextureWrap);
@@ -204,7 +232,10 @@ public:
     inline void SetTextureType(ETextureType IneTextureType);
     inline void SetTextureType(aiTextureType IneTextureType);
 
-    inline void SetTextureMinMagFilter(EGLTextureMinFilter IneTextureMinFilter, EGLTextureMagFilter IneTextureMagFilter);
+    inline void SetTextureMinMagFilter(
+        EGLTextureMinFilter IneTextureMinFilter,
+        EGLTextureMagFilter IneTextureMagFilter);
+
     inline void SetTextureMinFilter(EGLTextureMinFilter IneTextureFilter);
     inline void SetTextureMagFilter(EGLTextureMagFilter IneTextureFilter);
 
@@ -246,7 +277,9 @@ private:
 
 inline void Texture::SetId(uint32 IniId) { iTextureId = IniId; }
 
-inline void Texture::SetTextureWrap(EGLTextureWrap IneTextureWrapS, EGLTextureWrap IneTextureWrapT)
+inline void Texture::SetTextureWrap(
+    EGLTextureWrap IneTextureWrapS,
+    EGLTextureWrap IneTextureWrapT)
 {
     SetTextureWrapS(IneTextureWrapS);
     SetTextureWrapT(IneTextureWrapT);
@@ -276,7 +309,9 @@ inline void Texture::SetTextureWrapT(EGLTextureWrap IneTextureWrap)
     static_cast<GLint>(eTextureWrapT));
 }
 
-inline void Texture::SetTextureMinMagFilter(EGLTextureMinFilter IneTextureMinFilter, EGLTextureMagFilter IneTextureMagFilter)
+inline void Texture::SetTextureMinMagFilter(
+    EGLTextureMinFilter IneTextureMinFilter,
+    EGLTextureMagFilter IneTextureMagFilter)
 {
     SetTextureMinFilter(IneTextureMinFilter);
     SetTextureMagFilter(IneTextureMagFilter);
@@ -318,4 +353,9 @@ inline EGLTextureDataType Texture::GetTextureDataType() const { return eTextureD
 
 inline void Texture::Active() const { glActiveTexture(static_cast<GLenum>(eTextureSlot)); }
 
-inline void Texture::Use() const { glBindTexture(static_cast<GLenum>(EGLTextureDataType::EGLTDT_Texture2D), iTextureId); }
+inline void Texture::Use() const 
+{ 
+    glBindTexture(
+        static_cast<GLenum>(EGLTextureDataType::EGLTDT_Texture2D),
+        iTextureId); 
+}

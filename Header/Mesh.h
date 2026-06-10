@@ -3,8 +3,8 @@
 #include <string>
 #include <vector>
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
 
 #include "Math.h"
 #include "Object.h"
@@ -103,9 +103,9 @@ public:
 
 	constexpr inline void SetDrawMode(EGLDrawMode IneDrawMode);
 
-	constexpr inline uint32 GetVAO() const;	//!< Get the Vertex Array ID
-	constexpr inline uint32 GetVBO() const; //!< Get the Vertex Buffer ID
-	constexpr inline uint32 GetEBO() const; //!< Get the Element Buffer ID
+	constexpr inline uint32 GetVAO() const;	//!< Get the Vertex Array Object
+	constexpr inline uint32 GetVBO() const; //!< Get the Vertex Buffer Object
+	constexpr inline uint32 GetEBO() const; //!< Get the Element Buffer Object
 
 	inline vector<SVector> GetVertices() const; //!< Get Vertices array
 	inline vector<uint32> GetIndices() const; //!< Get Indices array
@@ -164,9 +164,7 @@ inline void MeshBase::RotateOffset(float InfRad, vec3 const& InrVector)
 {
 	uint32 i = 0;
 
-	mat4 MatTest = mat4(1.0f);
-
-	MatTest = glm::rotate(MatTest, InfRad, InrVector);
+	const mat4 MatTest = glm::rotate(mat4(1.0f), InfRad, InrVector);
 
 	while(i < rVertices.size())
 	{

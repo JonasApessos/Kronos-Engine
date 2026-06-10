@@ -3,10 +3,9 @@
 #include <iostream>
 #include <vector>
 
-#include <glm/glm.hpp>
+#include "glm/glm.hpp"
 
 #include "Primitives.h"
-#include "InputManager.h"
 
 using std::string, std::hash, std::to_string, std::vector;
 
@@ -27,12 +26,12 @@ public:
     inline string GetName() const;
 
     bool SetParent(ObjectBase* InrBase);
-    
+
     bool AddChild(ObjectBase* InrBase);
     bool AddChildren(vector<ObjectBase*>* InrBaseList);
 
 protected:
-    
+
 private:
 
     static uint64 iID;
@@ -80,22 +79,22 @@ private:
 
 
 inline void Object3D::SetPosition(vec3 const& InrPosition) noexcept { rPosition = InrPosition; }
-inline void Object3D::SetPosition(float InfX, float InfY, float InfZ) noexcept 
-{ 
+inline void Object3D::SetPosition(float InfX, float InfY, float InfZ) noexcept
+{
     rPosition.x = InfX;
     rPosition.y = InfY;
     rPosition.z = InfZ;
 }
 
-inline void Object3D::SetPosition(float InfVal) noexcept 
-{ 
+inline void Object3D::SetPosition(float InfVal) noexcept
+{
     rPosition.x = InfVal;
     rPosition.y = InfVal;
-    rPosition.z = InfVal; 
+    rPosition.z = InfVal;
 }
 
 inline void Object3D::SetRotation(vec3 const& InrRotation) noexcept { rRotation = InrRotation; }
-inline void Object3D::SetRotation(float InfX, float InfY, float InfZ) noexcept 
+inline void Object3D::SetRotation(float InfX, float InfY, float InfZ) noexcept
 {
     rRotation.x = InfX;
     rRotation.y = InfY;

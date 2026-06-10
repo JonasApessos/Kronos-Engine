@@ -1,15 +1,19 @@
 #include "KronosEngine.h"
 
-using glm::vec3, glm::vec2 , glm::mat4;
-
-using std::cout, std::exception;
-
 constexpr int32 CanvasWidth = 1024;
 constexpr int32 CanvasHeight = static_cast<int32>(static_cast<float>(CanvasWidth) * 9.f / 16.f);
 
 float MouseLastX = CanvasWidth * 0.5f, MouseLastY = CanvasHeight * 0.5f;
 
-Camera rMainCamera(vec3(0.f, 0.f, 10.f), vec3(0.f, 0.f, 1.f), vec3(0.f, 1.f, 0.f), 45.f, (16.f / 9.f), 10.f, 0.1f, 100.f);
+Camera rMainCamera(
+	vec3(0.f, 0.f, 10.f),
+	vec3(0.f, 0.f, 1.f),
+	vec3(0.f, 1.f, 0.f),
+	45.f,
+	(16.f / 9.f),
+	10.f,
+	0.1f,
+	100.f);
 
 float DeltaTime = 0.f, LastFrame = 0.f;
 
@@ -17,7 +21,16 @@ Log rGlobalLog("Log");
 
 static int Index = 0;
 
-const char* ctest[] = {"test1", "test2", "Test3", "Test4", "Test5", "Test6", "Test7", "Test8", "Test9"};
+const char* ctest[] = {
+	"test1",
+	"test2",
+	"Test3",
+	"Test4",
+	"Test5",
+	"Test6",
+	"Test7",
+	"Test8",
+	"Test9"};
 
 bool FirstMouse = true;
 
@@ -105,7 +118,7 @@ void GUICreatorTab(Canvas* InrCanvas)
 	ImGuiWindowFlags_NoMove |
 	ImGuiWindowFlags_NoBringToFrontOnFocus))
 	{
-		
+
 		ImGui::SetWindowPos(
 			ImVec2(
 				0.f,
@@ -167,7 +180,7 @@ void GUIOutlineTab(Canvas* InrCanvas)
 			for (int n = 0; n < IM_ARRAYSIZE(ctest); n++)
 			{
 				is_selected = (Index == n);
-				
+
 				if (ImGui::Selectable(ctest[n], is_selected))
 					Index = n;
 
@@ -188,9 +201,9 @@ void GUIAssetTab(Canvas* InrCanvas)
 	bool IsMainCanvasVisible = true;
 
 	//Asset Browser Tab
-	if(ImGui::Begin("Asset Browser Tab", 
+	if(ImGui::Begin("Asset Browser Tab",
 	&IsMainCanvasVisible,
-	ImGuiWindowFlags_NoCollapse | 
+	ImGuiWindowFlags_NoCollapse |
 	ImGuiWindowFlags_NoResize |
 	ImGuiWindowFlags_NoDecoration |
 	ImGuiWindowFlags_NoMove |
@@ -255,15 +268,21 @@ void SetupRenderer(Renderer* InrRenderer)
 
 	InrRenderer->SetClearColor(.2f * 0.3f, .4f * 0.3f, .3f * 0.3f, 1.f);
 
-	InrRenderer->SetClearBuffer(EGLClearBuffer::EGLC_ColorBufferBit | EGLClearBuffer::EGLC_DepthBufferBit | EGLClearBuffer::EGLC_StencilBufferBit);
+	InrRenderer->SetClearBuffer(
+		EGLClearBuffer::EGLC_ColorBufferBit |
+		EGLClearBuffer::EGLC_DepthBufferBit |
+		EGLClearBuffer::EGLC_StencilBufferBit);
 
 }
 
 void OnMouseScroll()
 {
-	SMouseScrollInputFrame rMouseScrollInput = InputManager::GetInstance()->GetMouseScrollInputFrame();
+	SMouseScrollInputFrame rMouseScrollInput = ManagerInput::GetInstance()->GetMouseScrollInputFrame();
 
-	ImGui_ImplGlfw_ScrollCallback(InputManager::GetCurrentWindow(), rMouseScrollInput.dScrollX, rMouseScrollInput.dScrollY);
+	ImGui_ImplGlfw_ScrollCallback(
+		ManagerInput::GetCurrentWindow(),
+		rMouseScrollInput.dScrollX,
+		rMouseScrollInput.dScrollY);
 
 	rMainCamera.SetFOV(rMainCamera.GetFOV() - static_cast<float>(rMouseScrollInput.dScrollY) * DeltaTime);
 
@@ -275,9 +294,12 @@ void OnMouseScroll()
 
 void OnMouseMove()
 {
-	SMouseMotionInputFrame rMouseMotion = InputManager::GetInstance()->GetMouseMotionInputFrame();
+	SMouseMotionInputFrame rMouseMotion = ManagerInput::GetInstance()->GetMouseMotionInputFrame();
 
-	ImGui_ImplGlfw_CursorPosCallback(InputManager::GetCurrentWindow(), rMouseMotion.dXPos, rMouseMotion.dYPos);
+	ImGui_ImplGlfw_CursorPosCallback(
+		ManagerInput::GetCurrentWindow(),
+		rMouseMotion.dXPos,
+		rMouseMotion.dYPos);
 
 	const float XPos = static_cast<float>(rMouseMotion.dXPos);
 	const float YPos = static_cast<float>(rMouseMotion.dYPos);
@@ -299,29 +321,14 @@ void OnMouseMove()
 	rMainCamera.AddPitch(YOffset);
 }
 
-void MoveCameraForwards()
-{
-	rMainCamera.TravelForwards(1.0f * DeltaTime);
-}
-
-void MoveCameraBackwards()
-{
-	rMainCamera.TravelForwards(-1.0f * DeltaTime);
-}
-
-void MoveCameraLeftwards()
-{
-	rMainCamera.TravelSideways(-1.0f * DeltaTime);
-}
-
-void MoveCameraRightwards()
-{
-	rMainCamera.TravelSideways(1.0f * DeltaTime);
-}
+void MoveCameraForwards() {	rMainCamera.TravelForwards(1.0f * DeltaTime); }
+void MoveCameraBackwards() { rMainCamera.TravelForwards(-1.0f * DeltaTime); }
+void MoveCameraLeftwards() { rMainCamera.TravelSideways(-1.0f * DeltaTime); }
+void MoveCameraRightwards() { rMainCamera.TravelSideways(1.0f * DeltaTime); }
 
 int main(int argc, char **argv)
 {
-	try 
+	try
 	{
 		App* rKronosApp = new App(argc, argv);
 
@@ -341,29 +348,11 @@ int main(int argc, char **argv)
 
 			GUISetupStyle(rMainCanvas);
 
-			rMainCanvas->test();
-			
 			GLint nrAttributes;
 			glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
-			
+
 			rGlobalLog.WriteAndDisplay("Maximum nr if vertex attributes supported: " + to_string(nrAttributes));
 
-			Texture* FrameBufferTexture = new Texture(
-				rMainCanvas->GetWidth(),
-				rMainCanvas->GetHeight(),
-				ETextureType::ETT_Albedo,
-				EGLTextureDataType::EGLTDT_Texture2D,
-				EGLTextureSlot::EGLTS_Slot0,
-				EGLTextureFormat::EGLTF_RGB);
-
-
-			Framebuffer* rFramebuffer = new Framebuffer(
-				EGLFramebufferOp::EGLFO_FrameBuffer,
-				EGLFramebufferAttach::EGLFA_Color,
-				EGLFramebufferTex::EGLFT_Texture2D,
-				FrameBufferTexture,
-				0);
-			
 
 			Renderer* rViewportRenderer = new Renderer();
 
@@ -378,7 +367,7 @@ int main(int argc, char **argv)
 			glfwSwapInterval(1);
 
 			rMainCamera.SetYaw(-89.0f);
-			
+
 			mat4 View = rMainCamera.GetView();
 			mat4 Projection = rMainCamera.GetProjection();
 			vec3 CameraPosition = -rMainCamera.GetLocation();
@@ -389,14 +378,41 @@ int main(int argc, char **argv)
 
 			Gizmo.ConstructGizmo();
 
-			InputManager::GetInstance()->SetCurrentWindow(rMainCanvas->GetWindow());
+			ManagerInput::GetInstance()->SetCurrentWindow(rMainCanvas->GetWindow());
 
-			InputManager::GetInstance()->BindInput("MoveForwards", EInputKey::EIK_W, EInputState::EIS_Hold, &MoveCameraForwards);
-			InputManager::GetInstance()->BindInput("MoveBackwords", EInputKey::EIK_S, EInputState::EIS_Hold, &MoveCameraBackwards);
-			InputManager::GetInstance()->BindInput("MoveLeftwards", EInputKey::EIK_A, EInputState::EIS_Hold, &MoveCameraLeftwards);
-			InputManager::GetInstance()->BindInput("MoveRightwords", EInputKey::EIK_D, EInputState::EIS_Hold, &MoveCameraRightwards);
-			InputManager::GetInstance()->BindInput("MouseMovement", EDeviceType::EDT_Mouse, &OnMouseMove);
-			InputManager::GetInstance()->BindInput("MouseScroll",EDeviceType::EDT_Mouse, &OnMouseScroll);
+			ManagerInput::GetInstance()->BindInput(
+				"MoveForwards",
+				EInputKey::EIK_W,
+				EInputState::EIS_Hold,
+				&MoveCameraForwards);
+
+			ManagerInput::GetInstance()->BindInput(
+				"MoveBackwords",
+				EInputKey::EIK_S,
+				EInputState::EIS_Hold,
+				&MoveCameraBackwards);
+
+			ManagerInput::GetInstance()->BindInput(
+				"MoveLeftwards",
+				EInputKey::EIK_A,
+				EInputState::EIS_Hold,
+				&MoveCameraLeftwards);
+
+			ManagerInput::GetInstance()->BindInput(
+				"MoveRightwords",
+				EInputKey::EIK_D,
+				EInputState::EIS_Hold,
+				&MoveCameraRightwards);
+
+			ManagerInput::GetInstance()->BindInput(
+				"MouseMovement",
+				EDeviceType::EDT_Mouse,
+				&OnMouseMove);
+
+			ManagerInput::GetInstance()->BindInput(
+				"MouseScroll",
+				EDeviceType::EDT_Mouse,
+				&OnMouseScroll);
 
 			//Main loop
 			while (!glfwWindowShouldClose(rMainCanvas->GetWindow()))
@@ -416,7 +432,7 @@ int main(int argc, char **argv)
 				Projection = rMainCamera.GetProjection();
 
 				CameraPosition = -rMainCamera.GetLocation();
-				
+
 				rShaderCubeLight.Use();
 				rShaderCubeLight.SetVec3("ObjectColor", 1.0f, 0.5f, 0.31f);
 				rShaderCubeLight.SetVec3("LightColor", 1.0f, 1.0f, 1.0f);
@@ -437,19 +453,18 @@ int main(int argc, char **argv)
 
 				ImGui::Render();
 				ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-				
+
 				glfwSwapBuffers(rMainCanvas->GetWindow());
 				rViewportRenderer->Clear();
-				InputManager::GetInstance()->ProcessInput();
+				ManagerInput::GetInstance()->ProcessInput();
 				glfwPollEvents();
 			}
 
-			delete rFramebuffer;
 			delete rViewportRenderer;
 		}
 		else
 			return -1;
-			
+
 		delete rMainCanvas;
 		delete rKronosApp;
 

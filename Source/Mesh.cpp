@@ -36,10 +36,18 @@ MeshBase::MeshBase(MeshBase&& InrMeshBase)
 
 MeshBase::~MeshBase() {}
 
-Mesh::Mesh(vector<SVector>& InrVertices, vector<uint32>& InrIndices) : MeshBase(InrVertices, InrIndices) { SetupMesh(); }
+Mesh::Mesh(
+	vector<SVector>& InrVertices,
+	vector<uint32>& InrIndices) : 
+	MeshBase(InrVertices, InrIndices) 
+	{ SetupMesh(); }
 
-Mesh::Mesh(vector<SVector>& InrVertices, vector<uint32>& InrIndices, vector<Texture>& InrTextures) : 
-MeshBase(InrVertices, InrIndices, InrTextures) { SetupMesh(); }
+Mesh::Mesh(
+	vector<SVector>& InrVertices,
+	vector<uint32>& InrIndices,
+	vector<Texture>& InrTextures) : 
+	MeshBase(InrVertices, InrIndices, InrTextures) 
+	{ SetupMesh(); }
 
 Mesh::Mesh(const Mesh& InrMesh) : 
 MeshBase(InrMesh) { SetupMesh(); }
@@ -87,24 +95,55 @@ void Mesh::SetupMesh()
 	glGenBuffers(1, &EBO);
 
 	glBindVertexArray(VAO);
-	glBindBuffer(static_cast<GLenum>(EGLBufferTarget::EGLBDT_ArrayBuffer), VBO);
+	glBindBuffer(
+		static_cast<GLenum>(EGLBufferTarget::EGLBDT_ArrayBuffer),
+		VBO);
 
-	glBufferData(static_cast<GLenum>(EGLBufferTarget::EGLBDT_ArrayBuffer), rVertices.size() * sizeof(SVector), &rVertices[0], static_cast<GLenum>(EGLBufferTUsage::EGLBDU_StaticDraw));
+	glBufferData(
+		static_cast<GLenum>(EGLBufferTarget::EGLBDT_ArrayBuffer),
+		rVertices.size() * sizeof(SVector),
+		&rVertices[0],
+		static_cast<GLenum>(EGLBufferTUsage::EGLBDU_StaticDraw));
 
-	glBindBuffer(static_cast<GLenum>(EGLBufferTarget::EGLBDT_ElementArrayBuffer), EBO);
-	glBufferData(static_cast<GLenum>(EGLBufferTarget::EGLBDT_ElementArrayBuffer), rIndices.size() * sizeof(GL_UNSIGNED_INT), &rIndices[0], static_cast<GLenum>(EGLBufferTUsage::EGLBDU_StaticDraw));
+	glBindBuffer(
+		static_cast<GLenum>(EGLBufferTarget::EGLBDT_ElementArrayBuffer),
+		EBO);
+
+	glBufferData(
+		static_cast<GLenum>(EGLBufferTarget::EGLBDT_ElementArrayBuffer),
+		rIndices.size() * sizeof(GL_UNSIGNED_INT),
+		&rIndices[0],
+		static_cast<GLenum>(EGLBufferTUsage::EGLBDU_StaticDraw));
 
 	//Vertex rPosition
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(SVector), (void*) offsetof(SVector, rPosition));
+	glVertexAttribPointer(
+		0,
+		3,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(SVector),
+		(void*) offsetof(SVector, rPosition));
 
 	//Vertex rNormal
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(SVector), (void*) offsetof(SVector, rNormal));
+	glVertexAttribPointer(
+		1,
+		3,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(SVector),
+		(void*) offsetof(SVector, rNormal));
 
 	//Vertex Texture Coords
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(SVector), (void*) offsetof(SVector, rTexCoords));
+	glVertexAttribPointer(
+		2,
+		2,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(SVector),
+		(void*) offsetof(SVector, rTexCoords));
 
 	glBindVertexArray(0);
 }
@@ -132,7 +171,9 @@ void Mesh::Draw(Shader& InrShader)
 				("Material." + to_string(static_cast<int32>(rTextures[DrawLoop].GetTextureType())) + "." + Number).c_str(),
 					static_cast<int32>(DrawLoop));
 					
-			glBindTexture(static_cast<GLenum>(rTextures[DrawLoop].GetTextureDataType()), rTextures[DrawLoop].GetId());
+			glBindTexture(
+				static_cast<GLenum>(rTextures[DrawLoop].GetTextureDataType()),
+				rTextures[DrawLoop].GetId());
 
 			Number = "";
 
@@ -144,6 +185,12 @@ void Mesh::Draw(Shader& InrShader)
 
 
 	glBindVertexArray(VAO);
-	glDrawElements(static_cast<GLenum>(eDrawMode), static_cast<GLsizei>(rIndices.size()), GL_UNSIGNED_INT, (void*)NULL);
+	
+	glDrawElements(
+		static_cast<GLenum>(eDrawMode),
+		static_cast<GLsizei>(rIndices.size()),
+		GL_UNSIGNED_INT,
+		(void*)NULL);
+
 	glBindVertexArray(0);
 }

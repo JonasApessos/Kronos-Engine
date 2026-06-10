@@ -2,7 +2,9 @@ import shutil
 import os
 
 AddOption("--build", dest="build", type="string", nargs=1, action="store", help="Build using debug mode")
-AddOption("--linker", dest="linker", type="string", nargs=1, action="store", help="change linker to build with")
+AddOption("--linker", dest="linker", type="string", nargs=1, action="store", help="change linker to link with")
+AddOption("--compiler", dest="compiler", type="string", nargs=1, action="store", help="change compiler to build with")
+AddOption("--asm", dest="asm", type="string", nargs=1, action="store", help="export assembler instruction (to analyze generated assembly code, only works in debug)")
 
 #c and cpp standards
 c_std = ["-std=c17"]
@@ -49,8 +51,11 @@ if GetOption("build") == "debug":
         "-Wall",
         "-Wpedantic",
         "-Wextra",
-        "-ggdb3",
-        "-Wanalyzer-possible-null-dereference"]
+        "-ggdb3"]
+    
+    if GetOption("asm") == "y":
+        c_CCFlags += ["-S", "-fverbose-asm"]
+
 elif GetOption("build") == "size":
     Build_Path = "build_size"
 
@@ -99,10 +104,18 @@ elif GetOption("linker") == "lld":
 elif GetOption("linker") == "gold":
     Linker = ["-fuse-ld=gold"]
 
+if GetOption("compiler") == "clang":
+    #Compiler for c
+    c_Compiler = "clang"
+    #Compiler for cpp
+    cpp_Compiler = "clang++"
+
 cpp_CCFlags = c_CCFlags
 
-#Dependency's Environment build
-c_Dep_Env = Environment()
+#Dependency Environment build
+c_Dep_Env = Environment(COMPILATIONDB_USE_ABSPATH=True)
+c_Dep_Env.Tool('compilation_db')
+c_Dep_Env.CompilationDatabase()
 c_Dep_Env["LINKFLAGS"] += Link_Flags + Linker
 c_Dep_Env["CC"] = c_Compiler
 c_Dep_Env["CXX"] = cpp_Compiler
@@ -112,7 +125,9 @@ cpp_Dep_Env = c_Dep_Env.Clone()
 cpp_Dep_Env["CCFLAGS"] = Dep_Flags + cpp_std
 
 #Kronos Engine Environment build
-Kronos_Env = Environment()
+Kronos_Env = Environment(COMPILATIONDB_USE_ABSPATH=True)
+Kronos_Env.Tool('compilation_db')
+Kronos_Env.CompilationDatabase()
 Kronos_Env["LINKFLAGS"] += Link_Flags + Linker
 Kronos_Env["CC"] = c_Compiler
 Kronos_Env["CXX"] = cpp_Compiler
@@ -131,9 +146,7 @@ Source = [
 
 #Find path of libraries needed to link
 LibPath = [
-    "Dep/GLFW/Lib",
-    "/usr/local/lib",
-    "/usr/lib/x86_64-linux-gnu"]
+    "Dep/GLFW/Lib"]
 
 #Libraries the executable needs to link
 Libs = [
@@ -143,6 +156,8 @@ Libs = [
     "GL",
     "glfw3",
     "assimp"]
+
+
 
 #Link All
 Kronos_Env.Program(Build_Path + "/KronosEngine", Source, LIBS=Libs, LIBPATH=LibPath)

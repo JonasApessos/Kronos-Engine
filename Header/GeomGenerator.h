@@ -3,9 +3,10 @@
 #include <vector>
 #include <string>
 
-#include <glm/glm.hpp>
+#include "glm/glm.hpp"
 
 #include "Primitives.h"
+
 #include "Vector.h"
 
 using std::vector, std::string;

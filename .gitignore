@@ -361,6 +361,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
 .vscode
 DOCS
 build*
@@ -369,3 +370,9 @@ imgui
 imgui.ini
 .sconsign.dblite
 *.o
+Dep/glad
+Dep/GLFW
+Dep/glm
+Dep/imgui
+compile_commands.json
+.zed/

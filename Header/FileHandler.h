@@ -8,8 +8,21 @@
 #include "Primitives.h"
 
 using std::cout, std::cerr;
-using std::ios_base, std::ostream, std::fstream, std::string, std::getline, std::error_code, std::strerror;
-using std::filesystem::create_directory, std::filesystem::exists, std::filesystem::space, std::filesystem::space_info, std::stringstream;
+
+using std::ios_base,
+    std::ostream,
+    std::fstream,
+    std::string,
+    std::getline,
+    std::error_code,
+    std::strerror;
+
+using std::filesystem::create_directory,
+    std::filesystem::exists,
+    std::filesystem::space,
+    std::filesystem::space_info,
+    std::stringstream;
+    
 using KronosPrim::int32, KronosPrim::uint32;
 
 /** @class FileHandler
@@ -20,8 +33,16 @@ public:
     int32 iBitFlagMode = ios_base::in | ios_base::out | ios_base::app;
 
     FileHandler();
-    FileHandler(char const* IncPath, char const* IncFileName, ios_base::openmode IniFlagType);
-    FileHandler(string const& InsPath, string const& InsFileName, ios_base::openmode IniFlagType);
+    FileHandler(
+        char const* IncPath,
+        char const* IncFileName,
+        ios_base::openmode IniFlagType);
+
+    FileHandler(
+        string const& InsPath,
+        string const& InsFileName,
+        ios_base::openmode IniFlagType);
+        
     FileHandler(FileHandler const& InrFileHandler);
     FileHandler(FileHandler && InrFileHandler);
 

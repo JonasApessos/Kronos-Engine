@@ -130,7 +130,7 @@ bool Log::Write(string const& InsData, ELogSeverity IneLogSeverity)
 			strerror_s(cErrorMsg, sizeof(cErrorMsg), iErrorCode);
 			cerr << "[" << sLogName << "][LogException]: " << cErrorMsg << "\r\n";
 		}
-		#elif defined __linux__
+		#elif defined(__linux__)
 		//check if localtime_s returned an error code
 		if (iErrorCode)
 		{
@@ -181,7 +181,7 @@ bool Log::WriteAndDisplay(string const& InsData)
 			strerror_s(cErrorMsg, sizeof(cErrorMsg), iErrorCode);
 			cerr << "[" << sLogName << "][LogException]: " << cErrorMsg << "\r\n";
 		}
-		#elif defined __linux__
+		#elif defined(__linux__)
 		//check if localtime_s returned an error codes
 		if (iErrorCode)
 		{
@@ -234,7 +234,7 @@ bool Log::WriteAndDisplay(string const& InsData, ELogSeverity IneLogSeverity)
 			strerror_s(cErrorMsg, sizeof(cErrorMsg), iErrorCode);
 			cerr << "[" << sLogName << "][LogException]: " << cErrorMsg << "\r\n";
 		}
-		#elif defined __linux__
+		#elif defined(__linux__)
 		//check if localtime_s returned an error code
 		if (iErrorCode)
 		{

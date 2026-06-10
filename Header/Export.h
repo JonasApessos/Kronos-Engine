@@ -2,8 +2,10 @@
 
 #include <iomanip>
 
-#include "Model.h"
 #include "FileHandler.h"
+
+#include "Model.h"
+
 
 using std::setprecision, std::fixed, std::endl;
 using KronosPrim::uint32;

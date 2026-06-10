@@ -2,16 +2,17 @@
 
 #include <assert.h>
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
 
-#include "MacroUtils.h"
-
-#include "Log.h"
-#include "Utils.h"
 #include "Primitives.h"
-#include "Model.h"
+#include "MacroUtils.h"
+#include "Utils.h"
+
+#include "Timer.h"
 #include "Math.h"
+#include "Log.h"
+#include "Model.h"
 
 using glm::vec3, glm::mat4;
 using KronosPrim::uint32;
@@ -118,19 +119,19 @@ struct SShapePrimBase
     inline void SetRes(uint32 IniResW, uint32 IniResH) noexcept;
 
     //Set the Radius of the shape
-    inline void SetRadius(float InfRadius);
+    inline void SetRadius(float InfRadius) noexcept;
     //Set Height if shape
-    inline void SetHeight(float InfHeight);
+    inline void SetHeight(float InfHeight) noexcept;
 
     //Get width resolution of shape
-    inline uint32 GetResW() const;
+    inline uint32 GetResW() const noexcept;
     //Get height resolution of shape
-    inline uint32 GetResH() const;
+    inline uint32 GetResH() const noexcept;
 
     //Get radius of shape
-    inline float GetRadius() const;
+    inline float GetRadius() const noexcept;
     //Get Height of shape
-    inline float GetHeight() const;
+    inline float GetHeight() const noexcept;
 
     //Get generated mesh
     virtual inline Mesh GetMesh();
@@ -155,21 +156,29 @@ inline void SShapePrimBase::SetResW(uint32 IniResW) noexcept { iResW = IniResW; 
 inline void SShapePrimBase::SetResH(uint32 IniResH) noexcept { iResH = IniResH; }
 inline void SShapePrimBase::SetRes(uint32 IniResW, uint32 IniResH) noexcept { iResW = IniResW; iResH = IniResH; }
 
-inline void SShapePrimBase::SetRadius(float InfRadius) { fRadius = InfRadius; }
-inline void SShapePrimBase::SetHeight(float InfHeight) { fHeight = InfHeight; }
+inline void SShapePrimBase::SetRadius(float InfRadius) noexcept { fRadius = InfRadius; }
+inline void SShapePrimBase::SetHeight(float InfHeight) noexcept { fHeight = InfHeight; }
 
-inline uint32 SShapePrimBase::GetResW() const { return iResW; }
-inline uint32 SShapePrimBase::GetResH() const { return iResH; }
+inline uint32 SShapePrimBase::GetResW() const noexcept { return iResW; }
+inline uint32 SShapePrimBase::GetResH() const noexcept { return iResH; }
 
-inline float SShapePrimBase::GetRadius() const { return fRadius; }
-inline float SShapePrimBase::GetHeight() const { return fHeight; }
+inline float SShapePrimBase::GetRadius() const noexcept { return fRadius; }
+inline float SShapePrimBase::GetHeight() const noexcept { return fHeight; }
 
 inline void SShapePrimBase::Translate(vec3 const& InrTranslate) { rModel.Translate(InrTranslate); }
 inline void SShapePrimBase::Rotate(float fDegrees, vec3 const& InrRotate) { rModel.Rotate(fDegrees, InrRotate); }
 inline void SShapePrimBase::Scale(vec3 const& InrScale) { rModel.Scale(InrScale); }
 
 inline Model SShapePrimBase::GetModel() const { return rModel; }
-inline Mesh SShapePrimBase::GetMesh() { return Mesh(rVertices, rIndices); }
+inline Mesh SShapePrimBase::GetMesh() 
+{ 
+    if (!rModel.GetMeshList().empty())
+    {
+        return rModel.GetMeshList()[0]; 
+    }
+    
+    return Mesh(rVertices, rIndices);
+}
 
 /** @struct SShapePrimLine
 *   @brief Primitive shape that generates a Line mesh
@@ -195,38 +204,28 @@ struct SShapePrimLine : SShapePrimBase
         GenerateVertexData();
         GenerateIndicesData();
 
-        rModel.AddMesh(Mesh(rVertices, rIndices));
+        Mesh rMesh = Mesh(rVertices, rIndices);
 
-        vector<Mesh> rMeshList = rModel.GetMeshList();
+        rMesh.SetDrawMode(EGLDrawMode::EGLDM_LineStrip);
 
-        rMeshList[0].SetDrawMode(EGLDrawMode::EGLDM_LineStrip);
-
-        rModel.SetMeshList(rMeshList);
+        rModel.AddMesh(rMesh);
 
         rLog.WriteAndDisplay("Generating Done...");
     }
 
     void GenerateVertexData() override
     {
-        rLog.WriteAndDisplay("Constructing Vertices...");
-
         rVertices = {
             SVector(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f), vec2(0.0f, 0.0f)),
             SVector(vec3(1.0f, 0.0f, 0.0f * fRadius), vec3(0.0f, 1.0f, 0.0f), vec2(0.0f, 1.0f))
         };
-
-        rLog.WriteAndDisplay("Vertices: " + to_string(rVertices.size()));
     }
 
     void GenerateIndicesData() override
     {
-        rLog.WriteAndDisplay("Constructing Indices...");
-
         rIndices = {
             0,1
         };
-
-        rLog.WriteAndDisplay("Indices: " + to_string(rIndices.size()));
     }
 };
 
@@ -255,26 +254,22 @@ struct SShapePrimCircle : SShapePrimBase
         GenerateVertexData();
         GenerateIndicesData();
 
-        rModel.AddMesh(Mesh(rVertices, rIndices));
+        Mesh rMesh = Mesh(rVertices, rIndices);
 
-        vector<Mesh> rMeshList = rModel.GetMeshList();
+        rMesh.SetDrawMode(EGLDrawMode::EGLDM_LineLoop);
 
-        rMeshList[0].SetDrawMode(EGLDrawMode::EGLDM_LineLoop);
-
-        rModel.SetMeshList(rMeshList);
+        rModel.AddMesh(rMesh);
 
         rLog.WriteAndDisplay("Generating Done...");
     }
 
     void GenerateVertexData() override
     {
-        rLog.WriteAndDisplay("Constructing Vertices...");
-
         uint32 iLoopW = 0;
 
         float fSinDistanceRadius = 0.f, fCosDistanceRadius = 0.f;
 
-        float fRadByDiv = TWO_PI_F/static_cast<float>(iResW);
+        const float fRadByDiv = TWO_PI_F/static_cast<float>(iResW);
 
         rVertices.reserve(iResW);
 
@@ -292,14 +287,10 @@ struct SShapePrimCircle : SShapePrimBase
 
             ++iLoopW;
         }
-
-        rLog.WriteAndDisplay("Vertices: " + to_string(rVertices.size()));
     }
 
     void GenerateIndicesData() override
     {
-        rLog.WriteAndDisplay("Constructing Indices...");
-
         uint32 iLoopW = 0;
 
         rIndices.reserve(iResW);
@@ -310,8 +301,6 @@ struct SShapePrimCircle : SShapePrimBase
 
             ++iLoopW;
         }
-
-        rLog.WriteAndDisplay("Indices: " + to_string(rIndices.size()));
     }
 };
 
@@ -339,40 +328,30 @@ struct SShapePrimPlane : SShapePrimBase
         GenerateVertexData();
         GenerateIndicesData();
 
-        rModel.AddMesh(Mesh(rVertices, rIndices));
+        Mesh rMesh = Mesh(rVertices, rIndices);
 
-        vector<Mesh> rMeshList = rModel.GetMeshList();
+        rMesh.SetDrawMode(EGLDrawMode::EGLDM_TriangleStrip);
 
-        rMeshList[0].SetDrawMode(EGLDrawMode::EGLDM_TriangleStrip);
-
-        rModel.SetMeshList(rMeshList);
+        rModel.AddMesh(rMesh);
 
         rLog.WriteAndDisplay("Generating Done...");
     }
 
     void GenerateVertexData() override
     {
-        rLog.WriteAndDisplay("Constructing Vertices...");
-
         rVertices = {
             SVector(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f), vec2(0.0f, 0.0f)),
             SVector(vec3(0.0f, 0.0f, 1.0f * fRadius), vec3(0.0f, 1.0f, 0.0f), vec2(0.0f, 1.0f)),
             SVector(vec3(1.0f * fRadius, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f), vec2(1.0f, 0.0f)),
             SVector(vec3(1.0f * fRadius, 0.0f, 1.0f * fRadius), vec3(0.0f, 1.0f, 0.0f), vec2(1.0f, 1.0f))
         };
-
-        rLog.WriteAndDisplay("Vertices: " + to_string(rVertices.size()));
     }
 
     void GenerateIndicesData() override
     {
-        rLog.WriteAndDisplay("Constructing Indices...");
-
         rIndices = {
             0,1,2,3
         };
-
-        rLog.WriteAndDisplay("Indices: " + to_string(rIndices.size()));
     }
 };
 
@@ -402,21 +381,17 @@ struct SShapePrimCube : SShapePrimBase
         GenerateVertexData();
         GenerateIndicesData();
 
-        rModel.AddMesh(Mesh(rVertices, rIndices));
+        Mesh rMesh = Mesh(rVertices, rIndices);
 
-        vector<Mesh> rMeshList = rModel.GetMeshList();
+        rMesh.SetDrawMode(EGLDrawMode::EGLDM_TriangleStrip);
 
-        rMeshList[0].SetDrawMode(EGLDrawMode::EGLDM_TriangleStrip);
-
-        rModel.SetMeshList(rMeshList);
+        rModel.AddMesh(rMesh);
 
         rLog.WriteAndDisplay("Generating Done...");
     }
 
     void GenerateVertexData() override
     {
-        rLog.WriteAndDisplay("Constructing Vertices...");
-
         rVertices = {
             SVector(vec3(0.0f, 0.0f, 0.0f), vec3(-1.0f, -1.0f, 1.0f), vec2(0.0f, 0.0f)),
             SVector(vec3(0.0f, fHeight, 0.0f), vec3(-1.0f, 1.0f, 1.0f), vec2(1.0f, 0.0f)),
@@ -427,14 +402,10 @@ struct SShapePrimCube : SShapePrimBase
             SVector(vec3(0.0f, 0.0f, fRadius), vec3(-1.0f, -1.0f, -1.0f), vec2(0.0f, 1.0f)),
             SVector(vec3(0.0f, fHeight, fRadius), vec3(-1.0f, 1.0f, -1.0f), vec2(1.0f, 1.0f))
         };
-        
-        rLog.WriteAndDisplay("Vertices: " + to_string(rVertices.size()));
     }
 
     void GenerateIndicesData() override
     {
-        rLog.WriteAndDisplay("Constructing Indices...");
-
         rIndices = {
             1,7,3,5,
             5,4,3,2,
@@ -443,8 +414,18 @@ struct SShapePrimCube : SShapePrimBase
             7,6,5,4,
             2,4,0,6
         };
+    }
 
-        rLog.WriteAndDisplay("Indices: " + to_string(rVertices.size()));
+    static void GenerateIndicesData2(vector<uint32>* OutIndicesData)
+    {
+        *OutIndicesData = {
+            1,7,3,5,
+            5,4,3,2,
+            3,2,1,0,
+            1,0,7,6,
+            7,6,5,4,
+            2,4,0,6
+        };
     }
 };
 
@@ -489,8 +470,6 @@ struct SShapePrimSphere : SShapePrimBase
 
     void GenerateVertexData() override
     {
-        rLog.WriteAndDisplay("Constructing Vertices...");
-
         uint32 iLoopW = 0, iLoopH = 1;
 
         //reserve before operation to avoid memory reservetion with every new element
@@ -531,21 +510,18 @@ struct SShapePrimSphere : SShapePrimBase
 
         rVertices.emplace_back(SVector(vec3(0.0f, fRadius*fHeight*2.f, 0.0f), vec3(0.0f), vec2(0.0f)));
 
-        rLog.WriteAndDisplay("Vertices: " + to_string(rVertices.size()));
         assert("Number of generated vertices does not correspond what was reserved" && !((GetResW() * (GetResH()-1) + 2) != rVertices.size()));
 
     }
 
     void GenerateIndicesData() override
     {
-        rLog.WriteAndDisplay("Constructing Indices...");
-
         uint32 iLoopW = 0;
         uint32 iLoopH = 0;
 
         uint32 iCurIndice = 1;
 
-        uint32 iVertexNum = static_cast<uint32>(rVertices.size());
+        const uint32 iVertexNum = static_cast<uint32>(rVertices.size());
         
         //reserve before operation to avoid memory reservetion with every new element
         rIndices.reserve((GetResW() * (GetResH()-1))*6);
@@ -614,7 +590,6 @@ struct SShapePrimSphere : SShapePrimBase
         rIndices.emplace_back(iResH-1);
         rIndices.emplace_back(iVertexNum-2);
 
-        rLog.WriteAndDisplay("Indices: " + to_string(rIndices.size()));
         assert("Number of generated indices does not correspond what was reserved" && !(((GetResW() * (GetResH()-1))*6) != rIndices.size()));
     }
 };
@@ -655,8 +630,6 @@ struct SShapePrimCone : SShapePrimBase
 
     void GenerateVertexData() override
     {
-        rLog.WriteAndDisplay("Constructing Vertices...");
-
         uint32 iLoopW = 0;
 
         const float fRadByDiv = TWO_PI_F/static_cast<float>(iResW);
@@ -685,16 +658,13 @@ struct SShapePrimCone : SShapePrimBase
 
         rVertices.emplace_back(
             SVector(vec3(0.0f, fHeight, 0.0f), vec3(0.0f), vec2(0.0f)));
-
-        rLog.WriteAndDisplay("Vertices: " + to_string(rVertices.size()));
+        
         assert("Number of generated vertices does not correspond what was reserved" && !((iResW + 2) != rVertices.size()));
 
     }
 
     void GenerateIndicesData() override
     {
-        rLog.WriteAndDisplay("Constructing Indices...");
-
         uint32 iLoopW = 0;
 
         //reserve before operation to avoid memory reservetion with every new element
@@ -725,7 +695,6 @@ struct SShapePrimCone : SShapePrimBase
         rIndices.emplace_back(iResW);
         rIndices.emplace_back(1);
 
-        rLog.WriteAndDisplay("Indices: " + to_string(rIndices.size()));
         assert("Number of generated indices does not correspond what was reserved" && !((iResW * 6) != rIndices.size()));
     }
 };
@@ -769,8 +738,6 @@ struct SShapePrimCylinder : SShapePrimBase
 
     void GenerateVertexData() override
     {   
-        rLog.WriteAndDisplay("Constructing Vertices...");
-
         uint32 iLoopW = 0;
 
         const float fRadByDiv = TWO_PI_F/static_cast<float>(iResW);
@@ -807,17 +774,14 @@ struct SShapePrimCylinder : SShapePrimBase
         rVertices.emplace_back(
             SVector(vec3(0.0f, fHeight, 0.0f), vec3(0.0f), vec2(0.0f)));
 
-        rLog.WriteAndDisplay("Vertices: " + to_string(rVertices.size()));
         assert("Number of generated vertices does not correspond what was reserved" && !((iResW * 2 + 2) != rVertices.size()));
     }
 
     void GenerateIndicesData() override
     {
-        rLog.WriteAndDisplay("Constructing indices...");
-
         uint32 iLoopW = 0;
 
-        uint32 iMaxRound = iResW * 2;
+        const uint32 iMaxRound = iResW * 2;
 
         //reserve before operation to avoid memory reservetion with every new element
         rIndices.reserve(iResW*12);
@@ -865,7 +829,6 @@ struct SShapePrimCylinder : SShapePrimBase
         rIndices.emplace_back(iMaxRound - 1);
         rIndices.emplace_back(1);
 
-        rLog.WriteAndDisplay("Indices: " + to_string(rIndices.size()));
         assert("Number of generated indices does not correspond what was reserved" && !((iResW*12) != rIndices.size()));
     }
 };

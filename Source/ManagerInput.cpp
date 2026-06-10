@@ -1,28 +1,28 @@
-#include "InputManager.h"
+#include "ManagerInput.h"
 
-Log InputManager::rLog("LogInputManager");
+Log ManagerInput::rLog("LogInputManager");
 
-map<EDeviceType, vector<SInputInfo>> InputManager::rKeyboardKeyList;
+map<EDeviceType, vector<SInputInfo>> ManagerInput::rKeyboardKeyList;
 
-SMouseKeyInputFrame InputManager::rMouseInputFrame = SMouseKeyInputFrame();
-SMouseMotionInputFrame InputManager::rMouseMotionInputFrame = SMouseMotionInputFrame();
-SMouseScrollInputFrame InputManager::rMouseScrollInputFrame = SMouseScrollInputFrame();
+SMouseKeyInputFrame ManagerInput::rMouseInputFrame = SMouseKeyInputFrame();
+SMouseMotionInputFrame ManagerInput::rMouseMotionInputFrame = SMouseMotionInputFrame();
+SMouseScrollInputFrame ManagerInput::rMouseScrollInputFrame = SMouseScrollInputFrame();
 
-uint64 InputManager::iInputHandlerID = 0;
+uint64 ManagerInput::iInputHandlerID = 0;
 
-GLFWwindow* InputManager::rCurrentWindowInput = nullptr;
+GLFWwindow* ManagerInput::rCurrentWindowInput = nullptr;
 
-InputManager* InputManager::rInputManager = nullptr;
+ManagerInput* ManagerInput::rInputManager = nullptr;
 
-InputManager* InputManager::GetInstance()
+ManagerInput* ManagerInput::GetInstance()
 {
 	if(rInputManager == nullptr)
-		rInputManager = new InputManager();
+		rInputManager = new ManagerInput();
 
 	return rInputManager;
 }
 
-void InputManager::BindInput(string const& InsName,
+void ManagerInput::BindInput(string const& InsName,
 EInputKey IneInputKey,
 EInputState IneInputState,
 void (*InrCallback)())
@@ -36,7 +36,7 @@ void (*InrCallback)())
 			*InrCallback));
 }
 
-void InputManager::BindInput(string const& InsName,
+void ManagerInput::BindInput(string const& InsName,
 EMouseKey IneInputMouseKey,
 EInputState IneInputState,
 void (*InrCallback)())
@@ -50,16 +50,16 @@ void (*InrCallback)())
 			*InrCallback));
 }
 
-void InputManager::BindInput(string const& InsName, EDeviceType IneDeviceType, void (*InrCallback)())
+void ManagerInput::BindInput(string const& InsName, EDeviceType IneDeviceType, void (*InrCallback)())
 {
 	rKeyboardKeyList[IneDeviceType].push_back(SInputInfo(InsName, 0, 0, 0, *InrCallback));
 }
 
-void InputManager::OnKey(GLFWwindow* InrWindow, int IniKeyCode, int IniScanCode, int IniAction, int IniMods)
+void ManagerInput::OnKey(GLFWwindow* InrWindow, int IniKeyCode, int IniScanCode, int IniAction, int IniMods)
 {
 	for (map<EDeviceType, vector<SInputInfo>>::iterator::value_type &rIt : rKeyboardKeyList)
 	{
-		for(int32 i = 0; i < rIt.second.size(); i++)
+		for(size_t i = 0; i < rIt.second.size(); i++)
 		{
 			rIt.second[i].iCurrentInputState = glfwGetKey(InrWindow, rIt.second[i].iInputKey);
 			rIt.second[i].bIsInputConsumed = !(static_cast<EInputState>(rIt.second[i].iCurrentInputState) == EInputState::EIS_Press);
@@ -67,7 +67,7 @@ void InputManager::OnKey(GLFWwindow* InrWindow, int IniKeyCode, int IniScanCode,
 	}
 }
 
-void InputManager::OnMousePos(GLFWwindow* InrWindow, double IndPosX, double IndPosY)
+void ManagerInput::OnMousePos(GLFWwindow* InrWindow, double IndPosX, double IndPosY)
 {
 	rMouseMotionInputFrame.dXPos = IndPosX;
 	rMouseMotionInputFrame.dYPos = IndPosY;
@@ -75,7 +75,7 @@ void InputManager::OnMousePos(GLFWwindow* InrWindow, double IndPosX, double IndP
 	rMouseMotionInputFrame.IsInputConsumed = false;
 }
 
-void InputManager::OnMouseButton(GLFWwindow* InrWindow, int IniButton, int IniAction, int IniMods)
+void ManagerInput::OnMouseButton(GLFWwindow* InrWindow, int IniButton, int IniAction, int IniMods)
 {
 	rMouseInputFrame.eMouseKey = static_cast<EMouseKey>(IniButton);
 	rMouseInputFrame.eInputState = static_cast<EInputState>(IniAction);
@@ -84,7 +84,7 @@ void InputManager::OnMouseButton(GLFWwindow* InrWindow, int IniButton, int IniAc
 	rMouseInputFrame.IsInputConsumed = false;
 }
 
-void InputManager::OnScroll(GLFWwindow* InrWindow, double IndOffsetX, double IndOffsetY)
+void ManagerInput::OnScroll(GLFWwindow* InrWindow, double IndOffsetX, double IndOffsetY)
 {
 	rMouseScrollInputFrame.dScrollX = IndOffsetX;
 	rMouseScrollInputFrame.dScrollY = IndOffsetY;
@@ -92,7 +92,7 @@ void InputManager::OnScroll(GLFWwindow* InrWindow, double IndOffsetX, double Ind
 	rMouseScrollInputFrame.IsInputConsumed = false;
 }
 
-void InputManager::ProcessInput()
+void ManagerInput::ProcessInput()
 {
 	for(map<EDeviceType, vector<SInputInfo>>::iterator::value_type &rIt : rKeyboardKeyList)
 	{
@@ -118,13 +118,13 @@ void InputManager::ProcessInput()
 
 			//TODO: Error binding input device, Unknown device
 			case EDeviceType::EDT_Unknown:
-				rLog.WriteAndDisplay("failed to bind device input, unknown device detected. can't handle input, aborting.");
+				rLog.WriteAndDisplay("failed to bind device input, unknown device detected. Aborting.");
 				break;
 		}
 	}
 }
 
-void InputManager::CallKeyInputList(vector<SInputInfo> & InsInputInfo)
+void ManagerInput::CallKeyInputList(vector<SInputInfo> & InsInputInfo)
 {
 	uint32 iLoop = 0;
 
@@ -168,7 +168,7 @@ void InputManager::CallKeyInputList(vector<SInputInfo> & InsInputInfo)
 	}
 }
 
-void InputManager::CallMousePosList(vector<SInputInfo> const& InsInputInfo)
+void ManagerInput::CallMousePosList(vector<SInputInfo> const& InsInputInfo)
 {
 	if(!rMouseMotionInputFrame.IsInputConsumed)
 	{
@@ -186,7 +186,7 @@ void InputManager::CallMousePosList(vector<SInputInfo> const& InsInputInfo)
 	}
 }
 
-void InputManager::CallMouseButtonInputList(vector<SInputInfo> const& InsInputInfo)
+void ManagerInput::CallMouseButtonInputList(vector<SInputInfo> const& InsInputInfo)
 {
 	if(!rMouseInputFrame.IsInputConsumed)
 	{
@@ -209,7 +209,7 @@ void InputManager::CallMouseButtonInputList(vector<SInputInfo> const& InsInputIn
 	}
 }
 
-void InputManager::CallScrollInputList(vector<SInputInfo> const& InsInputInfo)
+void ManagerInput::CallScrollInputList(vector<SInputInfo> const& InsInputInfo)
 {
 	if(!rMouseScrollInputFrame.IsInputConsumed)
 	{
@@ -227,7 +227,7 @@ void InputManager::CallScrollInputList(vector<SInputInfo> const& InsInputInfo)
 	}
 }
 
-InputManager::InputManager()
+ManagerInput::ManagerInput()
 {
 	rKeyboardKeyList.emplace(EDeviceType::EDT_Keyboard, vector<SInputInfo>());
 	rKeyboardKeyList.emplace(EDeviceType::EDT_Joystic, vector<SInputInfo>());
@@ -236,10 +236,10 @@ InputManager::InputManager()
 
 	if(rCurrentWindowInput != nullptr)
 	{
-		glfwSetKeyCallback(rCurrentWindowInput, InputManager::OnKey);
-		glfwSetCursorPosCallback(rCurrentWindowInput, InputManager::OnMousePos);
-		//glfwSetCursorEnterCallback(rCurrentWindowInput, InputManager::OnCursorEnter);
-		glfwSetMouseButtonCallback(rCurrentWindowInput, InputManager::OnMouseButton);
-		glfwSetScrollCallback(rCurrentWindowInput, InputManager::OnScroll);
+		glfwSetKeyCallback(rCurrentWindowInput, ManagerInput::OnKey);
+		glfwSetCursorPosCallback(rCurrentWindowInput, ManagerInput::OnMousePos);
+		//glfwSetCursorEnterCallback(rCurrentWindowInput, ManagerInput::OnCursorEnter);
+		glfwSetMouseButtonCallback(rCurrentWindowInput, ManagerInput::OnMouseButton);
+		glfwSetScrollCallback(rCurrentWindowInput, ManagerInput::OnScroll);
 	}
 }

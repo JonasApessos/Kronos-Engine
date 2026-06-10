@@ -4,11 +4,14 @@
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 
+#include "glm/glm.hpp"
+
 #include "Standard.h"
 #include "Primitives.h"
 #include "Log.h"
-#include "InputManager.h"
+#include "ManagerInput.h"
 
+using glm::vec2;
 using KronosPrim::uint32;
 
 /** @enum EHints
@@ -105,7 +108,7 @@ public:
 
 	inline GLFWwindow* GetWindow() const;
 
-	void test();
+	void SetViewport(vec2 InvLocation, vec2 InvSize);
 
 protected:
 	float fRatioX = 16.0f, fRatioY = 9.0f;
@@ -138,8 +141,8 @@ inline GLFWwindow* Canvas::CreateWindow()
 inline void Canvas::SetIsAspectLocked(bool InbIsApsectLocked) { bIsAspectLocked = InbIsApsectLocked; }
 
 inline void Canvas::SetScreenSize(int32 IniWidth, int32 IniHeight) { iWidth = IniWidth; iHeight = IniHeight; }
-inline void Canvas::SetWidth(int32 IniWidth) { iWidth = (IniWidth * IniWidth > 0) + (iWidth * IniWidth <= 0); }
-inline void Canvas::SetHeight(int32 IniHeight) { iHeight = (IniHeight * IniHeight > 0) + static_cast<int32>(iWidth * (fRatioY / fRatioX) * IniHeight <= 0); }
+inline void Canvas::SetWidth(int32 IniWidth) { iWidth = (IniWidth * (IniWidth > 0)) + (iWidth * (IniWidth <= 0)); }
+inline void Canvas::SetHeight(int32 IniHeight) { iHeight = (IniHeight * (IniHeight > 0)) + static_cast<int32>(iWidth * (fRatioY / fRatioX) * (IniHeight <= 0)); }
 
 
 inline bool Canvas::GetIsAspectLocked() const { return bIsAspectLocked; }

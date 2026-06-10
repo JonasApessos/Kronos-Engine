@@ -1,7 +1,8 @@
 #pragma once
 
 #include <string>
-#include <glm/glm.hpp>
+
+#include "glm/glm.hpp"
 #include "assimp/version.h"
 
 #include "Log.h"

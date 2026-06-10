@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Primitives.h"
-
 #include "glad/gl.h"
 #include "GLFW/glfw3.h"
+
+#include "Primitives.h"
 
 #include "Log.h"
 

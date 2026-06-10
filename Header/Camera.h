@@ -1,7 +1,7 @@
 #pragma once
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
 
 using glm::vec3, glm::mat4;
 using glm::perspective, glm::normalize, glm::radians, glm::lookAt;
@@ -228,7 +228,7 @@ inline void Camera::SetPitch(float InfPitch)
 
 inline void Camera::SetRoll(float InfRoll)
 {
-	rRotation.y = InfRoll;
+	rRotation.z = InfRoll;
 
 	if (rRotation.z < rMinRotation.z)
 		rRotation.z = rMinRotation.z;

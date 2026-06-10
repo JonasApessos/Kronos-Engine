@@ -2,10 +2,9 @@
 
 #include <iostream>
 
-#include "MacroUtils.h"
-
 #define __STDC_WANT_LIB_EXT1__ 1
 
+#include "MacroUtils.h"
 #include "Primitives.h"
 #include "FileHandler.h"
 
@@ -75,7 +74,7 @@ protected:
 
 	#ifdef _WIN32
 	char cErrorMsg[256] = "";
-	#elif defined __linux__
+	#elif defined(__linux__)
 	char* cErrorMsg;
 	#endif
 	

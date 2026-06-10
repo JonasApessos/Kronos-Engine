@@ -3,7 +3,6 @@
 #include <string>
 
 #include "Standard.h"
-
 #include "Primitives.h"
 
 using std::string;

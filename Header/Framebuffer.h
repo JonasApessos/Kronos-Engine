@@ -2,9 +2,9 @@
 #include <iostream>
 
 #include "Standard.h"
-
 #include "Primitives.h"
 #include "Log.h"
+
 #include "Texture.h"
 
 using KronosPrim::int32, KronosPrim::uint32;

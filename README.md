@@ -41,8 +41,10 @@ In order to build the project after installing all the necessary libraries, you 
 If you need to build in debug:<br>
 <code>scons --build=debug</code>
 
-if you need to use multiple jobs to build the project then add the following argument:
+If you need to use multiple jobs to build the project then add the following argument:
 <code>scons -jn</code>
+Example to run on 8 seperated threads:
+<code>scons -j8</code>
 
 change the number of jobs you need to build faster
 

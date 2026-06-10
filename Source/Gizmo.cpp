@@ -14,8 +14,6 @@ void GizmoTranslate::ConstructGizmo()
 
     Mesh rMesh = rLine.GetMesh();
 
-    rMesh.SetDrawMode(EGLDrawMode::EGLDM_LineStrip);
-
     AddMesh(rMesh);
 
     rMesh.RotateOffset(HALF_PI_F, vec3(0.f, 0.f, 1.f));
@@ -45,13 +43,9 @@ void GizmoTranslate::ConstructGizmo()
 
     rMesh.TranslateOffset(vec3(-0.05f, -0.05f, -0.05f));
 
-    rMesh.SetDrawMode(EGLDrawMode::EGLDM_TriangleStrip);
-
     AddMesh(rMesh);
 
     rMesh = rPlane.GetMesh();
-
-    rMesh.SetDrawMode(EGLDrawMode::EGLDM_TriangleStrip);
 
     rMesh.RotateOffset(PI_F, vec3(1.f, 0.f, 0.f));
     rMesh.TranslateOffset(vec3(0.f, 0.f, 0.5f));
@@ -67,7 +61,7 @@ void GizmoTranslate::ConstructGizmo()
     rMesh.RotateOffset(HALF_PI_F, vec3(0.f, 1.f, 0.f));
 
     AddMesh(rMesh);
-    
+
 }
 
 
@@ -81,8 +75,6 @@ void GizmoRotate::ConstructGizmo()
     //Circle Y
     Mesh rMesh(rCircle.GetMesh());
 
-    rMesh.SetDrawMode(EGLDrawMode::EGLDM_LineLoop);
-
     AddMesh(rMesh);
 
     //Circle X
@@ -95,10 +87,8 @@ void GizmoRotate::ConstructGizmo()
 
     AddMesh(rMesh);
 
-    //Cyrcle Control Y
+    //Circle Control Y
     rMesh = rSphere.GetMesh();
-
-    rMesh.SetDrawMode(EGLDrawMode::EGLDM_Triangles);
 
     Mesh rMesh2 = rCone.GetMesh();
 
@@ -137,8 +127,6 @@ void GizmoScale::ConstructGizmo()
 
     Mesh rMesh = rCube.GetMesh();
 
-    rMesh.SetDrawMode(EGLDrawMode::EGLDM_TriangleStrip);
-    
     rMesh.TranslateOffset(vec3(-0.05));
 
     AddMesh(rMesh);
@@ -157,8 +145,6 @@ void GizmoScale::ConstructGizmo()
 
 
     rMesh = rLine.GetMesh();
-
-    rMesh.SetDrawMode(EGLDrawMode::EGLDM_LineStrip);
 
     AddMesh(rMesh);
 
@@ -202,8 +188,6 @@ void GizmoTransform::ConstructTranslate()
 
     Mesh rMesh = rLine.GetMesh();
 
-    rMesh.SetDrawMode(EGLDrawMode::EGLDM_LineStrip);
-
     AddMesh(rMesh);
 
     rMesh.RotateOffset(HALF_PI_F, vec3(0.f, 0.f, 1.f));
@@ -233,13 +217,9 @@ void GizmoTransform::ConstructTranslate()
 
     rMesh.TranslateOffset(vec3(-0.05f, -0.05f, -0.05f));
 
-    rMesh.SetDrawMode(EGLDrawMode::EGLDM_TriangleStrip);
-
     AddMesh(rMesh);
 
     rMesh = rPlane.GetMesh();
-
-    rMesh.SetDrawMode(EGLDrawMode::EGLDM_TriangleStrip);
 
     rMesh.RotateOffset(PI_F, vec3(1.f, 0.f, 0.f));
     rMesh.TranslateOffset(vec3(0.f, 0.f, 0.25f));
@@ -266,8 +246,6 @@ void GizmoTransform::ConstructRotate()
     //Circle Y
     Mesh rMesh(rCircle.GetMesh());
 
-    rMesh.SetDrawMode(EGLDrawMode::EGLDM_LineLoop);
-
     AddMesh(rMesh);
 
     //Circle X
@@ -280,10 +258,8 @@ void GizmoTransform::ConstructRotate()
 
     AddMesh(rMesh);
 
-    //Cyrcle Control Y
+    //Circle Control Y
     rMesh = rSphere.GetMesh();
-
-    rMesh.SetDrawMode(EGLDrawMode::EGLDM_Triangles);
 
     Mesh rMesh2 = rCone.GetMesh();
 
@@ -320,8 +296,6 @@ void GizmoTransform::ConstructScale()
 
     Mesh rMesh = rCube.GetMesh();
 
-    rMesh.SetDrawMode(EGLDrawMode::EGLDM_TriangleStrip);
-    
     rMesh.TranslateOffset(vec3(-0.05));
 
     AddMesh(rMesh);
@@ -340,8 +314,6 @@ void GizmoTransform::ConstructScale()
 
 
     rMesh = rLine.GetMesh();
-
-    rMesh.SetDrawMode(EGLDrawMode::EGLDM_LineStrip);
 
     rMesh.RotateOffset(HALF_PI_F, vec3(0.f, -1.f, 0.f));
 

@@ -138,11 +138,15 @@ void Canvas::Init()
 	glfwGetWindowContentScale(rWindow, &fScaleX, &fScaleY);
 }
 
-void Canvas::test()
+void Canvas::SetViewport(vec2 InvCoord, vec2 InvSize)
 {
+	SetWidth(InvSize.x);
+	SetHeight(InvSize.y);
 	glViewport(
-		static_cast<GLint>(0),
-		static_cast<GLint>(0),
-		static_cast<GLsizei>(1280),
-		static_cast<GLsizei>(720));
+		static_cast<GLint>(InvCoord.x),
+		static_cast<GLint>(InvCoord.y),
+		static_cast<GLsizei>(InvSize.x),
+		static_cast<GLsizei>(InvSize.y));
+
+	rLog.WriteAndDisplay("vieport: " + to_string(iWidth) + " " + to_string(GetHeight()));
 }

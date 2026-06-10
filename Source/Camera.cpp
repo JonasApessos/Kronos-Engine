@@ -9,7 +9,7 @@ Camera::Camera(
 	float InfAspectRatio,
 	float InfTravelSpeed,
 	float InfNearClip,
-	float InfFarClip) : 
+	float InfFarClip) :
 	fFOV(InfFOV),
 	fAspectRation(InfAspectRatio),
 	fTravelSpeed(InfTravelSpeed),
@@ -18,7 +18,7 @@ Camera::Camera(
 	rLocation(InrCameraLoc),
 	rCameraFront(InrCameraFront),
 	rCameraUp(InrCameraUp)
-	
+
 {
 
 }
